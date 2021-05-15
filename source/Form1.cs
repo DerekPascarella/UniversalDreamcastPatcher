@@ -195,7 +195,7 @@ namespace UniversalDreamcastPatcher
                             redumpConversionComplete = true;
                         }
                         // If "_complete_" file doesn't exist, ensure the temporary folder isn't empty after 5 seconds, as this indicates a failed conversion.
-                        else if (conversionCheckCount >= 5 && temporaryFiles.Length == 0)
+                        else if(conversionCheckCount >= 5 && temporaryFiles.Length == 0)
                         {
                             // Display error message.
                             MessageBox.Show("The selected source CUE is either malformed or incompatible.", "Universal Dreamcast Patcher", MessageBoxButtons.OK, MessageBoxIcon.Error);
