@@ -38,12 +38,13 @@ As Universal Dreamcast Patcher evolves and improves over time, the list below re
 * Support for source and patched disc images (input and output) in CDI format.
 
 ## Usage: Patching
-Nunc ut dignissim mauris, vitae volutpat arcu. Fusce non ipsum at arcu accumsan vestibulum ut sit amet ipsum. Nunc consequat, nibh et mattis volutpat, dui neque tempus leo, ut laoreet arcu ipsum sit amet enim. Nunc sit amet fermentum ex, non consectetur est. Nulla at magna mollis, mollis lacus vitae, molestie sapien.
+Universal Dreamcast Patcher is simple to use.  After launching the application, follow the steps below.
 
-* Item 1
-* Item 2
-  * Item 2a
-  * Item 2b
+* Click "Select GDI or CUE" to open the source disc image.
+* Click "Select Patch" to open the DCP patch file.
+* Click "Apply Path" to generate the patched GDI.
+
+Note that details on the current step of the patching process will be updated as they progress.  Any errors encountered during sanity or integrity checks will be presented and the patching process will be halted.
 
 ## Usage: Creating Patches
 Nunc ut dignissim mauris, vitae volutpat arcu. Fusce non ipsum at arcu accumsan vestibulum ut sit amet ipsum. Nunc consequat, nibh et mattis volutpat, dui neque tempus leo, ut laoreet arcu ipsum sit amet enim. Nunc sit amet fermentum ex, non consectetur est. Nulla at magna mollis, mollis lacus vitae, molestie sapien.
