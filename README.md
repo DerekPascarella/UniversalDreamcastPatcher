@@ -29,7 +29,7 @@ While Universal Dreamcast Patcher delivers its core features reliably, all known
 
 * Patched disc image (output) cannot be created in Redump-style CUE format.
 * No CDI format support for source or patched disc images (input and output).
-* File hashes of the patched disc image (output) are not consistent even when using the same source disc image (input).  This is due to an issue with gditools which does not preserve timestamps on extracted folders.  Instead, the current day and time are used to generate the folder creation timestamp at the moment of extraction.
+* File hashes of the patched disc image (output) are not consistent even when using the same source disc image (input).  This is due to an issue with [gditools](https://sourceforge.net/projects/dcisotools/) which does not preserve timestamps on extracted folders.  Instead, the current day and time are used to generate the folder creation timestamp at the moment of extraction.
 
 ## Roadmap
 As Universal Dreamcast Patcher evolves and improves over time, the list below represents features which I'd like to implement.
