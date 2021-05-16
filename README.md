@@ -40,6 +40,7 @@ As Universal Dreamcast Patcher evolves and improves over time, the list below re
 * Support for source and patched disc images (input and output) in CDI format.
 * Ensure consistent file hashes for patched disc images (output) by retaining original timestamps on folders extracted from source disc image (input).
 * Research methods for decreasing size of patch file, such as using diffs/deltas on modified files.
+* Linux and Mac support.
 
 ## Usage: Patching
 Universal Dreamcast Patcher is simple to use.  After launching the application, follow the steps below.
