@@ -3,7 +3,7 @@
 
 ## Latest Version
 
-The latest version of Universal Dreamcast Patcher is [0.1](http://xxxxx).
+The latest version of Universal Dreamcast Patcher is [0.1](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.1/Universal.Dreamcast.Patcher.v0.1.zip).
 
 ## Table of Contents
 
