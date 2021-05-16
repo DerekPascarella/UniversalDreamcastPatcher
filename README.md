@@ -59,7 +59,7 @@ The DCP patch format was designed specifically for Universal Dreamcast Patcher. 
 1. Create a ZIP archive containing (in its root) all of the files/folder from the game's data that have been modified or are new.  Be sure to retain original folder structure and hierarchy.
    * If the patch should use a modified IP.BIN file, simply create a folder named "bootsector" in the root of the ZIP archive and place IP.BIN inside of it.
 2. Change the extension of the file from ZIP to DCP.
-   * Note that the base filename of the DCP will be used when this application generates the patched GDI.
+   * Note that the base filename of the DCP will be used when this application generates the patched GDI (e.g. a patch file named "My Game (v1.0).dcp" will result in a patched GDI folder named "My Game (v1.0) [GDI]").
 
 ### Example
 In this example, an existing DCP patch is seen being opened with 7-Zip, a common archive creator and extractor.
