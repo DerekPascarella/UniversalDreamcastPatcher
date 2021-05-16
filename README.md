@@ -53,9 +53,8 @@ Details on the current step of the patching process will be updated as they prog
 Note that throughout the patching process, several temporary folders and files will be written to the folder from which the application is launched.
 
 ## Usage: Creating Patches
-Nunc ut dignissim mauris, vitae volutpat arcu. Fusce non ipsum at arcu accumsan vestibulum ut sit amet ipsum. Nunc consequat, nibh et mattis volutpat, dui neque tempus leo, ut laoreet arcu ipsum sit amet enim. Nunc sit amet fermentum ex, non consectetur est. Nulla at magna mollis, mollis lacus vitae, molestie sapien.
+The DCP patch format was designed specifically for Universal Dreamcast Patcher.  This format is not complex or difficult to understand.  It is extremely simple by design and as a result DPC patches can be created without the use of any special software.  The steps to creating a patch are as follows.
 
-* Item 1
-* Item 2
-  * Item 2a
-  * Item 2b
+1. Create a ZIP file containing all of the files/folder from the game's data that have been modified or are new.  Be sure to retain original folder structure and hierarchy.
+2. Change the extension on the file from ZIP to DCP.
+   * Note that the base filename of the DCP will be used when this application generates the patched GDI.
