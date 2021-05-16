@@ -24,7 +24,7 @@ Nunc ut dignissim mauris, vitae volutpat arcu. Fusce non ipsum at arcu accumsan 
 * Item 2
   * Item 2a
   * Item 2b
-  * 
+
 ## Roadmap
 Nunc ut dignissim mauris, vitae volutpat arcu. Fusce non ipsum at arcu accumsan vestibulum ut sit amet ipsum. Nunc consequat, nibh et mattis volutpat, dui neque tempus leo, ut laoreet arcu ipsum sit amet enim. Nunc sit amet fermentum ex, non consectetur est. Nulla at magna mollis, mollis lacus vitae, molestie sapien.
 
