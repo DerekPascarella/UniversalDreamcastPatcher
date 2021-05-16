@@ -63,8 +63,11 @@ The DCP patch format was designed specifically for Universal Dreamcast Patcher. 
 ### Example
 In this example, an existing DCP patch is seen being opened with 7-Zip, a common archive creator and extractor.
 
-<img align="center" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/example_1.png?raw=true">
+
+<img src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/example_1.png?raw=true">
+
 
 All files/folders that contain patched or new files exist at the root of the patch.  Furthmore, a "bootsector" folder is seen in this example, along with its content.
 
-<img align="center" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/example_2.png?raw=true">
+
+<img src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/example_2.png?raw=true">
