@@ -58,3 +58,6 @@ The DCP patch format was designed specifically for Universal Dreamcast Patcher. 
 1. Create a ZIP file containing all of the files/folder from the game's data that have been modified or are new.  Be sure to retain original folder structure and hierarchy.
 2. Change the extension on the file from ZIP to DCP.
    * Note that the base filename of the DCP will be used when this application generates the patched GDI.
+
+# Example
+In this example... ... ...
