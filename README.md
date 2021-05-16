@@ -12,28 +12,29 @@
 * [Usage: Creating Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-creating-patches)
 
 ## Existing Features
-Nunc ut dignissim mauris, vitae volutpat arcu. Fusce non ipsum at arcu accumsan vestibulum ut sit amet ipsum. Nunc consequat, nibh et mattis volutpat, dui neque tempus leo, ut laoreet arcu ipsum sit amet enim. Nunc sit amet fermentum ex, non consectetur est. Nulla at magna mollis, mollis lacus vitae, molestie sapien.
+Below is a specific list of Universal Dreamcast Patcher's current features.
 
-* Item 1
-* Item 2
-  * Item 2a
-  * Item 2b
+* Source disc image integrity verification.
+* Disc image patching with custom IP.BIN.
+* Supported formats for source disc image (input):
+  * TOSEC-style GDI
+  * Redump-style CUE
+* Supported formats for patched disc image (output):
+  * TOSEC-style GDI
+* Supported formats for patch files:
+  * DCP
 
 ## Known Issues and Limitations
-Nunc ut dignissim mauris, vitae volutpat arcu. Fusce non ipsum at arcu accumsan vestibulum ut sit amet ipsum. Nunc consequat, nibh et mattis volutpat, dui neque tempus leo, ut laoreet arcu ipsum sit amet enim. Nunc sit amet fermentum ex, non consectetur est. Nulla at magna mollis, mollis lacus vitae, molestie sapien.
+While Universal Dreamcast Patcher delivers its core features reliably, all known issues and limitations of the application are listed below.
 
-* Item 1
-* Item 2
-  * Item 2a
-  * Item 2b
+* Patched disc image (output) cannot be created in Redump-style CUE format.
+* No CDI format support for source or patched disc images (input and output).
 
 ## Roadmap
-Nunc ut dignissim mauris, vitae volutpat arcu. Fusce non ipsum at arcu accumsan vestibulum ut sit amet ipsum. Nunc consequat, nibh et mattis volutpat, dui neque tempus leo, ut laoreet arcu ipsum sit amet enim. Nunc sit amet fermentum ex, non consectetur est. Nulla at magna mollis, mollis lacus vitae, molestie sapien.
+As Universal Dreamcast Patcher evolves and improves over time, the list below represents features which I'd like to implement.
 
-* Item 1
-* Item 2
-  * Item 2a
-  * Item 2b
+* Support for patched disc image (output) in Redump-style CUE format.
+* Support for source and patched disc images (input and output) in CDI format.
 
 ## Usage: Patching
 Nunc ut dignissim mauris, vitae volutpat arcu. Fusce non ipsum at arcu accumsan vestibulum ut sit amet ipsum. Nunc consequat, nibh et mattis volutpat, dui neque tempus leo, ut laoreet arcu ipsum sit amet enim. Nunc sit amet fermentum ex, non consectetur est. Nulla at magna mollis, mollis lacus vitae, molestie sapien.
