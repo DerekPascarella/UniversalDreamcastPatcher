@@ -60,7 +60,7 @@ Details on the current step of the patching process will be updated as they prog
 Note that throughout the patching process, several temporary folders and files will be written to the folder from which the application is launched, all of which are cleaned up upon completion.
 
 ## Usage: Creating Patches
-The DCP patch format was designed specifically for Universal Dreamcast Patcher.  This format is neither complex nor difficult to understand.  It is extremely simple by design and as a result, DCP patches can be created without the use of any special software.  The steps to creating a patch are as follows.
+The DCP patch format was designed specifically for Universal Dreamcast Patcher.  This format is neither complex nor difficult to understand.  It is extremely simple by design and as a result, DCP patches can be created without the use of any special software.  The steps for creating a patch are as follows.
 
 1. Create a ZIP archive containing (in its root) all of the files/folder from the game's data that have been modified or are new.  Be sure to retain original folder structure and hierarchy.
    * If the patch should use a modified IP.BIN file, simply create a folder named "bootsector" in the root of the ZIP archive and place IP.BIN inside of it.
