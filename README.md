@@ -1,5 +1,5 @@
 # Universal Dreamcast Patcher
-<img align="right" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshot.png?raw=true">Universal Dreamcast Patcher aims to provide an easy, cross-format game patching solution to the Dreamcast community.  Such patches typically come in the form of English translations and other forms of ROM hacks.  Universal Dreamcast Patcher is designed to accept any disc image as its source, whether it be formatted as a TOSEC-style GDI or a Redump-style CUE.  This application will extract any disc image meeting those standards, overwrite and/or add to its data according to a given patch (DCP file), and then rebuild the disc image with the new data.  Due to the flexible nature of acceptable disc image input, file hashes are not utilized for pre/post-patching verification.
+<img align="right" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/screenshot.png?raw=true">Universal Dreamcast Patcher aims to provide an easy, cross-format game patching solution to the Dreamcast community.  Such patches typically come in the form of English translations and other forms of ROM hacks.  Universal Dreamcast Patcher is designed to accept any disc image as its source, whether it be formatted as a TOSEC-style GDI or a Redump-style CUE.  This application will extract any disc image meeting those standards, overwrite and/or add to its data according to a given patch (DCP file), and then rebuild the disc image with the new data.  Due to the flexible nature of acceptable disc image input, file hashes are not utilized for pre/post-patching verification.
 
 ## Latest Version
 
@@ -61,4 +61,10 @@ The DCP patch format was designed specifically for Universal Dreamcast Patcher. 
    * Note that the base filename of the DCP will be used when this application generates the patched GDI.
 
 ### Example
-In this example... ... ...
+In this example, an existing DCP patch is seen being opened with 7-Zip, a common archive creator and extractor.
+
+<img align="center" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/example_1.png?raw=true">
+
+All files/folders that contain patched or new files exist at the root of the patch.  Furthmore, a "bootsector" folder is seen in this example, along with its content.
+
+<img align="center" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/example_2.png?raw=true">
