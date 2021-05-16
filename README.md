@@ -44,7 +44,9 @@ Universal Dreamcast Patcher is simple to use.  After launching the application, 
 * Click "Select Patch" to open the DCP patch file.
 * Click "Apply Path" to generate the patched GDI.
 
-Note that details on the current step of the patching process will be updated as they progress.  Any errors encountered during sanity or integrity checks will be presented and the patching process will be halted.
+Details on the current step of the patching process will be updated as they progress.  Any errors encountered during sanity or integrity checks will be presented and the patching process will be halted.
+
+Note that throughout the patching process, several temporary folders and files will be written to the folder from which the application is launched.
 
 ## Usage: Creating Patches
 Nunc ut dignissim mauris, vitae volutpat arcu. Fusce non ipsum at arcu accumsan vestibulum ut sit amet ipsum. Nunc consequat, nibh et mattis volutpat, dui neque tempus leo, ut laoreet arcu ipsum sit amet enim. Nunc sit amet fermentum ex, non consectetur est. Nulla at magna mollis, mollis lacus vitae, molestie sapien.
