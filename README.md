@@ -7,11 +7,11 @@ The latest version of Universal Dreamcast Patcher is [0.1](http://xxxxx).
 
 ## Table of Contents
 
-* [Existing Features](https://github.com/DerekPascarella/UniversalDreamcastPatcher#existing-features)
-* [Known Issues and Limitations](https://github.com/DerekPascarella/UniversalDreamcastPatcher#known-issues-and-limitations)
-* [Roadmap](https://github.com/DerekPascarella/UniversalDreamcastPatcher#roadmap)
-* [Usage: Patching](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-patching)
-* [Usage: Creating Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-creating-patches)
+1. [Existing Features](https://github.com/DerekPascarella/UniversalDreamcastPatcher#existing-features)
+2. [Known Issues and Limitations](https://github.com/DerekPascarella/UniversalDreamcastPatcher#known-issues-and-limitations)
+3. [Roadmap](https://github.com/DerekPascarella/UniversalDreamcastPatcher#roadmap)
+4. [Usage: Patching](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-patching)
+5. [Usage: Creating Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-creating-patches)
 
 ## Existing Features
 Below is a specific list of Universal Dreamcast Patcher's current features.
