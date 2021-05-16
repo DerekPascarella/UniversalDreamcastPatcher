@@ -70,7 +70,7 @@ In this example, an existing DCP patch is seen being opened with 7-Zip, a common
 <img src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/example_1.png?raw=true">
 </p>
 
-All patched or new files exist at root of the patch.  Likewise, all folders containing patched or new files exist at the root of the patch just as they did within the game's original disc structure.  Furthmore, a "bootsector" folder is seen in this example, along with its content.
+All modified or new files reside in the root of the patch.  Likewise, all folders containing modified or new files exist at the root of the patch just as they did within the game's original disc structure.  Furthmore, a "bootsector" folder is seen in this example, along with its content.
 
 <p align="center">
 <img src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/example_2.png?raw=true">
