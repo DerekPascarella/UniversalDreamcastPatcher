@@ -6,7 +6,7 @@ Universal Dreamcast Patcher is designed to accept any disc image as its source, 
 Under the hood, this application utilizes [gditools](https://sourceforge.net/projects/dcisotools/), [buildgdi](https://projects.sappharad.com/tools/gdibuilder.html), and a modified version of [RedumpCUE2GDI](https://github.com/AwfulBear/RedumpCUE2GDI).
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [0.2](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.2/Universal.Dreamcast.Patcher.v0.2.zip).
+The latest version of Universal Dreamcast Patcher is [0.1](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.1/Universal.Dreamcast.Patcher.v0.1.zip).
 
 ## Changelog
 * Version 0.1 (2021-05-16)
