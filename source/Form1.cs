@@ -356,6 +356,9 @@ namespace UniversalDreamcastPatcher
                     // Otherwise, proceed with copying source GDI to the temporary folder.
                     else
                     {
+                        // Copy source GDI file to temporary folder.
+                        File.Copy(gdiFile, appTempFolder + "\\disc.gdi");
+
                         // Calculate GDI-file-copy progress bar interval value.
                         int gdiCopyProgress = 30 / (gdiArray.Length - 1);
 
