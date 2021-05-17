@@ -41,7 +41,6 @@ While Universal Dreamcast Patcher delivers its core features reliably, all known
 
 * Patched disc image (output) cannot be created in Redump-style CUE format.
 * No CDI format support for source or patched disc images (input and output).
-* No support for source disc images (input) containing CDDA.
 * File hashes of the patched disc image (output) are not consistent even when using the same source disc image (input).  This is partly due to an issue with gditools which does not preserve timestamps on extracted folders. Instead, the current day and time are used to generate the folder creation timestamp at the moment of extraction. As of now, no ISO extraction utilities (with the necessary LBA options) that I've researched successfully preserve timestamps on folders.  As a workaround, the hardcoded timestamp of 1999-09-09-00:00:00 (UTC) is being used.  However, gditools is still inserting some dynamic timestamps into the modified data track.  After some research, I believe the gditools implementation of [DiscUtils](https://github.com/Sappharad/GDIbuilder/tree/master/GDIbuilder/DiscUtils) is to blame.
 
 ## Roadmap
