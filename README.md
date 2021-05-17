@@ -46,7 +46,6 @@ While Universal Dreamcast Patcher delivers its core features reliably, all known
 ## Roadmap
 As Universal Dreamcast Patcher evolves and improves over time, the list below represents features which I'd like to implement.
 
-* Support for source disc images (input) containg CDDA.
 * Support for patched disc image (output) in Redump-style CUE format.
 * Support for source and patched disc images (input and output) in CDI format.
 * Ensure consistent file hashes for patched disc images (output).
