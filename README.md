@@ -6,9 +6,12 @@ Universal Dreamcast Patcher is designed to accept any disc image as its source, 
 Under the hood, this application utilizes [gditools](https://sourceforge.net/projects/dcisotools/), [buildgdi](https://projects.sappharad.com/tools/gdibuilder.html), and a modified version of [RedumpCUE2GDI](https://github.com/AwfulBear/RedumpCUE2GDI).
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [0.1](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.1/Universal.Dreamcast.Patcher.v0.1.zip).
+The latest version of Universal Dreamcast Patcher is [0.2](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.2/Universal.Dreamcast.Patcher.v0.2.zip).
 
 ## Changelog
+* Version 0.2 (2021-05-17)
+  * Added support for source disc images with CDDA.
+  * Fixed bug with source disc image integrity verification.
 * Version 0.1 (2021-05-16)
   * Initial release.
 
@@ -39,7 +42,7 @@ While Universal Dreamcast Patcher delivers its core features reliably, all known
 * Patched disc image (output) cannot be created in Redump-style CUE format.
 * No CDI format support for source or patched disc images (input and output).
 * No support for source disc images (input) containing CDDA.
-* File hashes of the patched disc image (output) are not consistent even when using the same source disc image (input). This is due to an issue with gditools which does not preserve timestamps on extracted folders. Instead, the current day and time are used to generate the folder creation timestamp at the moment of extraction. As of now, no ISO extraction utilities (with the necessary LBA options) that I've researched successfully preserve timestamps on folders.
+* File hashes of the patched disc image (output) are not consistent even when using the same source disc image (input).  This is partly due to an issue with gditools which does not preserve timestamps on extracted folders. Instead, the current day and time are used to generate the folder creation timestamp at the moment of extraction. As of now, no ISO extraction utilities (with the necessary LBA options) that I've researched successfully preserve timestamps on folders.  As a workaround, the hardcoded timestamp of 1999-09-09-00:00:00 (UTC) is being used.  However, gditools is still 
 
 ## Roadmap
 As Universal Dreamcast Patcher evolves and improves over time, the list below represents features which I'd like to implement.
