@@ -475,6 +475,7 @@ namespace UniversalDreamcastPatcher
                         Directory.SetLastWriteTimeUtc(gameDataFolders[i], hardcodedDirectoryTimestamp);
                     }
 
+                    // Store array of all files across entire tree of game data.
                     string[] gameDataFiles = Directory.GetFiles(appTempFolder + "_extracted", "*", SearchOption.AllDirectories);
 
                     // Iterate through "gameDataFolders" array to apply timestamps to all folders and subfolders in game data before building GDI.
