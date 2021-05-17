@@ -11,9 +11,9 @@ Under the hood, this application utilizes [gditools](https://sourceforge.net/pro
 The latest version of Universal Dreamcast Patcher is [0.2](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.2/Universal.Dreamcast.Patcher.v0.2.zip).
 
 ## Changelog
-* Version 0.2
+* Version 0.2 (2021-05-17)
   * Due to a bug in gditools, timestamps on folders extracted from a source disc image are not preserved.  This results in patched disc images having different hashes/checksums even when the same source disc image and patch are used to generate it.  After several attempts to preserve timestamps correctly, I decided on a workaround where prior to building the patched disc image, all folders and subfolders are modified with the hardcoded timestamp of September 9th, 1999 at midnight (UTC).  This ensures that identical data is produced each and every time a given source disc image is patched with a given patch.
-* Version 0.1
+* Version 0.1 (2021-05-16)
   * Initial release.
 
 ## Table of Contents
