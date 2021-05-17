@@ -120,7 +120,7 @@ namespace UniversalDreamcastPatcher
                 // Sleep for half a second.
                 wait(500);
 
-                // Add 10 to progress bar.
+                // Update progress bar.
                 patchingProgressBar.Value += 5;
                 patchingProgressPercentage.Text = patchingProgressBar.Value + "%";
 
@@ -233,23 +233,7 @@ namespace UniversalDreamcastPatcher
                         wait(1000);
                     }
 
-                    // Add 5 to progress bar.
-                    patchingProgressBar.Value += 5;
-                    patchingProgressPercentage.Text = patchingProgressBar.Value + "%";
-                }
-                // Otherwise, proceed with copying source GDI to temporary folder.
-                else
-                {
-                    // Update patching progress details.
-                    patchingProgressDetails.Text = "Creating temporary copy of original GDI...";
-
-                    // Sleep for 1 second.
-                    wait(1000);
-
-                    // Copy source GDI to temporary folder.
-                    File.Copy(gdiFile, appTempFolder + "\\disc.gdi");
-
-                    // Add 5 to progress bar.
+                    // Update progress bar.
                     patchingProgressBar.Value += 5;
                     patchingProgressPercentage.Text = patchingProgressBar.Value + "%";
                 }
@@ -260,27 +244,45 @@ namespace UniversalDreamcastPatcher
                 // Set default GDI compatibility flag to "true".
                 bool compatibleGDI = true;
 
-                // Construct "gditools" command for initial GDI validation.
-                string command_VALIDATE = "-command \"& '" + appBaseFolder + "tools\\gditools.exe' -i '" + appBaseFolder + folderGUID + "\\" + gdiFilename + "'\"";
+                // Construct "gditools" command for initial source GDI validation.
+                string command_VALIDATE = "-command \"& '" + appBaseFolder + "tools\\gditools.exe' -i '" + gdiFile + "'\"";
 
-                // Perform initial GDI validation step by executing "gditools.exe" via PowerShell.
+                // Perform initial source GDI validation step by executing "gditools.exe" via PowerShell.
                 System.Diagnostics.Process processValidate = new System.Diagnostics.Process();
                 System.Diagnostics.ProcessStartInfo startInfoValidate = new System.Diagnostics.ProcessStartInfo();
                 startInfoValidate.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
                 startInfoValidate.FileName = "powershell.exe";
                 startInfoValidate.Arguments = command_VALIDATE;
                 startInfoValidate.RedirectStandardOutput = true;
+                startInfoValidate.RedirectStandardError = true;
                 startInfoValidate.UseShellExecute = false;
                 startInfoValidate.CreateNoWindow = true;
                 processValidate.StartInfo = startInfoValidate;
                 processValidate.Start();
                 processValidate.WaitForExit();
 
-                // Store standard output of "gditools.exe" from initial GDI validation.
-                var gdiValidateOutput = processValidate.StandardOutput.ReadToEnd();
+                // Store standard error output of "gditools.exe" from initial source GDI validation.
+                var gdiValidateErrorOutput = processValidate.StandardError.ReadToEnd();
 
-                // If standard output of "gditools.exe" is empty, consider the GDI incompatible.
-                if(String.IsNullOrEmpty(gdiValidateOutput))
+                // Update progress bar.
+                patchingProgressBar.Value += 5;
+                patchingProgressPercentage.Text = patchingProgressBar.Value + "%";
+
+                // Update patching progress details.
+                patchingProgressDetails.Text = "Verifying integrity of source GDI...";
+
+                // Sleep for half a second.
+                wait(500);
+
+                // Update progress bar.
+                patchingProgressBar.Value += 5;
+                patchingProgressPercentage.Text = patchingProgressBar.Value + "%";
+
+                // Sleep for half a second.
+                wait(500);
+
+                // If standard error output of "gditools.exe" isn't empty, consider the source GDI incompatible.
+                if(!String.IsNullOrEmpty(gdiValidateErrorOutput))
                 {
                     compatibleGDI = false;
                 }
@@ -365,7 +367,7 @@ namespace UniversalDreamcastPatcher
                             string trackFilename = trackInfo[4];
 
                             // Update patching progress details.
-                            patchingProgressDetails.Text = "Copying " + trackFilename + "...";
+                            patchingProgressDetails.Text = "Copying " + trackFilename.ToLower() + "...";
 
                             // Sleep for 1 second.
                             wait(1000);
@@ -385,8 +387,8 @@ namespace UniversalDreamcastPatcher
                     // Update patching progress details.
                     patchingProgressDetails.Text = "Extracting GDI...";
 
-                    // Add 20 to progress bar.
-                    patchingProgressBar.Value += 15;
+                    // Update progress bar.
+                    patchingProgressBar.Value += 13;
                     patchingProgressPercentage.Text = patchingProgressBar.Value + "%";
 
                     // Sleep for half a second.
@@ -408,8 +410,8 @@ namespace UniversalDreamcastPatcher
                     // Update patching progress details.
                     patchingProgressDetails.Text = "Patching extracted GDI files with new data...";
 
-                    // Add 20 to progress bar.
-                    patchingProgressBar.Value += 15;
+                    // Update progress bar.
+                    patchingProgressBar.Value += 13;
                     patchingProgressPercentage.Text = patchingProgressBar.Value + "%";
 
                     // Sleep for half a second.
@@ -470,18 +472,55 @@ namespace UniversalDreamcastPatcher
                         Directory.SetLastWriteTimeUtc(gameDataFolders[i], hardcodedDirectoryTimestamp);
                     }
 
+                    string[] gameDataFiles = Directory.GetFiles(appTempFolder + "_extracted", "*", SearchOption.AllDirectories);
+
+                    // Iterate through "gameDataFolders" array to apply timestamps to all folders and subfolders in game data before building GDI.
+                    for(int i = 0; i < gameDataFiles.Length; i++)
+                    {
+                        File.SetCreationTimeUtc(gameDataFiles[i], hardcodedDirectoryTimestamp);
+                        File.SetLastAccessTimeUtc(gameDataFiles[i], hardcodedDirectoryTimestamp);
+                        File.SetLastWriteTimeUtc(gameDataFiles[i], hardcodedDirectoryTimestamp);
+                    }
+
                     // Update patching progress details.
                     patchingProgressDetails.Text = "Building patched GDI...";
 
-                    // Add 20 to progress bar.
-                    patchingProgressBar.Value += 15;
+                    // Update progress bar.
+                    patchingProgressBar.Value += 14;
                     patchingProgressPercentage.Text = patchingProgressBar.Value + "%";
 
                     // Sleep for half a second.
                     wait(500);
 
                     // Construct "buildgdi" command for GDI rebuild.
-                    string command_BUILD = "-command \"& '" + appBaseFolder + "tools\\buildgdi.exe' -data '" + appBaseFolder + folderGUID + "_extracted' -ip '" + appBaseFolder + folderGUID + "_extracted\\bootsector\\IP.BIN' -output '" + appBaseFolder + folderGUID + "' -gdi '" + appBaseFolder + folderGUID + "\\" + gdiFilename + "' -raw\"";
+                    string command_BUILD = "-command \"& '" + appBaseFolder + "tools\\buildgdi.exe' -data '" + appBaseFolder + folderGUID + "_extracted' -ip '" + appBaseFolder + folderGUID + "_extracted\\bootsector\\IP.BIN' -output '" + appBaseFolder + folderGUID + "' -gdi '" + appBaseFolder + folderGUID + "\\" + gdiFilename + "' -raw";
+                    
+                    // If the source GDI contains contains CDDA, append those tracks to "buildgdi" command.
+                    if(File.Exists(appBaseFolder + folderGUID + "\\track04.raw"))
+                    {
+                        // Add flag to "buildgdi" command signifying presence of CDDA.
+                        command_BUILD = command_BUILD + " -cdda";
+
+                        // Store all GDI track filenames in "cddaTracks" array.
+                        string[] cddaTracks = Directory.GetDirectories(appTempFolder + "_extracted", "track*.raw", SearchOption.TopDirectoryOnly);
+
+                        // Iterate through each track file.
+                        for(int i = 0; i < cddaTracks.Length; i ++)
+                        {
+                            // Store track number without extension or prepended "track" string.
+                            string cddaTrackFilename = Path.GetFileNameWithoutExtension(cddaTracks[i]);
+                            cddaTrackFilename = cddaTrackFilename.Replace("track", "");
+
+                            // If track number is greater than or equal to 4, append it to the "buildgdi" command.
+                            if(Int32.Parse(cddaTrackFilename) >= 4)
+                            {
+                                command_BUILD = command_BUILD + " '" + cddaTracks[i] + "'";
+                            }
+                        }
+                    }
+
+                    // Finish constructing "buildgdi" command.
+                    command_BUILD = command_BUILD + "\"";
 
                     // Execute "buildgdi.exe" via PowerShell to build the patched GDI.
                     System.Diagnostics.Process processBuild = new System.Diagnostics.Process();
