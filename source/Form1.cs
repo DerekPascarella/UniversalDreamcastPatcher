@@ -456,6 +456,20 @@ namespace UniversalDreamcastPatcher
                         return;
                     }
 
+                    // Set hardcoded timestamp for all folders and subfolders in game data before building GDI.
+                    DateTime hardcodedDirectoryTimestamp = new DateTime(1999, 9, 9, 0, 0, 0, DateTimeKind.Utc);
+
+                    // Store array of all folders and subfolders in game data.
+                    string[] gameDataFolders = Directory.GetDirectories(appTempFolder + "_extracted", "*", SearchOption.AllDirectories);
+
+                    // Iterate through "gameDataFolders" array to apply timestamps to all folders and subfolders in game data before building GDI.
+                    for(int i = 0; i < gameDataFolders.Length; i ++)
+                    {
+                        Directory.SetCreationTimeUtc(gameDataFolders[i], hardcodedDirectoryTimestamp);
+                        Directory.SetLastAccessTimeUtc(gameDataFolders[i], hardcodedDirectoryTimestamp);
+                        Directory.SetLastWriteTimeUtc(gameDataFolders[i], hardcodedDirectoryTimestamp);
+                    }
+
                     // Update patching progress details.
                     patchingProgressDetails.Text = "Building patched GDI...";
 
@@ -546,8 +560,6 @@ namespace UniversalDreamcastPatcher
         // Recursive function for file/folder copying.
         public static void RecursiveCopyAll(DirectoryInfo source, DirectoryInfo target)
         {
-            Directory.CreateDirectory(target.FullName);
-
             // Copy each file into the new directory.
             foreach(FileInfo fileInfo in source.GetFiles())
             {
