@@ -1,9 +1,7 @@
 # Universal Dreamcast Patcher
-<img align="right" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/screenshot.png?raw=true">Universal Dreamcast Patcher aims to provide an easy, cross-format game patching solution for the Dreamcast community.  Such patches typically come in the form of English translations and other forms of ROM hacks.
+<img align="right" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/screenshot.png?raw=true">Universal Dreamcast Patcher aims to provide an easy, cross-format game patching solution for the Dreamcast community. Such patches typically come in the form of English translations and other forms of ROM hacks.
 
-Universal Dreamcast Patcher is designed to accept any disc image as its source, whether it be formatted as a TOSEC-style GDI or a Redump-style CUE.  This application will extract any disc image meeting those standards, overwrite and/or add to its data according to a given patch (DCP file), and then rebuild the disc image with the new data.
-
-Due to the flexible nature of acceptable disc image input, file hashes are not utilized for pre/post-patching verification.  However, hashes/checksums of patched disc images using the same source disc image and same patch will be consistent.
+Universal Dreamcast Patcher is designed to accept any disc image as its source, whether it be formatted as a TOSEC-style GDI or a Redump-style CUE. This application will extract any disc image meeting those standards, overwrite and/or add to its data according to a given patch (DCP file), and then rebuild the disc image with the new data. Due to the flexible nature of acceptable disc image input, file hashes are not utilized for pre/post-patching verification.
 
 Under the hood, this application utilizes [gditools](https://sourceforge.net/projects/dcisotools/), [buildgdi](https://projects.sappharad.com/tools/gdibuilder.html), and a modified version of [RedumpCUE2GDI](https://github.com/AwfulBear/RedumpCUE2GDI).
 
@@ -11,8 +9,6 @@ Under the hood, this application utilizes [gditools](https://sourceforge.net/pro
 The latest version of Universal Dreamcast Patcher is [0.2](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.2/Universal.Dreamcast.Patcher.v0.2.zip).
 
 ## Changelog
-* Version 0.2 (2021-05-17)
-  * Due to a bug in gditools, timestamps on folders extracted from a source disc image are not preserved.  This results in patched disc images having different hashes/checksums even when the same source disc image and patch are used to generate it.  After several attempts to preserve timestamps correctly, I decided on a workaround where prior to building the patched disc image, all folders and subfolders are modified with the hardcoded timestamp of September 9th, 1999 at midnight (UTC).  This ensures that identical data is produced each and every time a given source disc image is patched with a given patch.
 * Version 0.1 (2021-05-16)
   * Initial release.
 
@@ -42,12 +38,14 @@ While Universal Dreamcast Patcher delivers its core features reliably, all known
 
 * Patched disc image (output) cannot be created in Redump-style CUE format.
 * No CDI format support for source or patched disc images (input and output).
+* File hashes of the patched disc image (output) are not consistent even when using the same source disc image (input). This is due to an issue with gditools which does not preserve timestamps on extracted folders. Instead, the current day and time are used to generate the folder creation timestamp at the moment of extraction. As of now, no ISO extraction utilities (with the necessary LBA options) that I've researched successfully preserve timestamps on folders.
 
 ## Roadmap
 As Universal Dreamcast Patcher evolves and improves over time, the list below represents features which I'd like to implement.
 
 * Support for patched disc image (output) in Redump-style CUE format.
 * Support for source and patched disc images (input and output) in CDI format.
+* Ensure consistent file hashes for patched disc images (output) by retaining original timestamps on folders extracted from source disc image (input).
 * Research methods for decreasing size of patch file, such as using diffs/deltas on modified files.
 * Linux and Mac support.
 
