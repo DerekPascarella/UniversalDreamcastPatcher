@@ -359,6 +359,9 @@ namespace UniversalDreamcastPatcher
                         // Copy source GDI file to temporary folder.
                         File.Copy(gdiFile, appTempFolder + "\\disc.gdi");
 
+                        // Convert all text in GDI file to lowercase.
+                        File.WriteAllText(appTempFolder + "\\disc.gdi", File.ReadAllText(gdiFile).ToLower());
+
                         // Calculate GDI-file-copy progress bar interval value.
                         int gdiCopyProgress = 30 / (gdiArray.Length - 1);
 
@@ -375,8 +378,8 @@ namespace UniversalDreamcastPatcher
                             // Sleep for 1 second.
                             wait(1000);
 
-                            // Copy file.
-                            File.Copy(gdiBaseFolder + "\\" + trackFilename, appTempFolder + "\\" + trackFilename.ToString());
+                            // Copy file, lowercasing its name if necessary.
+                            File.Copy(gdiBaseFolder + "\\" + trackFilename, appTempFolder + "\\" + trackFilename.ToString().ToLower());
 
                             // Add calculated interval to progress bar.
                             patchingProgressBar.Value += gdiCopyProgress;
@@ -503,13 +506,15 @@ namespace UniversalDreamcastPatcher
                     string command_BUILD = "-command \"& '" + appBaseFolder + "tools\\buildgdi.exe' -data '" + appTempFolder + "_extracted' -ip '" + appTempFolder + "_bootsector\\IP.BIN' -output '" + appTempFolder + "' -gdi '" + appTempFolder + "\\" + gdiFilename + "' -raw";
                     
                     // If the source GDI contains contains CDDA, append those tracks to "buildgdi" command.
-                    if(File.Exists(appBaseFolder + folderGUID + "\\track04.raw"))
+                    if(File.Exists(appTempFolder + "\\track04.raw"))
                     {
                         // Add flag to "buildgdi" command signifying presence of CDDA.
                         command_BUILD = command_BUILD + " -cdda";
 
                         // Store all GDI track filenames in "cddaTracks" array.
-                        string[] cddaTracks = Directory.GetDirectories(appTempFolder + "_extracted", "track*.raw", SearchOption.TopDirectoryOnly);
+                        string[] cddaTracks = Directory.GetFiles(appTempFolder, "track*.raw", SearchOption.TopDirectoryOnly);
+
+                        MessageBox.Show("cdda track count: " + cddaTracks.Length.ToString(), "test");
 
                         // Iterate through each track file.
                         for(int i = 0; i < cddaTracks.Length; i ++)
