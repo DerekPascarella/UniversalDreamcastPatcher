@@ -6,9 +6,11 @@ Universal Dreamcast Patcher is designed to accept any disc image as its source, 
 Under the hood, this application utilizes [gditools](https://sourceforge.net/projects/dcisotools/), [buildgdi](https://projects.sappharad.com/tools/gdibuilder.html), and a modified version of [RedumpCUE2GDI](https://github.com/AwfulBear/RedumpCUE2GDI).
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [0.2](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.2/Universal.Dreamcast.Patcher.v0.2.zip).
+The latest version of Universal Dreamcast Patcher is [0.3](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.3/Universal.Dreamcast.Patcher.v0.3.zip).
 
 ## Changelog
+* Version 0.3 (2021-05-17)
+  * The "bootsector" folder and its IP.BIN were erroneously being included as a folder and file in the patched GDI's filesystem.
 * Version 0.2 (2021-05-17)
   * Added support for source disc images with CDDA.
   * Fixed bug with source disc image integrity verification.
