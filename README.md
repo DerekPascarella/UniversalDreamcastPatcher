@@ -15,9 +15,11 @@ Under the hood, this application utilizes [gditools](https://sourceforge.net/pro
 7. [Usage: Creating Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-creating-patches)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [0.3](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.3/Universal.Dreamcast.Patcher.v0.3.zip).
+The latest version of Universal Dreamcast Patcher is [0.4](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.4/Universal.Dreamcast.Patcher.v0.4.zip).
 
 ## Changelog
+* Version 0.4 (2021-05-18)
+  * Fixed bug with incorrect GDI building when source disc image contains CDDA.
 * Version 0.3 (2021-05-17)
   * The "bootsector" folder and its IP.BIN were erroneously being included as a folder and file in the patched GDI's filesystem.
 * Version 0.2 (2021-05-17)
