@@ -514,8 +514,6 @@ namespace UniversalDreamcastPatcher
                         // Store all GDI track filenames in "cddaTracks" array.
                         string[] cddaTracks = Directory.GetFiles(appTempFolder, "track*.raw", SearchOption.TopDirectoryOnly);
 
-                        MessageBox.Show("cdda track count: " + cddaTracks.Length.ToString(), "test");
-
                         // Iterate through each track file.
                         for(int i = 0; i < cddaTracks.Length; i ++)
                         {
