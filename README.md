@@ -57,7 +57,7 @@ Universal Dreamcast Patcher is simple to use.  After launching the application, 
 
 1. Click "Select GDI or CUE" to open the source disc image.
 2. Click "Select Patch" to open the DCP patch file.
-3. Click "Apply Path" to generate the patched GDI.
+3. Click "Apply Patch" to generate the patched GDI.
    * The patched GDI will be generated in the folder from with the application is launched.
 4. Click "Quit" to exit the application.
 
