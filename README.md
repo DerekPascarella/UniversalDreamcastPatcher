@@ -32,6 +32,7 @@ The latest version of Universal Dreamcast Patcher is [0.4](https://github.com/De
 Below is a specific list of Universal Dreamcast Patcher's current features.
 
 * Source disc image integrity verification.
+* Support for source disc images (input) with CDDA.
 * Disc image patching with custom IP.BIN.
 * Supported formats for source disc image (input):
   * TOSEC-style GDI
