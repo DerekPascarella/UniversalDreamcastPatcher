@@ -398,7 +398,7 @@ namespace UniversalDreamcastPatcher
                     wait(500);
 
                     // Construct "gditools" command for GDI extraction.
-                    string command_EXTRACT = "-command \"& '" + appBaseFolder + "tools\\gditools.exe' -i '" + appBaseFolder + folderGUID + "\\" + gdiFilename + "' --data-folder '..\\" + folderGUID + "_extracted' -b '..\\" + folderGUID + "_extracted\\bootsector\\IP.BIN' --extract-all --silent\"";
+                    string command_EXTRACT = "-command \"& '" + appBaseFolder + "tools\\gditools.exe' -i '" + gdiFile + "' --data-folder '..\\" + folderGUID + "_extracted' -b '..\\" + folderGUID + "_extracted\\bootsector\\IP.BIN' --extract-all --silent\"";
 
                     // Execute "gditools.exe" via PowerShell to extract the selected GDI to the temporary folder.
                     System.Diagnostics.Process processExtract = new System.Diagnostics.Process();
@@ -496,8 +496,11 @@ namespace UniversalDreamcastPatcher
                     // Sleep for half a second.
                     wait(500);
 
+                    // Move "bootsector" folder to temporary folder location.
+                    Directory.Move(appTempFolder + "_extracted\\bootsector", appTempFolder + "_bootsector");
+
                     // Construct "buildgdi" command for GDI rebuild.
-                    string command_BUILD = "-command \"& '" + appBaseFolder + "tools\\buildgdi.exe' -data '" + appBaseFolder + folderGUID + "_extracted' -ip '" + appBaseFolder + folderGUID + "_extracted\\bootsector\\IP.BIN' -output '" + appBaseFolder + folderGUID + "' -gdi '" + appBaseFolder + folderGUID + "\\" + gdiFilename + "' -raw";
+                    string command_BUILD = "-command \"& '" + appBaseFolder + "tools\\buildgdi.exe' -data '" + appTempFolder + "_extracted' -ip '" + appTempFolder + "_bootsector\\IP.BIN' -output '" + appTempFolder + "' -gdi '" + appTempFolder + "\\" + gdiFilename + "' -raw";
                     
                     // If the source GDI contains contains CDDA, append those tracks to "buildgdi" command.
                     if(File.Exists(appBaseFolder + folderGUID + "\\track04.raw"))
@@ -542,8 +545,11 @@ namespace UniversalDreamcastPatcher
                     // Remove temporary extracted patch folder and all of its contents.
                     Directory.Delete(appTempFolder + "_patch", true);
 
+                    // Remove temporary IP.BIN folder and all of its contents.
+                    Directory.Delete(appTempFolder + "_bootsector", true);
+
                     // Remove patched GDI folder and all of its contents if it already exists.
-                    if(Directory.Exists(appBaseFolder + "\\" + patchFilename + " [GDI]"))
+                    if (Directory.Exists(appBaseFolder + "\\" + patchFilename + " [GDI]"))
                     {
                         Directory.Delete(appBaseFolder + "\\" + patchFilename + " [GDI]", true);
                     }
