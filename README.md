@@ -51,6 +51,7 @@ As Universal Dreamcast Patcher evolves and improves over time, the list below re
 
 * Support for patched disc image (output) in Redump-style CUE format.
 * Support for source and patched disc images (input and output) in CDI format.
+* Extend DCP patch format to support modifying CDDA tracks.
 * Ensure consistent file hashes for patched disc images (output).
 * Research methods for decreasing size of patch file, such as using diffs/deltas on modified files.
 * Linux and Mac support.
