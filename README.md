@@ -5,6 +5,15 @@ Universal Dreamcast Patcher is designed to accept any disc image as its source, 
 
 Under the hood, this application utilizes [gditools](https://sourceforge.net/projects/dcisotools/), [buildgdi](https://projects.sappharad.com/tools/gdibuilder.html), and a modified version of [RedumpCUE2GDI](https://github.com/AwfulBear/RedumpCUE2GDI).
 
+## Table of Contents
+1. [Latest Version](https://github.com/DerekPascarella/UniversalDreamcastPatcher#latest-version)
+2. [Changelog](https://github.com/DerekPascarella/UniversalDreamcastPatcher#changelog)
+3. [Existing Features](https://github.com/DerekPascarella/UniversalDreamcastPatcher#existing-features)
+4. [Known Issues and Limitations](https://github.com/DerekPascarella/UniversalDreamcastPatcher#known-issues-and-limitations)
+5. [Roadmap](https://github.com/DerekPascarella/UniversalDreamcastPatcher#roadmap)
+6. [Usage: Patching](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-patching)
+7. [Usage: Creating Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-creating-patches)
+
 ## Latest Version
 The latest version of Universal Dreamcast Patcher is [0.3](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.3/Universal.Dreamcast.Patcher.v0.3.zip).
 
@@ -16,14 +25,6 @@ The latest version of Universal Dreamcast Patcher is [0.3](https://github.com/De
   * Fixed bug with source disc image integrity verification.
 * Version 0.1 (2021-05-16)
   * Initial release.
-
-## Table of Contents
-
-1. [Existing Features](https://github.com/DerekPascarella/UniversalDreamcastPatcher#existing-features)
-2. [Known Issues and Limitations](https://github.com/DerekPascarella/UniversalDreamcastPatcher#known-issues-and-limitations)
-3. [Roadmap](https://github.com/DerekPascarella/UniversalDreamcastPatcher#roadmap)
-4. [Usage: Patching](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-patching)
-5. [Usage: Creating Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-creating-patches)
 
 ## Existing Features
 Below is a specific list of Universal Dreamcast Patcher's current features.
