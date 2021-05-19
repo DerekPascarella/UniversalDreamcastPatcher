@@ -16,9 +16,11 @@ Under the hood, this application utilizes [gditools](https://sourceforge.net/pro
    1. [Example](https://github.com/DerekPascarella/UniversalDreamcastPatcher#example)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [0.4](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.4/Universal.Dreamcast.Patcher.v0.4.zip).
+The latest version of Universal Dreamcast Patcher is [0.5](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.5/Universal.Dreamcast.Patcher.v0.5.zip).
 
 ## Changelog
+* Version 0.5 (2021-05-19)
+  * Fixed bug in file path parsing.
 * Version 0.4 (2021-05-18)
   * Fixed bug with incorrect GDI building when source disc image contains CDDA.
 * Version 0.3 (2021-05-17)
