@@ -60,6 +60,7 @@ As Universal Dreamcast Patcher evolves and improves over time, the list below re
 * Support for source and patched disc images (input and output) in CDI format.
 * Extend DCP patch format to support modifying CDDA tracks.
 * Ensure consistent file hashes for patched disc images (output).
+* New feature for automatically creating DCP patches by supplying the original source disc image and the fully patched disc image.
 * Research methods for decreasing size of patch file, such as using diffs/deltas on modified files.
 * Linux and Mac support.
 
