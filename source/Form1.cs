@@ -245,13 +245,13 @@ namespace UniversalDreamcastPatcher
                 bool compatibleGDI = true;
 
                 // Construct "gditools" command for initial source GDI validation.
-                string command_VALIDATE = "-command \"& '" + appBaseFolder + "tools\\gditools.exe' -i '" + gdiFile + "'\"";
+                string command_VALIDATE = "-i \"" + gdiFile + "\"";
 
-                // Perform initial source GDI validation step by executing "gditools.exe" via PowerShell.
+                // Perform initial source GDI validation step by executing "gditools.exe".
                 System.Diagnostics.Process processValidate = new System.Diagnostics.Process();
                 System.Diagnostics.ProcessStartInfo startInfoValidate = new System.Diagnostics.ProcessStartInfo();
                 startInfoValidate.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                startInfoValidate.FileName = "powershell.exe";
+                startInfoValidate.FileName = appBaseFolder + "\\tools\\gditools.exe";
                 startInfoValidate.Arguments = command_VALIDATE;
                 startInfoValidate.RedirectStandardOutput = true;
                 startInfoValidate.RedirectStandardError = true;
@@ -401,13 +401,13 @@ namespace UniversalDreamcastPatcher
                     wait(500);
 
                     // Construct "gditools" command for GDI extraction.
-                    string command_EXTRACT = "-command \"& '" + appBaseFolder + "tools\\gditools.exe' -i '" + gdiFile + "' --data-folder '..\\" + folderGUID + "_extracted' -b '..\\" + folderGUID + "_extracted\\bootsector\\IP.BIN' --extract-all --silent\"";
+                    string command_EXTRACT = "-i \"" + appTempFolder + "\\disc.gdi\" --data-folder \"..\\" + folderGUID + "_extracted\" -b \"..\\" + folderGUID + "_extracted\\bootsector\\IP.BIN\" --extract-all --silent\"";
 
-                    // Execute "gditools.exe" via PowerShell to extract the selected GDI to the temporary folder.
+                    // Execute "gditools.exe" to extract the selected GDI to the temporary folder.
                     System.Diagnostics.Process processExtract = new System.Diagnostics.Process();
                     System.Diagnostics.ProcessStartInfo startInfoExtract = new System.Diagnostics.ProcessStartInfo();
                     startInfoExtract.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                    startInfoExtract.FileName = "powershell.exe";
+                    startInfoExtract.FileName = appBaseFolder + "\\tools\\gditools.exe";
                     startInfoExtract.Arguments = command_EXTRACT;
                     processExtract.StartInfo = startInfoExtract;
                     processExtract.Start();
@@ -503,7 +503,7 @@ namespace UniversalDreamcastPatcher
                     Directory.Move(appTempFolder + "_extracted\\bootsector", appTempFolder + "_bootsector");
 
                     // Construct "buildgdi" command for GDI rebuild.
-                    string command_BUILD = "-command \"& '" + appBaseFolder + "tools\\buildgdi.exe' -data '" + appTempFolder + "_extracted' -ip '" + appTempFolder + "_bootsector\\IP.BIN' -output '" + appTempFolder + "' -gdi '" + appTempFolder + "\\" + gdiFilename + "' -raw";
+                    string command_BUILD = "-data \"" + appTempFolder + "_extracted\" -ip \"" + appTempFolder + "_bootsector\\IP.BIN\" -output \"" + appTempFolder + "\" -gdi \"" + appTempFolder + "\\" + gdiFilename + "\" -raw";
                     
                     // If the source GDI contains contains CDDA, append those tracks to "buildgdi" command.
                     if(File.Exists(appTempFolder + "\\track04.raw"))
@@ -524,7 +524,7 @@ namespace UniversalDreamcastPatcher
                             // If track number is greater than or equal to 4, append it to the "buildgdi" command.
                             if(Int32.Parse(cddaTrackFilename) >= 4)
                             {
-                                command_BUILD = command_BUILD + " '" + cddaTracks[i] + "'";
+                                command_BUILD = command_BUILD + " \"" + cddaTracks[i] + "\"";
                             }
                         }
                     }
@@ -532,11 +532,11 @@ namespace UniversalDreamcastPatcher
                     // Finish constructing "buildgdi" command.
                     command_BUILD = command_BUILD + "\"";
 
-                    // Execute "buildgdi.exe" via PowerShell to build the patched GDI.
+                    // Execute "buildgdi.exe" to build the patched GDI.
                     System.Diagnostics.Process processBuild = new System.Diagnostics.Process();
                     System.Diagnostics.ProcessStartInfo startInfoBuild = new System.Diagnostics.ProcessStartInfo();
                     startInfoBuild.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                    startInfoBuild.FileName = "powershell.exe";
+                    startInfoBuild.FileName = appBaseFolder + "tools\\buildgdi.exe";
                     startInfoBuild.Arguments = command_BUILD;
                     processBuild.StartInfo = startInfoBuild;
                     processBuild.Start();
@@ -552,7 +552,7 @@ namespace UniversalDreamcastPatcher
                     Directory.Delete(appTempFolder + "_bootsector", true);
 
                     // Remove patched GDI folder and all of its contents if it already exists.
-                    if (Directory.Exists(appBaseFolder + "\\" + patchFilename + " [GDI]"))
+                    if(Directory.Exists(appBaseFolder + "\\" + patchFilename + " [GDI]"))
                     {
                         Directory.Delete(appBaseFolder + "\\" + patchFilename + " [GDI]", true);
                     }
