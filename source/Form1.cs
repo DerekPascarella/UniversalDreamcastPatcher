@@ -117,6 +117,23 @@ namespace UniversalDreamcastPatcher
                 // Show wait cursor.
                 Cursor.Current = Cursors.WaitCursor;
 
+                // Change logo to show power LED on with a cool flashing effect.
+                wait(250);
+                pictureBox1.Visible = false;
+                pictureBox2.Visible = true;
+                wait(250);
+                pictureBox1.Visible = true;
+                pictureBox2.Visible = false;
+                wait(150);
+                pictureBox1.Visible = false;
+                pictureBox2.Visible = true;
+                wait(150);
+                pictureBox1.Visible = true;
+                pictureBox2.Visible = false;
+                wait(150);
+                pictureBox1.Visible = false;
+                pictureBox2.Visible = true;
+
                 // Sleep for half a second.
                 wait(500);
 
@@ -129,16 +146,47 @@ namespace UniversalDreamcastPatcher
                 string gdiBaseFolder = Path.GetDirectoryName(gdiFile);
                 string appBaseFolder = AppDomain.CurrentDomain.BaseDirectory;
                 string folderGUID = Guid.NewGuid().ToString();
-                string appTempFolder = appBaseFolder + folderGUID;
+                string appTempFolder = Path.GetTempPath() + "_UDP_" + folderGUID;
 
                 // Set default CUE source image flag to "false".
                 bool sourceImageIsCUE = false;
 
                 // Create temporary folders for patched files, copied GDI, and extracted GDI.
-                DirectorySecurity securityRules = new DirectorySecurity();
-                Directory.CreateDirectory(appTempFolder);
-                Directory.CreateDirectory(appTempFolder + "_extracted");
-                Directory.CreateDirectory(appTempFolder + "_patch");
+                try
+                {
+                    Directory.CreateDirectory(appTempFolder);
+                    Directory.CreateDirectory(appTempFolder + "_extracted");
+                    Directory.CreateDirectory(appTempFolder + "_patch");
+                }
+                // Otherwise, display an error if folder creation fails.
+                catch
+                {
+                    // Display error message.
+                    MessageBox.Show("Unable to create necessary temporary folders!\n\nTry running Universal Dreamcast Patcher as Administrator.", "Universal Dreamcast Patcher", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    // Hide progress bar and reset it.
+                    patchingProgressBar.Value = 0;
+                    patchingProgressBar.Visible = false;
+                    patchingProgressDetails.Visible = false;
+                    patchingProgressPercentage.Visible = false;
+
+                    // Show previously hidden buttons.
+                    buttonSelectGDI.Visible = true;
+                    buttonApplyPatch.Visible = true;
+                    buttonQuit.Visible = true;
+
+                    // Change enabled/disabled status of buttons.
+                    buttonSelectGDI.Enabled = true;
+                    buttonApplyPatch.Enabled = false;
+                    buttonQuit.Enabled = true;
+
+                    // Return to normal logo.
+                    pictureBox1.Visible = true;
+                    pictureBox2.Visible = false;
+
+                    // Stop function's execution.
+                    return;
+                }
 
                 // If source disc image is in CUE format, convert to GDI before initiating the patching process.
                 if(Path.GetExtension(gdiFile).ToLower() == ".cue")
@@ -215,6 +263,10 @@ namespace UniversalDreamcastPatcher
                             buttonSelectGDI.Enabled = true;
                             buttonApplyPatch.Enabled = false;
                             buttonQuit.Enabled = true;
+
+                            // Return to normal logo.
+                            pictureBox1.Visible = true;
+                            pictureBox2.Visible = false;
 
                             // Remove temporary GDI folder and all of its contents.
                             Directory.Delete(appTempFolder, true);
@@ -325,6 +377,10 @@ namespace UniversalDreamcastPatcher
                     buttonApplyPatch.Enabled = false;
                     buttonQuit.Enabled = true;
 
+                    // Return to normal logo.
+                    pictureBox1.Visible = true;
+                    pictureBox2.Visible = false;
+
                     // Remove temporary GDI folder and all of its contents.
                     Directory.Delete(appTempFolder, true);
 
@@ -401,7 +457,7 @@ namespace UniversalDreamcastPatcher
                     wait(500);
 
                     // Construct "gditools" command for GDI extraction.
-                    string command_EXTRACT = "-i \"" + appTempFolder + "\\disc.gdi\" --data-folder \"..\\" + folderGUID + "_extracted\" -b \"..\\" + folderGUID + "_extracted\\bootsector\\IP.BIN\" --extract-all --silent\"";
+                    string command_EXTRACT = "-i \"" + appTempFolder + "\\disc.gdi\" --data-folder \"..\\_UDP_" + folderGUID + "_extracted\" -b \"..\\_UDP_" + folderGUID + "_extracted\\bootsector\\IP.BIN\" --extract-all --silent\"";
 
                     // Execute "gditools.exe" to extract the selected GDI to the temporary folder.
                     System.Diagnostics.Process processExtract = new System.Diagnostics.Process();
@@ -450,6 +506,10 @@ namespace UniversalDreamcastPatcher
                         buttonSelectGDI.Enabled = true;
                         buttonApplyPatch.Enabled = false;
                         buttonQuit.Enabled = true;
+
+                        // Return to normal logo.
+                        pictureBox1.Visible = true;
+                        pictureBox2.Visible = false;
 
                         // Remove temporary GDI folder and all of its contents.
                         Directory.Delete(appTempFolder, true);
@@ -529,9 +589,6 @@ namespace UniversalDreamcastPatcher
                         }
                     }
 
-                    // Finish constructing "buildgdi" command.
-                    command_BUILD = command_BUILD + "\"";
-
                     // Execute "buildgdi.exe" to build the patched GDI.
                     System.Diagnostics.Process processBuild = new System.Diagnostics.Process();
                     System.Diagnostics.ProcessStartInfo startInfoBuild = new System.Diagnostics.ProcessStartInfo();
@@ -588,6 +645,10 @@ namespace UniversalDreamcastPatcher
 
                     // Re-enable the "Quit" button.
                     buttonQuit.Enabled = true;
+
+                    // Return to normal logo.
+                    pictureBox1.Visible = true;
+                    pictureBox2.Visible = false;
                 }
             }
             // User selected "No".

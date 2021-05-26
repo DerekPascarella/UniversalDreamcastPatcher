@@ -40,14 +40,16 @@
             this.patchingProgressDetails = new System.Windows.Forms.Label();
             this.buttonSelectPatch = new System.Windows.Forms.Button();
             this.patchingProgressPercentage = new System.Windows.Forms.Label();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonApplyPatch
             // 
             this.buttonApplyPatch.Enabled = false;
             this.buttonApplyPatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonApplyPatch.Location = new System.Drawing.Point(8, 208);
+            this.buttonApplyPatch.Location = new System.Drawing.Point(8, 184);
             this.buttonApplyPatch.Margin = new System.Windows.Forms.Padding(2);
             this.buttonApplyPatch.Name = "buttonApplyPatch";
             this.buttonApplyPatch.Size = new System.Drawing.Size(424, 40);
@@ -60,7 +62,7 @@
             // buttonSelectGDI
             // 
             this.buttonSelectGDI.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSelectGDI.Location = new System.Drawing.Point(8, 160);
+            this.buttonSelectGDI.Location = new System.Drawing.Point(8, 136);
             this.buttonSelectGDI.Margin = new System.Windows.Forms.Padding(2);
             this.buttonSelectGDI.Name = "buttonSelectGDI";
             this.buttonSelectGDI.Size = new System.Drawing.Size(424, 40);
@@ -71,12 +73,13 @@
             // 
             // pictureBox1
             // 
+            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.InitialImage = null;
-            this.pictureBox1.Location = new System.Drawing.Point(16, 16);
+            this.pictureBox1.Location = new System.Drawing.Point(8, 8);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(408, 128);
+            this.pictureBox1.Size = new System.Drawing.Size(424, 120);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 4;
             this.pictureBox1.TabStop = false;
@@ -85,19 +88,19 @@
             // label2
             // 
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(8, 312);
+            this.label2.Location = new System.Drawing.Point(8, 288);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(424, 24);
             this.label2.TabIndex = 5;
-            this.label2.Text = "v0.5 - Derek Pascarella (ateam)";
+            this.label2.Text = "v0.6 - Derek Pascarella (ateam)";
             this.label2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.label2.Click += new System.EventHandler(this.Label2_Click);
             // 
             // buttonQuit
             // 
             this.buttonQuit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonQuit.Location = new System.Drawing.Point(8, 256);
+            this.buttonQuit.Location = new System.Drawing.Point(8, 232);
             this.buttonQuit.Margin = new System.Windows.Forms.Padding(2);
             this.buttonQuit.Name = "buttonQuit";
             this.buttonQuit.Size = new System.Drawing.Size(424, 40);
@@ -108,7 +111,7 @@
             // 
             // patchingProgressBar
             // 
-            this.patchingProgressBar.Location = new System.Drawing.Point(8, 232);
+            this.patchingProgressBar.Location = new System.Drawing.Point(8, 208);
             this.patchingProgressBar.Margin = new System.Windows.Forms.Padding(2);
             this.patchingProgressBar.MarqueeAnimationSpeed = 0;
             this.patchingProgressBar.Name = "patchingProgressBar";
@@ -120,7 +123,7 @@
             // patchingProgressDetails
             // 
             this.patchingProgressDetails.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.patchingProgressDetails.Location = new System.Drawing.Point(8, 168);
+            this.patchingProgressDetails.Location = new System.Drawing.Point(8, 144);
             this.patchingProgressDetails.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.patchingProgressDetails.Name = "patchingProgressDetails";
             this.patchingProgressDetails.Size = new System.Drawing.Size(424, 24);
@@ -134,7 +137,7 @@
             // 
             this.buttonSelectPatch.Enabled = false;
             this.buttonSelectPatch.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSelectPatch.Location = new System.Drawing.Point(8, 208);
+            this.buttonSelectPatch.Location = new System.Drawing.Point(8, 184);
             this.buttonSelectPatch.Margin = new System.Windows.Forms.Padding(2);
             this.buttonSelectPatch.Name = "buttonSelectPatch";
             this.buttonSelectPatch.Size = new System.Drawing.Size(424, 40);
@@ -146,7 +149,7 @@
             // patchingProgressPercentage
             // 
             this.patchingProgressPercentage.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.patchingProgressPercentage.Location = new System.Drawing.Point(8, 200);
+            this.patchingProgressPercentage.Location = new System.Drawing.Point(8, 176);
             this.patchingProgressPercentage.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.patchingProgressPercentage.Name = "patchingProgressPercentage";
             this.patchingProgressPercentage.Size = new System.Drawing.Size(424, 24);
@@ -155,12 +158,27 @@
             this.patchingProgressPercentage.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.patchingProgressPercentage.Visible = false;
             // 
+            // pictureBox2
+            // 
+            this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
+            this.pictureBox2.InitialImage = null;
+            this.pictureBox2.Location = new System.Drawing.Point(8, 8);
+            this.pictureBox2.Margin = new System.Windows.Forms.Padding(2);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(424, 120);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox2.TabIndex = 11;
+            this.pictureBox2.TabStop = false;
+            this.pictureBox2.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(441, 343);
+            this.ClientSize = new System.Drawing.Size(441, 315);
+            this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.buttonSelectPatch);
             this.Controls.Add(this.buttonQuit);
             this.Controls.Add(this.label2);
@@ -175,9 +193,10 @@
             this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "Universal Dreamcast Patcher (v0.5)";
+            this.Text = "Universal Dreamcast Patcher (v0.6)";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -193,6 +212,7 @@
         private System.Windows.Forms.Label patchingProgressDetails;
         private System.Windows.Forms.Button buttonSelectPatch;
         private System.Windows.Forms.Label patchingProgressPercentage;
+        private System.Windows.Forms.PictureBox pictureBox2;
     }
 }
 
