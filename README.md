@@ -21,7 +21,7 @@ The latest version of Universal Dreamcast Patcher is [0.6](https://github.com/De
 ## Changelog
 * Version 0.6 (2021-05-26)
   * Changed location of temporary folders/files to use Windows' default location rather than the application's working directory.
-  * Updated logo.
+  * Updated logo (also, watch what happens when the "Apply Patch" button is clicked).
 * Version 0.5 (2021-05-19)
   * Fixed bug in file path parsing.
 * Version 0.4 (2021-05-18)
