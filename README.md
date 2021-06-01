@@ -16,9 +16,11 @@ Under the hood, this application utilizes [gditools](https://sourceforge.net/pro
    1. [Example](https://github.com/DerekPascarella/UniversalDreamcastPatcher#example)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [0.6](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.6/Universal.Dreamcast.Patcher.v0.6.zip).
+The latest version of Universal Dreamcast Patcher is [0.7](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.7/Universal.Dreamcast.Patcher.v0.7.zip).
 
 ## Changelog
+* Version 0.7 (2021-06-01)
+  * Fixed bug with temporary folders/files if they're written to a different disk drive than the one from which the application the launched.
 * Version 0.6 (2021-05-26)
   * Changed location of temporary folders/files to use Windows' default location rather than the application's working directory.
   * Updated logo (also, watch what happens when the "Apply Patch" button is clicked).
