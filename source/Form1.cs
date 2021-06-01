@@ -437,8 +437,17 @@ namespace UniversalDreamcastPatcher
                             // Copy file, lowercasing its name if necessary.
                             File.Copy(gdiBaseFolder + "\\" + trackFilename, appTempFolder + "\\" + trackFilename.ToString().ToLower());
 
-                            // Add calculated interval to progress bar.
-                            patchingProgressBar.Value += gdiCopyProgress;
+                            // If track count exceeds 30, add "1" to the progress bar for every other file.
+                            if(i % 2 == 0 && gdiCopyProgress == 0)
+                            {
+                                patchingProgressBar.Value += 1;
+                            }
+                            // Otherwise, add calculated interval to progress bar.
+                            else
+                            {
+                                patchingProgressBar.Value += gdiCopyProgress;
+                            }
+                                                            
                             patchingProgressPercentage.Text = patchingProgressBar.Value + "%";
                         }
                     }
@@ -615,7 +624,9 @@ namespace UniversalDreamcastPatcher
                     }
 
                     // Rename temporary GDI folder based on the name of the patch.
-                    Directory.Move(appTempFolder, appBaseFolder + "\\" + patchFilename + " [GDI]");
+                    Directory.CreateDirectory(appBaseFolder + "\\" + patchFilename + " [GDI]");
+                    RecursiveCopy(appTempFolder, appBaseFolder + "\\" + patchFilename + " [GDI]");
+                    Directory.Delete(appTempFolder, true);
 
                     // Update patching progress details.
                     patchingProgressDetails.Text = "Done!";
