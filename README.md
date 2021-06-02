@@ -80,8 +80,6 @@ Universal Dreamcast Patcher is simple to use.  After launching the application, 
 
 Details on the current step of the patching process will be updated as they progress.  Any errors encountered during sanity or integrity checks will be presented and the patching process will be halted.
 
-Note that throughout the patching process, several temporary folders and files will be written to the folder from which the application is launched, all of which are cleaned up upon completion.
-
 ## Usage: Creating Patches
 The DCP patch format was designed specifically for Universal Dreamcast Patcher.  This format is neither complex nor difficult to understand.  It is extremely simple by design and as a result, DCP patches can be created without the use of any special software.  The steps for creating a patch are as follows.
 
