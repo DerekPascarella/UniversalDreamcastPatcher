@@ -1,5 +1,5 @@
 # Universal Dreamcast Patcher
-<img align="right" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/screenshot.png?raw=true">Universal Dreamcast Patcher aims to provide an easy, cross-format game patching solution for the Dreamcast community. Such patches typically come in the form of English translations and other forms of ROM hacks.
+<img align="right" width="350" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/screenshot.gif?raw=true">Universal Dreamcast Patcher aims to provide an easy, cross-format game patching solution for the Dreamcast community. Such patches typically come in the form of English translations and other forms of ROM hacks.
 
 Universal Dreamcast Patcher is designed to accept any disc image as its source, whether it be formatted as a TOSEC-style GDI or a Redump-style CUE. This application will extract any disc image meeting those standards, overwrite and/or add to its data according to a given patch (DCP file), and then rebuild the disc image with the new data. Due to the flexible nature of acceptable disc image input, file hashes are not utilized for pre/post-patching verification.
 
