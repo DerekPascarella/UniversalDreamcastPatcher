@@ -646,7 +646,7 @@ namespace UniversalDreamcastPatcher
                     patchingProgressDetails.Visible = false;
                     patchingProgressPercentage.Visible = false;
 
-                    // Remove wait curson.
+                    // Remove wait cursor.
                     Cursor.Current = Cursors.Default;
 
                     // Unide buttons.
