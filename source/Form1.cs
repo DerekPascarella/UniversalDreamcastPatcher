@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 using System.Security.AccessControl;
+using System.Linq;
 
 namespace UniversalDreamcastPatcher
 {
@@ -41,11 +42,6 @@ namespace UniversalDreamcastPatcher
             if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\tools\\DiscUtils.dll"))
             {
                 missingFiles = missingFiles + "\n - DiscUtils.dll";
-            }
-
-            if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\tools\\python27.dll"))
-            {
-                missingFiles = missingFiles + "\n - python27.dll";
             }
 
             if(!String.IsNullOrEmpty(missingFiles))
@@ -313,7 +309,8 @@ namespace UniversalDreamcastPatcher
                 processValidate.Start();
                 processValidate.WaitForExit();
 
-                // Store standard error output of "gditools.exe" from initial source GDI validation.
+                // Store standard error and standard output of "gditools.exe" from initial source GDI validation.
+                var gdiValidateStandardOutput = processValidate.StandardOutput.ReadToEnd();
                 var gdiValidateErrorOutput = processValidate.StandardError.ReadToEnd();
 
                 // Update progress bar.
@@ -333,8 +330,8 @@ namespace UniversalDreamcastPatcher
                 // Sleep for half a second.
                 wait(500);
 
-                // If standard error output of "gditools.exe" isn't empty, consider the source GDI incompatible.
-                if(!String.IsNullOrEmpty(gdiValidateErrorOutput))
+                // If standard error of "gditools.exe" isn't empty but standard output is, consider the source GDI incompatible.
+                if(!String.IsNullOrEmpty(gdiValidateErrorOutput) && String.IsNullOrEmpty(gdiValidateStandardOutput))
                 {
                     compatibleGDI = false;
                 }
@@ -435,7 +432,7 @@ namespace UniversalDreamcastPatcher
                             wait(1000);
 
                             // Copy file, lowercasing its name if necessary.
-                            File.Copy(gdiBaseFolder + "\\" + trackFilename, appTempFolder + "\\" + trackFilename.ToString().ToLower());
+                            File.Copy(gdiBaseFolder + "\\" + trackFilename, appTempFolder + "\\" + trackFilename.ToLower());
 
                             // If track count exceeds 30, add "1" to the progress bar for every other file.
                             if(i % 2 == 0 && gdiCopyProgress == 0)
@@ -447,7 +444,8 @@ namespace UniversalDreamcastPatcher
                             {
                                 patchingProgressBar.Value += gdiCopyProgress;
                             }
-                                                            
+
+                            // Update patching progress details.
                             patchingProgressPercentage.Text = patchingProgressBar.Value + "%";
                         }
                     }
@@ -534,7 +532,7 @@ namespace UniversalDreamcastPatcher
                     }
 
                     // Set hardcoded timestamp for all folders and subfolders in game data before building GDI.
-                    DateTime hardcodedDirectoryTimestamp = new DateTime(1999, 9, 9, 0, 0, 0, DateTimeKind.Utc);
+                    DateTime hardcodedDirectoryTimestamp = new DateTime(1999, 9, 9, 12, 12, 12, DateTimeKind.Utc);
 
                     // Store array of all folders and subfolders in game data.
                     string[] gameDataFolders = Directory.GetDirectories(appTempFolder + "_extracted", "*", SearchOption.AllDirectories);
