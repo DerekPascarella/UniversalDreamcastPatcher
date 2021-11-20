@@ -3,7 +3,7 @@
 
 Universal Dreamcast Patcher is designed to accept any disc image as its source, whether it be formatted as a TOSEC-style GDI or a Redump-style CUE. This application will extract any disc image meeting those standards, overwrite and/or add to its data according to a given patch (DCP file), and then rebuild the disc image with the new data. Due to the flexible nature of acceptable disc image input, file hashes are not utilized for pre/post-patching verification.
 
-Under the hood, this application utilizes [gditools](https://sourceforge.net/projects/dcisotools/), [buildgdi](https://projects.sappharad.com/tools/gdibuilder.html), and a modified version of [RedumpCUE2GDI](https://github.com/AwfulBear/RedumpCUE2GDI).
+Under the hood, this application utilizes a version of [gditools](https://sourceforge.net/projects/dcisotools/) modified by [mrneo240](https://github.com/mrneo240), [buildgdi](https://projects.sappharad.com/tools/gdibuilder.html), and a version of [RedumpCUE2GDI](https://github.com/AwfulBear/RedumpCUE2GDI) modified by me.
 
 ## Table of Contents
 1. [Latest Version](https://github.com/DerekPascarella/UniversalDreamcastPatcher#latest-version)
@@ -16,9 +16,11 @@ Under the hood, this application utilizes [gditools](https://sourceforge.net/pro
    1. [Example](https://github.com/DerekPascarella/UniversalDreamcastPatcher#example)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [0.7](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.7/Universal.Dreamcast.Patcher.v0.7.zip).
+The latest version of Universal Dreamcast Patcher is [0.8](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.8/Universal.Dreamcast.Patcher.v0.8.zip).
 
 ## Changelog
+* Version 0.8 (2021-11-19)
+  * Now using modified version of gditools (thanks to [mrneo240](https://github.com/mrneo240)) that can now extract the dozen-or-so problematic GDIs which previously failed.
 * Version 0.7 (2021-06-01)
   * Fixed bug with temporary folders/files if they're written to a different disk drive than the one from which the application is launched.
 * Version 0.6 (2021-05-26)
@@ -56,7 +58,7 @@ While Universal Dreamcast Patcher delivers its core features reliably, all known
 * Patched disc image (output) cannot be created in Redump-style CUE format.
 * No CDI format support for source or patched disc images (input and output).
 * While source disc images (input) with CDDA are supported, the DCP patch format does not yet include a method for modifying CDDA tracks.
-* File hashes of patched disc images (output) are not consistent even when using the same source disc image (input) and same patch file.  This is partly due to an issue with gditools which does not preserve timestamps on extracted folders. Instead, the current day and time are used to generate the folder creation timestamp at the moment of extraction. As of now, no ISO extraction utilities (with the necessary LBA options) that I've researched successfully preserve timestamps on folders.  As a workaround, the hardcoded timestamp of 1999-09-09-00:00:00 (UTC) is being used.  However, buildgdi is still inserting some dynamic timestamps (and other metadata) into the modified data track.  After some research, I believe buildgdi's implementation of [DiscUtils](https://github.com/Sappharad/GDIbuilder/tree/master/GDIbuilder/DiscUtils) is to blame, although this may just be part of the ISO 9660 standard and thus considered expected behavior.
+* File hashes of patched disc images (output) are not consistent even when using the same source disc image (input) and same patch file.  This is partly due to an issue with gditools which does not preserve timestamps on extracted folders. Instead, the current day and time are used to generate the folder creation timestamp at the moment of extraction. As of now, no ISO extraction utilities (with the necessary LBA options) that I've researched successfully preserve timestamps on folders.  As a workaround, the hardcoded timestamp of 1999-09-09-12:12:12 (UTC) is being used.  However, buildgdi is still inserting some dynamic timestamps (and other metadata) into the modified data track.  After some research, I believe buildgdi's implementation of [DiscUtils](https://github.com/Sappharad/GDIbuilder/tree/master/GDIbuilder/DiscUtils) is to blame, although this may just be part of the ISO 9660 standard and thus considered expected behavior.
 
 ## Roadmap
 As Universal Dreamcast Patcher evolves and improves over time, the list below represents features which I'd like to implement.
