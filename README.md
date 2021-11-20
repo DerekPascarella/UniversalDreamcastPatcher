@@ -20,7 +20,7 @@ The latest version of Universal Dreamcast Patcher is [0.8](https://github.com/De
 
 ## Changelog
 * Version 0.8 (2021-11-19)
-  * Now using modified version of gditools (thanks to [mrneo240](https://github.com/mrneo240)) that can now extract the dozen-or-so problematic GDIs which previously failed.
+  * Now using modified version of gditools (thanks to [mrneo240](https://github.com/mrneo240)) that can extract the dozen-or-so problematic GDIs which previously failed.
 * Version 0.7 (2021-06-01)
   * Fixed bug with temporary folders/files if they're written to a different disk drive than the one from which the application is launched.
 * Version 0.6 (2021-05-26)
