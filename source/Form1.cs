@@ -478,11 +478,12 @@ namespace UniversalDreamcastPatcher
                     // Sleep for half a second.
                     wait(500);
 
-                    //// Construct "gditools" command for GDI extraction.
-                    //string command_EXTRACT = "-i \"" + appTempFolder + "\\disc.gdi\" --data-folder \"..\\_UDP_" + folderGUID + "_extracted\" -b \"..\\_UDP_" + folderGUID + "_extracted\\bootsector\\IP.BIN\" --extract-all --silent\"";
-
+                    //
                     // Code below utilizies the problematic "gditools.exe" utility for extraction, which has been
                     // replaced with a direct ISO extraction method.
+                    //
+                    //// Construct "gditools" command for GDI extraction.
+                    //string command_EXTRACT = "-i \"" + appTempFolder + "\\disc.gdi\" --data-folder \"..\\_UDP_" + folderGUID + "_extracted\" -b \"..\\_UDP_" + folderGUID + "_extracted\\bootsector\\IP.BIN\" --extract-all --silent\"";
                     //
                     //// Execute "gditools.exe" to extract the selected GDI to the temporary folder.
                     //System.Diagnostics.Process processExtract = new System.Diagnostics.Process();
@@ -493,6 +494,7 @@ namespace UniversalDreamcastPatcher
                     //processExtract.StartInfo = startInfoExtract;
                     //processExtract.Start();
                     //processExtract.WaitForExit();
+                    //
 
                     // Declare string to store list of ".iso" files to extract, converted from ".bin".
                     string isoExtractionList = String.Empty;
