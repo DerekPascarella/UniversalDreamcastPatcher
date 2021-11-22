@@ -36,7 +36,12 @@ namespace UniversalDreamcastPatcher
 
             if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\tools\\gditools.exe"))
             {
-                missingFiles = missingFiles + "\n - buigditoolsldgdi.exe";
+                missingFiles = missingFiles + "\n - gditools.exe";
+            }
+
+            if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\tools\\python27.dll"))
+            {
+                missingFiles = missingFiles + "\n - python27.dll";
             }
 
             if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\tools\\DiscUtils.dll"))
@@ -44,7 +49,17 @@ namespace UniversalDreamcastPatcher
                 missingFiles = missingFiles + "\n - DiscUtils.dll";
             }
 
-            if(!String.IsNullOrEmpty(missingFiles))
+            if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\tools\\extract.exe"))
+            {
+                missingFiles = missingFiles + "\n - extract.exe";
+            }
+
+            if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\tools\\bin2iso.exe"))
+            {
+                missingFiles = missingFiles + "\n - bin2iso.exe";
+            }
+
+            if (!String.IsNullOrEmpty(missingFiles))
             {
                 MessageBox.Show("One or more required files is missing from the \"tools\" folder:" + missingFiles, "Universal Dreamcast Patcher", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
@@ -463,18 +478,98 @@ namespace UniversalDreamcastPatcher
                     // Sleep for half a second.
                     wait(500);
 
-                    // Construct "gditools" command for GDI extraction.
-                    string command_EXTRACT = "-i \"" + appTempFolder + "\\disc.gdi\" --data-folder \"..\\_UDP_" + folderGUID + "_extracted\" -b \"..\\_UDP_" + folderGUID + "_extracted\\bootsector\\IP.BIN\" --extract-all --silent\"";
+                    //// Construct "gditools" command for GDI extraction.
+                    //string command_EXTRACT = "-i \"" + appTempFolder + "\\disc.gdi\" --data-folder \"..\\_UDP_" + folderGUID + "_extracted\" -b \"..\\_UDP_" + folderGUID + "_extracted\\bootsector\\IP.BIN\" --extract-all --silent\"";
 
-                    // Execute "gditools.exe" to extract the selected GDI to the temporary folder.
+                    // Code below utilizies the problematic "gditools.exe" utility for extraction, which has been
+                    // replaced with a direct ISO extraction method.
+                    //
+                    //// Execute "gditools.exe" to extract the selected GDI to the temporary folder.
+                    //System.Diagnostics.Process processExtract = new System.Diagnostics.Process();
+                    //System.Diagnostics.ProcessStartInfo startInfoExtract = new System.Diagnostics.ProcessStartInfo();
+                    //startInfoExtract.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                    //startInfoExtract.FileName = appBaseFolder + "\\tools\\gditools.exe";
+                    //startInfoExtract.Arguments = command_EXTRACT;
+                    //processExtract.StartInfo = startInfoExtract;
+                    //processExtract.Start();
+                    //processExtract.WaitForExit();
+
+                    // Declare string to store list of ".iso" files to extract, converted from ".bin".
+                    string isoExtractionList = String.Empty;
+
+                    // Declare string to store last data track's LBA.
+                    string extractionLastDataTrackLBA = String.Empty;
+
+                    // Create counter for number of data tracks found in the GDI.
+                    int extractionDataTrackCount = 0;
+
+                    // Iterate through each track of the GDI to convert data tracks to ".iso" in the temporary extraction folder.
+                    for(int i = 1; i < gdiArray.Length; i++)
+                    {
+                        // Extract filename and extension.
+                        var trackInfoExtraction = gdiArray[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                        string trackFilenameExtraction = trackInfoExtraction[4];
+                        string trackFileExtensionExtraction = Path.GetExtension(trackFilenameExtraction).ToLower();
+
+                        // If file is a ".bin" and not the first track of the GDI, convert it to ".iso".
+                        if(trackFileExtensionExtraction == ".bin" && trackFilenameExtraction.ToLower() != "track01.bin")
+                        {
+                            // Execute "bin2iso.exe" to convert source GDI data track.
+                            System.Diagnostics.Process processBIN2ISO = new System.Diagnostics.Process();
+                            System.Diagnostics.ProcessStartInfo startInfoBIN2ISO = new System.Diagnostics.ProcessStartInfo();
+                            startInfoBIN2ISO.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                            startInfoBIN2ISO.FileName = appBaseFolder + "\\tools\\bin2iso.exe";
+                            startInfoBIN2ISO.Arguments = "\"" + appTempFolder + "\\" + trackFilenameExtraction + "\" \"" + appTempFolder + "_extracted\\UDP_" + trackFilenameExtraction.ToLower().Replace(".bin", ".iso") + "\"";
+                            processBIN2ISO.StartInfo = startInfoBIN2ISO;
+                            processBIN2ISO.Start();
+                            processBIN2ISO.WaitForExit();
+
+                            // Append filename to "isoExtractionList".
+                            isoExtractionList += " UDP_" + trackFilenameExtraction.ToLower().Replace(".bin", ".iso");
+
+                            // Store data track's LBA from source GDI into "extractionLastDataTrackLBA".
+                            extractionLastDataTrackLBA = trackInfoExtraction[1].ToString();
+
+                            // Increase data track counter by 1.
+                            extractionDataTrackCount++;
+                        }
+                    }
+
+                    // If more than one data track is found in the source GDI
+                    if(extractionDataTrackCount > 1)
+                    {
+                        isoExtractionList += " " + extractionLastDataTrackLBA;
+                    }
+
+                    // Copy "extract.exe" to temporary extraction folder.
+                    File.Copy(appBaseFolder + "\\tools\\extract.exe", appTempFolder + "_extracted\\extract.exe");
+
+                    // Execute "extract.exe" to extract the converted ".iso" files.
                     System.Diagnostics.Process processExtract = new System.Diagnostics.Process();
                     System.Diagnostics.ProcessStartInfo startInfoExtract = new System.Diagnostics.ProcessStartInfo();
                     startInfoExtract.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                    startInfoExtract.FileName = appBaseFolder + "\\tools\\gditools.exe";
-                    startInfoExtract.Arguments = command_EXTRACT;
+                    startInfoExtract.FileName = appTempFolder + "_extracted\\extract.exe";
+                    startInfoExtract.Arguments = isoExtractionList;
+                    startInfoExtract.WorkingDirectory = appTempFolder + "_extracted\\";
                     processExtract.StartInfo = startInfoExtract;
                     processExtract.Start();
                     processExtract.WaitForExit();
+
+                    // Delete "extract.exe" from temporary extraction folder.
+                    File.Delete(appTempFolder + "_extracted\\extract.exe");
+
+                    // Delete all converted ".iso" files from the temporary extraction folder.
+                    Directory.GetFiles(appTempFolder + "_extracted\\", "UDP_*.iso", SearchOption.TopDirectoryOnly).ToList().ForEach(File.Delete);
+
+                    // Remove "bootsector" folder and all of its contents from temporary extraction folder if it already exists.
+                    if(Directory.Exists(appTempFolder + "_extracted\\bootsector"))
+                    {
+                        Directory.Delete(appTempFolder + "_extracted\\bootsector", true);
+                    }
+
+                    // Inside temporary extraction folder, create "bootsector" folder and move "IP.BIN" into it.
+                    Directory.CreateDirectory(appTempFolder + "_extracted\\bootsector");
+                    File.Move(appTempFolder + "_extracted\\IP.BIN", appTempFolder + "_extracted\\bootsector\\IP.BIN");
 
                     // Update patching progress details.
                     patchingProgressDetails.Text = "Patching extracted GDI files with new data...";
