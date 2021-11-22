@@ -3,9 +3,7 @@
 
 Universal Dreamcast Patcher is designed to accept any disc image as its source, whether it be formatted as a TOSEC-style GDI or a Redump-style CUE. This application will extract any disc image meeting those standards, overwrite and/or add to its data according to a given patch (DCP file), and then rebuild the disc image with the new data. Due to the flexible nature of acceptable disc image input, file hashes are not utilized for pre/post-patching verification.
 
-Under the hood, this application utilizes a version of [gditools](https://sourceforge.net/projects/dcisotools/) modified by [mrneo240](https://github.com/mrneo240), [buildgdi](https://projects.sappharad.com/tools/gdibuilder.html), and a version of [RedumpCUE2GDI](https://github.com/AwfulBear/RedumpCUE2GDI) modified by me.
-
-**NOTICE:** Windows Defender can potentially erroneously flag the new Pyinstaller-compiled version of gditools as malware. This can safely be ignored, but if you'd like to inspect the source code for yourself, it is [available here](https://github.com/DerekPascarella/UniversalDreamcastPatcher/raw/main/tools/gditools_mrneo240_source.zip). If you'd prefer to compile Universal Dreamcast Patcher's modified version of gditools yourself, simply install [Pyinstaller](https://www.pyinstaller.org/) (requires Python 3.x) with `pip install pyinstaller` and then issue the `pyinstaller --onefile gditools.py` command in Windows Terminal. The gditools.exe file inside of Universal Dreamcast Patcher's "tools" folder can then be replaced with the one created by Pyinstaller. Alternatively, if you'd prefer to use the older, less compatible version of gditools that Universal Dreamcast Patcher shipped with prior to version 0.8, place both of the [files found here](https://github.com/DerekPascarella/UniversalDreamcastPatcher/tree/main/tools/old_gditools) inside this application's "tools" folder.
+Under the hood, this application utilizes [gditools](https://sourceforge.net/projects/dcisotools/), [buildgdi](https://projects.sappharad.com/tools/gdibuilder.html), [bin2iso](http://jj1odm.qp.land.to/#dcpprip), extract, and a version of [RedumpCUE2GDI](https://github.com/AwfulBear/RedumpCUE2GDI) modified by me.
 
 ## Table of Contents
 1. [Latest Version](https://github.com/DerekPascarella/UniversalDreamcastPatcher#latest-version)
@@ -18,9 +16,11 @@ Under the hood, this application utilizes a version of [gditools](https://source
    1. [Example](https://github.com/DerekPascarella/UniversalDreamcastPatcher#example)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [0.8](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.8/Universal.Dreamcast.Patcher.v0.8.zip).
+The latest version of Universal Dreamcast Patcher is [0.9](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/0.9/Universal.Dreamcast.Patcher.v0.9.zip).
 
 ## Changelog
+* Version 0.9 (2021-11-22)
+  * Due to many anti-virus tools erroneously flagging the modified version of gditools from v0.8 as malware, this version uses an alternative method for GDI extraction that still delivers the same level of compatibility.
 * Version 0.8 (2021-11-19)
   * Now using modified version of gditools (thanks to [mrneo240](https://github.com/mrneo240)) that can extract the dozen-or-so problematic GDIs which previously failed.
 * Version 0.7 (2021-06-01)
