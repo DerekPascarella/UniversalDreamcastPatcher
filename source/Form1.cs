@@ -537,10 +537,10 @@ namespace UniversalDreamcastPatcher
                         }
                     }
 
-                    // If more than one data track is found in the source GDI
+                    // If more than one data track is found in the source GDI, append its LBA (plus 150) to the "extract.exe" command's arguments.
                     if(extractionDataTrackCount > 1)
                     {
-                        isoExtractionList += " " + extractionLastDataTrackLBA;
+                        isoExtractionList += " " + (Int32.Parse(extractionLastDataTrackLBA) + 150).ToString();
                     }
 
                     // Copy "extract.exe" to temporary extraction folder.
