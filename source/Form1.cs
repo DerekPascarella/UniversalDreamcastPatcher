@@ -130,20 +130,15 @@ namespace UniversalDreamcastPatcher
 
                 // Change logo to show power LED on with a cool flashing effect.
                 wait(250);
-                pictureBox1.Visible = false;
-                pictureBox2.Visible = true;
+                pictureBox1.Image = pictureBox2.Image;
                 wait(250);
-                pictureBox1.Visible = true;
-                pictureBox2.Visible = false;
+                pictureBox1.Image = pictureBox3.Image;
                 wait(150);
-                pictureBox1.Visible = false;
-                pictureBox2.Visible = true;
+                pictureBox1.Image = pictureBox2.Image;
                 wait(150);
-                pictureBox1.Visible = true;
-                pictureBox2.Visible = false;
+                pictureBox1.Image = pictureBox3.Image;
                 wait(150);
-                pictureBox1.Visible = false;
-                pictureBox2.Visible = true;
+                pictureBox1.Image = pictureBox2.Image;
 
                 // Sleep for half a second.
                 wait(500);
@@ -192,8 +187,7 @@ namespace UniversalDreamcastPatcher
                     buttonQuit.Enabled = true;
 
                     // Return to normal logo.
-                    pictureBox1.Visible = true;
-                    pictureBox2.Visible = false;
+                    pictureBox1.Image = pictureBox3.Image;
 
                     // Stop function's execution.
                     return;
@@ -276,8 +270,7 @@ namespace UniversalDreamcastPatcher
                             buttonQuit.Enabled = true;
 
                             // Return to normal logo.
-                            pictureBox1.Visible = true;
-                            pictureBox2.Visible = false;
+                            pictureBox1.Image = pictureBox3.Image;
 
                             // Remove temporary GDI folder and all of its contents.
                             Directory.Delete(appTempFolder, true);
@@ -390,8 +383,7 @@ namespace UniversalDreamcastPatcher
                     buttonQuit.Enabled = true;
 
                     // Return to normal logo.
-                    pictureBox1.Visible = true;
-                    pictureBox2.Visible = false;
+                    pictureBox1.Image = pictureBox3.Image;
 
                     // Remove temporary GDI folder and all of its contents.
                     Directory.Delete(appTempFolder, true);
@@ -612,8 +604,7 @@ namespace UniversalDreamcastPatcher
                         buttonQuit.Enabled = true;
 
                         // Return to normal logo.
-                        pictureBox1.Visible = true;
-                        pictureBox2.Visible = false;
+                        pictureBox1.Image = pictureBox3.Image;
 
                         // Remove temporary GDI folder and all of its contents.
                         Directory.Delete(appTempFolder, true);
@@ -753,8 +744,7 @@ namespace UniversalDreamcastPatcher
                     buttonQuit.Enabled = true;
 
                     // Return to normal logo.
-                    pictureBox1.Visible = true;
-                    pictureBox2.Visible = false;
+                    pictureBox1.Image = pictureBox3.Image;
                 }
             }
             // User selected "No".
