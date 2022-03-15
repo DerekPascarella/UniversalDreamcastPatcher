@@ -91,6 +91,7 @@ The DCP patch format was designed specifically for Universal Dreamcast Patcher. 
 
 1. Create a ZIP archive containing (in its root) all of the files/folders from the game's data that have been modified or are new.  Be sure to retain original folder structure and hierarchy.
    * If the patch should use a modified IP.BIN file, simply create a folder named "bootsector" in the root of the ZIP archive and place IP.BIN inside of it.  Note that this folder and file will not be included in the patched disc image's (output) filesystem.
+   * If the patch's new IP.BIN has been region-modified, ensure the text region (not just the single-byte flag in the header) has been modified, as well.  This ensures compatibility with certain emulators that fail to boot when there's a discrepancy.  If unsure of how to make those necessary changes, leverage my [Dreamcast IP.BIN Patcher](https://github.com/DerekPascarella/Dreamcast-IP.BIN-Patcher) utility.
 2. Change the extension of the file from ZIP to DCP.
    * Note that the base filename of the DCP will be used when this application generates the patched GDI (e.g. a patch file named "My Game (v1.0).dcp" will result in a patched GDI folder named "My Game (v1.0) [GDI]").
 
