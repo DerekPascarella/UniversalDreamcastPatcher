@@ -16,9 +16,11 @@ Under the hood, this application utilizes [gditools](https://sourceforge.net/pro
    1. [Example](https://github.com/DerekPascarella/UniversalDreamcastPatcher#example)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [1.0](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/1.0/Universal.Dreamcast.Patcher.v1.0.zip).
+The latest version of Universal Dreamcast Patcher is [1.1](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/1.1/Universal.Dreamcast.Patcher.v1.1.zip).
 
 ## Changelog
+* Version 1.0 (2022-03-17)
+  * Eliminated GUI lockup that occurred at different stages of the patching process.
 * Version 1.0 (2021-11-26)
   * Fixed bug in LBA calculation used for extracting GDI data tracks.
 * Version 0.9 (2021-11-22)
