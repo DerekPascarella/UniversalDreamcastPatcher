@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using System.Security.AccessControl;
 using System.Linq;
 
 namespace UniversalDreamcastPatcher
@@ -59,7 +58,7 @@ namespace UniversalDreamcastPatcher
                 missingFiles = missingFiles + "\n - bin2iso.exe";
             }
 
-            if (!String.IsNullOrEmpty(missingFiles))
+            if(!String.IsNullOrEmpty(missingFiles))
             {
                 MessageBox.Show("One or more required files is missing from the \"tools\" folder:" + missingFiles, "Universal Dreamcast Patcher", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
@@ -210,7 +209,6 @@ namespace UniversalDreamcastPatcher
                     System.Diagnostics.ProcessStartInfo convertRedumpToGDI = new System.Diagnostics.ProcessStartInfo();
                     convertRedumpToGDI.FileName = Path.Combine(appBaseFolder, "tools", "convertredumptogdi.exe");
                     convertRedumpToGDI.Arguments = "\"" + gdiFile + "\" \"" + appTempFolder + "\"";
-                    convertRedumpToGDI.RedirectStandardOutput = true;
                     convertRedumpToGDI.UseShellExecute = false;
                     convertRedumpToGDI.CreateNoWindow = true;
                     processConvert.StartInfo = convertRedumpToGDI;
@@ -227,7 +225,7 @@ namespace UniversalDreamcastPatcher
                     while(!redumpConversionComplete)
                     {
                         // Increase conversion completion check counter by 1.
-                        conversionCheckCount ++;
+                        conversionCheckCount++;
 
                         // Store fole count for the temporary folder.
                         string[] temporaryFiles = Directory.GetFiles(appTempFolder);
@@ -470,24 +468,6 @@ namespace UniversalDreamcastPatcher
                     // Sleep for half a second.
                     wait(500);
 
-                    //
-                    // Code below utilizies the problematic "gditools.exe" utility for extraction, which has been
-                    // replaced with a direct ISO extraction method.
-                    //
-                    //// Construct "gditools" command for GDI extraction.
-                    //string command_EXTRACT = "-i \"" + appTempFolder + "\\disc.gdi\" --data-folder \"..\\_UDP_" + folderGUID + "_extracted\" -b \"..\\_UDP_" + folderGUID + "_extracted\\bootsector\\IP.BIN\" --extract-all --silent\"";
-                    //
-                    //// Execute "gditools.exe" to extract the selected GDI to the temporary folder.
-                    //System.Diagnostics.Process processExtract = new System.Diagnostics.Process();
-                    //System.Diagnostics.ProcessStartInfo startInfoExtract = new System.Diagnostics.ProcessStartInfo();
-                    //startInfoExtract.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                    //startInfoExtract.FileName = appBaseFolder + "\\tools\\gditools.exe";
-                    //startInfoExtract.Arguments = command_EXTRACT;
-                    //processExtract.StartInfo = startInfoExtract;
-                    //processExtract.Start();
-                    //processExtract.WaitForExit();
-                    //
-
                     // Declare string to store list of ".iso" files to extract, converted from ".bin".
                     string isoExtractionList = String.Empty;
 
@@ -514,9 +494,19 @@ namespace UniversalDreamcastPatcher
                             startInfoBIN2ISO.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
                             startInfoBIN2ISO.FileName = appBaseFolder + "\\tools\\bin2iso.exe";
                             startInfoBIN2ISO.Arguments = "\"" + appTempFolder + "\\" + trackFilenameExtraction + "\" \"" + appTempFolder + "_extracted\\UDP_" + trackFilenameExtraction.ToLower().Replace(".bin", ".iso") + "\"";
+                            startInfoBIN2ISO.UseShellExecute = false;
+                            startInfoBIN2ISO.CreateNoWindow = true;
                             processBIN2ISO.StartInfo = startInfoBIN2ISO;
                             processBIN2ISO.Start();
-                            processBIN2ISO.WaitForExit();
+
+                            // Wait for process to exit, checking every half a second.
+                            while(!processBIN2ISO.HasExited)
+                            {
+                                wait(500);
+                            }
+
+                            // Close process.
+                            processBIN2ISO.Close();
 
                             // Append filename to "isoExtractionList".
                             isoExtractionList += " UDP_" + trackFilenameExtraction.ToLower().Replace(".bin", ".iso");
@@ -545,9 +535,19 @@ namespace UniversalDreamcastPatcher
                     startInfoExtract.FileName = appTempFolder + "_extracted\\extract.exe";
                     startInfoExtract.Arguments = isoExtractionList;
                     startInfoExtract.WorkingDirectory = appTempFolder + "_extracted\\";
+                    startInfoExtract.UseShellExecute = false;
+                    startInfoExtract.CreateNoWindow = true;
                     processExtract.StartInfo = startInfoExtract;
                     processExtract.Start();
-                    processExtract.WaitForExit();
+
+                    // Wait for process to exit, checking every half a second.
+                    while(!processExtract.HasExited)
+                    {
+                        wait(500);
+                    }
+
+                    // Close process.
+                    processExtract.Close();
 
                     // Delete "extract.exe" from temporary extraction folder.
                     File.Delete(appTempFolder + "_extracted\\extract.exe");
@@ -626,7 +626,7 @@ namespace UniversalDreamcastPatcher
                     string[] gameDataFolders = Directory.GetDirectories(appTempFolder + "_extracted", "*", SearchOption.AllDirectories);
 
                     // Iterate through "gameDataFolders" array to apply timestamps to all folders and subfolders in game data before building GDI.
-                    for(int i = 0; i < gameDataFolders.Length; i ++)
+                    for(int i = 0; i < gameDataFolders.Length; i++)
                     {
                         Directory.SetCreationTimeUtc(gameDataFolders[i], hardcodedDirectoryTimestamp);
                         Directory.SetLastAccessTimeUtc(gameDataFolders[i], hardcodedDirectoryTimestamp);
@@ -659,7 +659,7 @@ namespace UniversalDreamcastPatcher
 
                     // Construct "buildgdi" command for GDI rebuild.
                     string command_BUILD = "-data \"" + appTempFolder + "_extracted\" -ip \"" + appTempFolder + "_bootsector\\IP.BIN\" -output \"" + appTempFolder + "\" -gdi \"" + appTempFolder + "\\" + gdiFilename + "\" -raw";
-                    
+
                     // If the source GDI contains contains CDDA, append those tracks to "buildgdi" command.
                     if(File.Exists(appTempFolder + "\\track04.raw"))
                     {
@@ -670,7 +670,7 @@ namespace UniversalDreamcastPatcher
                         string[] cddaTracks = Directory.GetFiles(appTempFolder, "track*.raw", SearchOption.TopDirectoryOnly);
 
                         // Iterate through each track file.
-                        for(int i = 0; i < cddaTracks.Length; i ++)
+                        for(int i = 0; i < cddaTracks.Length; i++)
                         {
                             // Store track number without extension or prepended "track" string.
                             string cddaTrackFilename = Path.GetFileNameWithoutExtension(cddaTracks[i]);
@@ -690,9 +690,19 @@ namespace UniversalDreamcastPatcher
                     startInfoBuild.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
                     startInfoBuild.FileName = appBaseFolder + "tools\\buildgdi.exe";
                     startInfoBuild.Arguments = command_BUILD;
+                    startInfoBuild.UseShellExecute = false;
+                    startInfoBuild.CreateNoWindow = true;
                     processBuild.StartInfo = startInfoBuild;
                     processBuild.Start();
-                    processBuild.WaitForExit();
+
+                    // Wait for process to exit, checking every half a second.
+                    while(!processBuild.HasExited)
+                    {
+                        wait(500);
+                    }
+
+                    // Close process.
+                    processBuild.Close();
 
                     // Remove temporary extracted GDI folder and all of its contents.
                     Directory.Delete(appTempFolder + "_extracted", true);
