@@ -394,6 +394,9 @@ namespace UniversalDreamcastPatcher
 
                     // Display error message.
                     MessageBox.Show("The selected source GDI is either malformed or incompatible.", "Universal Dreamcast Patcher", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    // Stop function's execution.
+                    return;
                 }
                 // Otherwise, proceed with the patching process.
                 else
