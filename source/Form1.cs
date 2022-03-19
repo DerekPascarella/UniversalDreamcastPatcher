@@ -336,8 +336,8 @@ namespace UniversalDreamcastPatcher
                 // Sleep for half a second.
                 wait(500);
 
-                // If standard error of "gditools.exe" isn't empty but standard output is, consider the source GDI incompatible.
-                if(!String.IsNullOrEmpty(gdiValidateErrorOutput) && String.IsNullOrEmpty(gdiValidateStandardOutput))
+                // If standard error of "gditools.exe" isn't empty, consider the source GDI incompatible.
+                if(!String.IsNullOrEmpty(gdiValidateErrorOutput))
                 {
                     compatibleGDI = false;
                 }
