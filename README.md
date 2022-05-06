@@ -105,7 +105,7 @@ As of version 1.3, Universal Dreamcast Patcher now ships bundled with its own de
 
 For example, a translation patch developer would supply the original retail disc image along with their modified one.  Universal Dreamcast Patch Builder would analyze the two for changes and then automatically generate the DCP patch file.
 
-Furthermore, Universal Dreamcast Patch Builder includes options to apply additional modifications to IP.BIN, like enabling VGA mode, setting the game as region-free, or giving the game a custon name label.
+Furthermore, Universal Dreamcast Patch Builder includes options to apply additional modifications to IP.BIN, like enabling VGA mode, setting the game as region-free, or giving the game a custom name label.
 
 The steps for automatically creating a patch are as follows.
 
@@ -113,7 +113,7 @@ The steps for automatically creating a patch are as follows.
 2. In the "Step 2" box, supply a filename for the DCP patch.  Note that the base filename of the DCP will be used when this application generates the patched GDI (e.g. a patch file named "My Game (v1.0).dcp" will result in a patched GDI folder named "My Game (v1.0) [GDI]").
 3. In the "Step 3" box, select whether a custom IP.BIN file should be used when building the patch.  In many cases, patch developers won't bother with this step, but there are several advantages in enabling these options:
    * **Region-Free** - Patched disc image (output) can be booted on any ODE or emulator, regardless of region setting, and without enabling region-free options within the ODE or emulator itself.
-   * **VGA** - If supported, patched disc image (output) can be booted in VGA mode on any ODE or emulator, regardless of VGA autopatching settings within the ODE or emulator itself.
+   * **VGA** - If supported, patched disc image (output) can be booted in VGA mode on any ODE or emulator, regardless of VGA auto-patching settings within the ODE or emulator itself.
    * **Custom Game Name** - Patched disc image (output) will be displayed using a custom name within tools like the various SD card managers for GDEMU, thus giving another degree of creative control to patch developers opting for a localized game title.
 4. Click "Build Patch".
 
