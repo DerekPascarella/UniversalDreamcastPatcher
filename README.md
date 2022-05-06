@@ -13,7 +13,8 @@ Under the hood, this application utilizes [gditools](https://sourceforge.net/pro
 1. [Roadmap](https://github.com/DerekPascarella/UniversalDreamcastPatcher#roadmap)
 1. [Usage: Patching](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-patching)
 1. [Usage: Creating Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-creating-patches)
-   1. [Example](https://github.com/DerekPascarella/UniversalDreamcastPatcher#example)
+   1. [Automatic Method](https://github.com/DerekPascarella/UniversalDreamcastPatcher#automatic-method)
+   2. [Manual Method](https://github.com/DerekPascarella/UniversalDreamcastPatcher#manual-method)
 
 ## Latest Version
 The latest version of Universal Dreamcast Patcher is [1.3](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/1.3/Universal.Dreamcast.Patcher.v1.3.zip).
