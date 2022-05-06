@@ -115,7 +115,7 @@ The steps for automatically creating a patch are as follows.
    * **Region-Free** - Patched disc image (output) can be booted on any ODE or emulator, regardless of region setting, and without enabling region-free options within the ODE or emulator itself.
    * **VGA** - If supported, patched disc image (output) can be booted in VGA mode on any ODE or emulator, regardless of VGA autopatching settings within the ODE or emulator itself.
    * **Custom Game Name** - Patched disc image (output) will be displayed using a custom name within tools like the various SD card managers for GDEMU, thus giving another degree of creative control to patch developers opting for a localized game title.
-
+4. Click "Build Patch".
 
 ### Manual Method
 Use this method when:
