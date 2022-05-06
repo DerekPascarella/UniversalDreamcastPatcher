@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Forms;
 using System.Linq;
+using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace UniversalDreamcastPatcher
 {
@@ -10,6 +11,7 @@ namespace UniversalDreamcastPatcher
         public string gdiFile;
         public string patchFile;
         public string patchFilename;
+        private static List<string> patchedGDIFiles = new List<string>();
 
         public Form1()
         {
@@ -56,6 +58,11 @@ namespace UniversalDreamcastPatcher
             if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\tools\\bin2iso.exe"))
             {
                 missingFiles = missingFiles + "\n - bin2iso.exe";
+            }
+
+            if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\tools\\xdelta.exe"))
+            {
+                missingFiles = missingFiles + "\n - xdelta.exe";
             }
 
             if(!String.IsNullOrEmpty(missingFiles))
@@ -225,7 +232,7 @@ namespace UniversalDreamcastPatcher
                     while(!redumpConversionComplete)
                     {
                         // Increase conversion completion check counter by 1.
-                        conversionCheckCount++;
+                        conversionCheckCount ++;
 
                         // Store fole count for the temporary folder.
                         string[] temporaryFiles = Directory.GetFiles(appTempFolder);
@@ -345,7 +352,7 @@ namespace UniversalDreamcastPatcher
                 else
                 {
                     // Iterate through each track in the GDI for validation.
-                    for(int i = 1; i < gdiArray.Length; i++)
+                    for(int i = 1; i < gdiArray.Length; i ++)
                     {
                         // Extract filename.
                         var trackInfoSanityCheck = gdiArray[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
@@ -427,7 +434,7 @@ namespace UniversalDreamcastPatcher
                         int gdiCopyProgress = 30 / (gdiArray.Length - 1);
 
                         // Copy each track file to temporary folder.
-                        for(int i = 1; i < gdiArray.Length; i++)
+                        for(int i = 1; i < gdiArray.Length; i ++)
                         {
                             // Extract filename.
                             var trackInfo = gdiArray[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
@@ -481,7 +488,7 @@ namespace UniversalDreamcastPatcher
                     int extractionDataTrackCount = 0;
 
                     // Iterate through each track of the GDI to convert data tracks to ".iso" in the temporary extraction folder.
-                    for(int i = 1; i < gdiArray.Length; i++)
+                    for(int i = 1; i < gdiArray.Length; i ++)
                     {
                         // Extract filename and extension.
                         var trackInfoExtraction = gdiArray[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
@@ -518,7 +525,7 @@ namespace UniversalDreamcastPatcher
                             extractionLastDataTrackLBA = trackInfoExtraction[1].ToString();
 
                             // Increase data track counter by 1.
-                            extractionDataTrackCount++;
+                            extractionDataTrackCount ++;
                         }
                     }
 
@@ -583,6 +590,137 @@ namespace UniversalDreamcastPatcher
                     {
                         System.IO.Compression.ZipFile.ExtractToDirectory(patchFile, appTempFolder + "_patch");
                         RecursiveCopy(appTempFolder + "_patch", appTempFolder + "_extracted");
+
+                        // Store recursive list of all files/folders from extracted patched GDI so that xdeltas can be applied.
+                        DirectoryInfo diExtractedPatchedGDI = new DirectoryInfo(appTempFolder + "_extracted");
+                        WalkDirectoryTree(diExtractedPatchedGDI);
+
+                        // Iterate through each file/folder from extracted patched GDI so that xdeltas can be applied.
+                        for(int i = 0; i < patchedGDIFiles.Count; i ++)
+                        {
+                            // Store full path of current file.
+                            string patchedFullFilePath = patchedGDIFiles[i];
+
+                            // Current file is an xdelta patch.
+                            if(patchedFullFilePath.ToLower().EndsWith(".xdelta"))
+                            {
+                                // Store full path of corresponding original file.
+                                string patchedFullFilePath_ORIGINAL = patchedFullFilePath.Replace(".xdelta", "");
+
+                                // Corresponding original file exists.
+                                if(File.Exists(patchedFullFilePath_ORIGINAL))
+                                {
+                                    // Execute process to apply xdelta patch.
+                                    System.Diagnostics.Process processXDELTA = new System.Diagnostics.Process();
+                                    System.Diagnostics.ProcessStartInfo startInfoXDELTA = new System.Diagnostics.ProcessStartInfo();
+                                    startInfoXDELTA.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                                    startInfoXDELTA.FileName = appBaseFolder + "\\tools\\xdelta.exe";
+                                    startInfoXDELTA.Arguments = "-d -s \"" + patchedFullFilePath_ORIGINAL + "\" \"" + patchedFullFilePath + "\" \"" + patchedFullFilePath_ORIGINAL + ".new\"";
+                                    startInfoXDELTA.RedirectStandardOutput = true;
+                                    startInfoXDELTA.RedirectStandardError = true;
+                                    startInfoXDELTA.UseShellExecute = false;
+                                    startInfoXDELTA.CreateNoWindow = true;
+                                    processXDELTA.StartInfo = startInfoXDELTA;
+                                    processXDELTA.Start();
+
+                                    // Wait for process to exit, checking every half a second.
+                                    while(!processXDELTA.HasExited)
+                                    {
+                                        wait(500);
+                                    }
+
+                                    // Close process.
+                                    processXDELTA.Close();
+
+                                    // Store error output of "xdelta.exe".
+                                    var xdeltaErrorOutput = processValidate.StandardError.ReadToEnd();
+
+                                    // If error output isn't empty, an error has occurred and patching should not proceed.
+                                    if(!String.IsNullOrEmpty(xdeltaErrorOutput))
+                                    {
+                                        // Display error message.
+                                        MessageBox.Show("The selected source disc image contains a different version of one or more files than what's expected by the selected DCP patch.  Patching process cannot proceed.", "Universal Dreamcast Patcher", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                                        // Hide progress bar and reset it.
+                                        patchingProgressBar.Value = 0;
+                                        patchingProgressBar.Visible = false;
+                                        patchingProgressDetails.Visible = false;
+                                        patchingProgressPercentage.Visible = false;
+
+                                        // Show previously hidden buttons.
+                                        buttonSelectGDI.Visible = true;
+                                        buttonApplyPatch.Visible = true;
+                                        buttonQuit.Visible = true;
+
+                                        // Change enabled/disabled status of buttons.
+                                        buttonSelectGDI.Enabled = true;
+                                        buttonApplyPatch.Enabled = false;
+                                        buttonQuit.Enabled = true;
+
+                                        // Return to normal logo.
+                                        pictureBox1.Image = pictureBox3.Image;
+
+                                        // Remove temporary GDI folder and all of its contents.
+                                        Directory.Delete(appTempFolder, true);
+
+                                        // Remove temporary extracted GDI folder and all of its contents.
+                                        Directory.Delete(appTempFolder + "_extracted", true);
+
+                                        // Remove temporary extracted patch folder and all of its contents.
+                                        Directory.Delete(appTempFolder + "_patch", true);
+
+                                        // Stop function's execution.
+                                        return;
+                                    }
+
+                                    // Delete original file.
+                                    File.Delete(patchedFullFilePath_ORIGINAL);
+
+                                    // Delete xdelta file.
+                                    File.Delete(patchedFullFilePath);
+
+                                    // Rename patched file.
+                                    File.Move(patchedFullFilePath_ORIGINAL + ".new", patchedFullFilePath_ORIGINAL);
+                                }
+                                // Corresponding original file does not exist.
+                                else
+                                {
+                                    // Display error message.
+                                    MessageBox.Show("The selected DCP patch file contains instructions to modify files not present on the selected source disc image.  Patching process cannot proceed.", "Universal Dreamcast Patcher", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                                    // Hide progress bar and reset it.
+                                    patchingProgressBar.Value = 0;
+                                    patchingProgressBar.Visible = false;
+                                    patchingProgressDetails.Visible = false;
+                                    patchingProgressPercentage.Visible = false;
+
+                                    // Show previously hidden buttons.
+                                    buttonSelectGDI.Visible = true;
+                                    buttonApplyPatch.Visible = true;
+                                    buttonQuit.Visible = true;
+
+                                    // Change enabled/disabled status of buttons.
+                                    buttonSelectGDI.Enabled = true;
+                                    buttonApplyPatch.Enabled = false;
+                                    buttonQuit.Enabled = true;
+
+                                    // Return to normal logo.
+                                    pictureBox1.Image = pictureBox3.Image;
+
+                                    // Remove temporary GDI folder and all of its contents.
+                                    Directory.Delete(appTempFolder, true);
+
+                                    // Remove temporary extracted GDI folder and all of its contents.
+                                    Directory.Delete(appTempFolder + "_extracted", true);
+
+                                    // Remove temporary extracted patch folder and all of its contents.
+                                    Directory.Delete(appTempFolder + "_patch", true);
+
+                                    // Stop function's execution.
+                                    return;
+                                }
+                            }
+                        }
                     }
                     // Otherwise, if the .DCP patch file is corrupt or otherwise malformed, throw an error.
                     catch
@@ -629,7 +767,7 @@ namespace UniversalDreamcastPatcher
                     string[] gameDataFolders = Directory.GetDirectories(appTempFolder + "_extracted", "*", SearchOption.AllDirectories);
 
                     // Iterate through "gameDataFolders" array to apply timestamps to all folders and subfolders in game data before building GDI.
-                    for(int i = 0; i < gameDataFolders.Length; i++)
+                    for(int i = 0; i < gameDataFolders.Length; i ++)
                     {
                         Directory.SetCreationTimeUtc(gameDataFolders[i], hardcodedDirectoryTimestamp);
                         Directory.SetLastAccessTimeUtc(gameDataFolders[i], hardcodedDirectoryTimestamp);
@@ -640,7 +778,7 @@ namespace UniversalDreamcastPatcher
                     string[] gameDataFiles = Directory.GetFiles(appTempFolder + "_extracted", "*", SearchOption.AllDirectories);
 
                     // Iterate through "gameDataFolders" array to apply timestamps to all folders and subfolders in game data before building GDI.
-                    for(int i = 0; i < gameDataFiles.Length; i++)
+                    for(int i = 0; i < gameDataFiles.Length; i ++)
                     {
                         File.SetCreationTimeUtc(gameDataFiles[i], hardcodedDirectoryTimestamp);
                         File.SetLastAccessTimeUtc(gameDataFiles[i], hardcodedDirectoryTimestamp);
@@ -673,7 +811,7 @@ namespace UniversalDreamcastPatcher
                         string[] cddaTracks = Directory.GetFiles(appTempFolder, "track*.raw", SearchOption.TopDirectoryOnly);
 
                         // Iterate through each track file.
-                        for(int i = 0; i < cddaTracks.Length; i++)
+                        for(int i = 0; i < cddaTracks.Length; i ++)
                         {
                             // Store track number without extension or prepended "track" string.
                             string cddaTrackFilename = Path.GetFileNameWithoutExtension(cddaTracks[i]);
@@ -822,6 +960,33 @@ namespace UniversalDreamcastPatcher
             }
         }
 
+        // Recursively traverse directory tree, ignoring empty folders.
+        static void WalkDirectoryTree(System.IO.DirectoryInfo root)
+        {
+            System.IO.FileInfo[] files = null;
+            System.IO.DirectoryInfo[] subDirs = null;
+
+            // First, process all the files directly under this folder.
+            files = root.GetFiles("*.*");
+
+            if(files != null)
+            {
+                foreach(System.IO.FileInfo fi in files)
+                {
+                    patchedGDIFiles.Add(fi.FullName);
+                }
+
+                // Now find all the subdirectories under this directory.
+                subDirs = root.GetDirectories();
+
+                foreach(System.IO.DirectoryInfo dirInfo in subDirs)
+                {
+                    // Resursive call for each subdirectory.
+                    WalkDirectoryTree(dirInfo);
+                }
+            }
+        }
+
         private void PictureBox1_Click(object sender, EventArgs e)
         {
 
@@ -848,6 +1013,11 @@ namespace UniversalDreamcastPatcher
         }
 
         private void Label1_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void PictureBox3_Click(object sender, EventArgs e)
         {
 
         }
