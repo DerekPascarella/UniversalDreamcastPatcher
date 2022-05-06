@@ -98,7 +98,7 @@ The DCP patch format was designed specifically for Universal Dreamcast Patcher. 
 ### Automatic Method
 <img width="222" align="right" src="https://raw.githubusercontent.com/DerekPascarella/UniversalDreamcastPatcher/main/screenshots/screenshot_builder.png">Use this method when:
 * You do not wish to distribute whole files containing copyrighted content.
-* Your aim is to keep the patch file as small as possible.
+* Your aim is to keep patch files as small as possible.
 * You want all the work done for you!
 
 As of version 1.3, Universal Dreamcast Patcher now ships bundled with its own dedicated patch-building utility.  This utility, Universal Dreamcast Patch Builder, produces a DCP patch file based on changes between two disc images (unpatched and patched).
