@@ -111,7 +111,7 @@ Furthermore, Universal Dreamcast Patch Builder includes options to apply additio
 The steps for automatically creating a patch are as follows.
 
 1. In the "Step 1" box, select the original, unmodified disc image as "Unpatched GDI".  Then, select the modified disc image as "Patched GDI".
-2. In the "Step 2" box, supply a filename for the DCP patch.  Note that the base filename of the DCP will be used when this application generates the patched GDI (e.g. a patch file named "My Game (v1.0).dcp" will result in a patched GDI folder named "My Game (v1.0) [GDI]").
+2. In the "Step 2" box, supply a filename for the DCP patch.  Note that the base filename of the DCP will be used when the patching application generates the patched GDI (e.g. a patch file named "My Game (v1.0).dcp" will result in a patched GDI folder named "My Game (v1.0) [GDI]").
 3. In the "Step 3" box, select whether a custom IP.BIN file should be used when building the patch.  In many cases, patch developers won't bother with this step, but there are several advantages in enabling these options:
    * **Region-Free** - Patched disc image (output) can be booted on any ODE or emulator, regardless of region setting, and without enabling region-free options within the ODE or emulator itself.
    * **VGA** - If supported, patched disc image (output) can be booted in VGA mode on any ODE or emulator, regardless of VGA auto-patching settings within the ODE or emulator itself.
