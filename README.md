@@ -7,14 +7,14 @@ Under the hood, this application utilizes [gditools](https://sourceforge.net/pro
 
 ## Table of Contents
 1. [Latest Version](https://github.com/DerekPascarella/UniversalDreamcastPatcher#latest-version)
-1. [Changelog](https://github.com/DerekPascarella/UniversalDreamcastPatcher#changelog)
-1. [Existing Features](https://github.com/DerekPascarella/UniversalDreamcastPatcher#existing-features)
-1. [Known Issues and Limitations](https://github.com/DerekPascarella/UniversalDreamcastPatcher#known-issues-and-limitations)
-1. [Roadmap](https://github.com/DerekPascarella/UniversalDreamcastPatcher#roadmap)
-1. [Usage: Patching](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-patching)
-1. [Usage: Creating Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-creating-patches)
-   1. [Automatic Method](https://github.com/DerekPascarella/UniversalDreamcastPatcher#automatic-method)
-   2. [Manual Method](https://github.com/DerekPascarella/UniversalDreamcastPatcher#manual-method)
+2. [Changelog](https://github.com/DerekPascarella/UniversalDreamcastPatcher#changelog)
+3. [Existing Features](https://github.com/DerekPascarella/UniversalDreamcastPatcher#existing-features)
+4. [Known Issues and Limitations](https://github.com/DerekPascarella/UniversalDreamcastPatcher#known-issues-and-limitations)
+5. [Roadmap](https://github.com/DerekPascarella/UniversalDreamcastPatcher#roadmap)
+6. [Usage: Patching](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-patching)
+7. [Usage: Creating Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-creating-patches)
+   - [Automatic Method](https://github.com/DerekPascarella/UniversalDreamcastPatcher#automatic-method)
+   - [Manual Method](https://github.com/DerekPascarella/UniversalDreamcastPatcher#manual-method)
 
 ## Latest Version
 The latest version of Universal Dreamcast Patcher is [1.3](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/1.3/Universal.Dreamcast.Patcher.v1.3.zip).
