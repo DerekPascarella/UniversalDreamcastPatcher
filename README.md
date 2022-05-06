@@ -3,7 +3,7 @@
 
 Universal Dreamcast Patcher is designed to accept any disc image as its source, whether it be formatted as a TOSEC-style GDI or a Redump-style CUE. This application will extract any disc image meeting those standards, overwrite and/or add to its data according to a given patch (DCP file), and then rebuild the disc image with the new data. Due to the flexible nature of acceptable disc image input, file hashes are not utilized for pre/post-patching verification.
 
-Under the hood, this application utilizes [gditools](https://sourceforge.net/projects/dcisotools/), [buildgdi](https://projects.sappharad.com/tools/gdibuilder.html), [bin2iso](http://jj1odm.qp.land.to/#dcpprip), extract, and a version of [RedumpCUE2GDI](https://github.com/AwfulBear/RedumpCUE2GDI) modified by me.
+Under the hood, this application utilizes [gditools](https://sourceforge.net/projects/dcisotools/), [buildgdi](https://projects.sappharad.com/tools/gdibuilder.html), [bin2iso](http://jj1odm.qp.land.to/#dcpprip), [xdelta](http://xdelta.org/), extract, and a version of [RedumpCUE2GDI](https://github.com/AwfulBear/RedumpCUE2GDI) modified by me.
 
 ## Table of Contents
 1. [Latest Version](https://github.com/DerekPascarella/UniversalDreamcastPatcher#latest-version)
@@ -16,9 +16,12 @@ Under the hood, this application utilizes [gditools](https://sourceforge.net/pro
    1. [Example](https://github.com/DerekPascarella/UniversalDreamcastPatcher#example)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [1.2](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/1.2/Universal.Dreamcast.Patcher.v1.2.zip).
+The latest version of Universal Dreamcast Patcher is [1.3](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/1.2/Universal.Dreamcast.Patcher.v1.3.zip).
 
 ## Changelog
+* Version 1.3 (2022-05-06)
+  * Added xdelta support to reduce patch size, as well as eliminate the potenteial distribution of whole files containing copyrighted material.
+  * Introduced separate patch-building utility for developers to automatically produce patch files, analyzing changes between original retail disc image and modified one.
 * Version 1.2 (2022-03-19)
   * Enhanced GDI compatibility and integrity checking.
 * Version 1.1 (2022-03-17)
@@ -52,6 +55,7 @@ Below is a specific list of Universal Dreamcast Patcher's current features.
 * Source disc image integrity verification.
 * Support for source disc images (input) with CDDA.
 * Disc image patching with custom IP.BIN.
+* Support for xdeltas in order to reduce patch size and mitigate copyright concerns.
 * Supported formats for source disc image (input):
   * TOSEC-style GDI
   * Redump-style CUE
@@ -75,8 +79,6 @@ As Universal Dreamcast Patcher evolves and improves over time, the list below re
 * Support for source and patched disc images (input and output) in CDI format.
 * Extend DCP patch format to support modifying CDDA tracks.
 * Ensure consistent file hashes for patched disc images (output).
-* New feature for automatically creating DCP patches by supplying the original source disc image and the fully patched disc image.
-* Research methods for decreasing size of patch file, such as using diffs/deltas on modified files.
 * Linux and Mac support.
 
 ## Usage: Patching
@@ -91,7 +93,36 @@ Universal Dreamcast Patcher is simple to use.  After launching the application, 
 Details on the current step of the patching process will be updated as they progress.  Any errors encountered during sanity or integrity checks will be presented and the patching process will be halted.
 
 ## Usage: Creating Patches
-The DCP patch format was designed specifically for Universal Dreamcast Patcher.  This format is neither complex nor difficult to understand.  It is extremely simple by design and as a result, DCP patches can be created without the use of any special software.  The steps for creating a patch are as follows.
+The DCP patch format was designed specifically for Universal Dreamcast Patcher.  Presently, there is both an automatic and a manual method one can use to build a patch.
+
+### Automatic Method
+<img width="222" align="right" src="https://raw.githubusercontent.com/DerekPascarella/UniversalDreamcastPatcher/main/screenshots/screenshot_builder.png">Use this method when:
+* You do not wish to distribute whole files containing copyrighted content.
+* Your aim is to keep the patch file as small as possible.
+* You want all the work done for you!
+
+As of version 1.3, Universal Dreamcast Patcher now ships bundled with its own dedicated patch-building utility.  This utility, Universal Dreamcast Patch Builder, produces a DCP patch file based on changes between two disc images (unpatched and patched).
+
+For example, a translation patch developer would supply the original retail disc image along with their modified one.  Universal Dreamcast Patch Builder would analyze the two for changes and then automatically generate the DCP patch file.
+
+Furthermore, Universal Dreamcast Patch Builder includes options to apply additional modifications to IP.BIN, like enabling VGA mode, setting the game as region-free, or giving the game a custon name label.
+
+The steps for automatically creating a patch are as follows.
+
+1. In the "Step 1" box, select the original, unmodified disc image as "Unpatched GDI".  Then, select the modified disc image as "Patched GDI".
+2. In the "Step 2" box, supply a filename for the DCP patch.  Note that the base filename of the DCP will be used when this application generates the patched GDI (e.g. a patch file named "My Game (v1.0).dcp" will result in a patched GDI folder named "My Game (v1.0) [GDI]").
+3. In the "Step 3" box, select whether a custom IP.BIN file should be used when building the patch.  In many cases, patch developers won't bother with this step, but there are several advantages in enabling these options:
+   * **Region-Free** - Patched disc image (output) can be booted on any ODE or emulator, regardless of region setting, and without enabling region-free options within the ODE or emulator itself.
+   * **VGA** - If supported, patched disc image (output) can be booted in VGA mode on any ODE or emulator, regardless of VGA autopatching settings within the ODE or emulator itself.
+   * **Custom Game Name** - Patched disc image (output) will be displayed using a custom name within tools like the various SD card managers for GDEMU, thus giving another degree of creative control to patch developers opting for a localized game title.
+
+
+### Manual Method
+Use this method when:
+* The distribution of copyrighted content is not a concern.
+* Reducing the size of a patch file is not a priority.
+
+The steps for manually creating a patch are as follows.
 
 1. Create a ZIP archive containing (in its root) all of the files/folders from the game's data that have been modified or are new.  Be sure to retain original folder structure and hierarchy.
    * If the patch should use a modified IP.BIN file, simply create a folder named "bootsector" in the root of the ZIP archive and place IP.BIN inside of it.  Note that this folder and file will not be included in the patched disc image's (output) filesystem.
@@ -99,7 +130,7 @@ The DCP patch format was designed specifically for Universal Dreamcast Patcher. 
 2. Change the extension of the file from ZIP to DCP.
    * Note that the base filename of the DCP will be used when this application generates the patched GDI (e.g. a patch file named "My Game (v1.0).dcp" will result in a patched GDI folder named "My Game (v1.0) [GDI]").
 
-### Example
+#### Example
 In this example, an existing DCP patch is seen being opened with 7-Zip, a common archive creator and extractor.
 
 <p align="center">
