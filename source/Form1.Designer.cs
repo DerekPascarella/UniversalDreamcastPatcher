@@ -95,7 +95,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(424, 24);
             this.label2.TabIndex = 5;
-            this.label2.Text = "v1.3 - Derek Pascarella (ateam)";
+            this.label2.Text = "v1.4 - Derek Pascarella (ateam)";
             this.label2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.label2.Click += new System.EventHandler(this.Label2_Click);
             // 
@@ -211,7 +211,7 @@
             this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "Universal Dreamcast Patcher (v1.3)";
+            this.Text = "Universal Dreamcast Patcher (v1.4)";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();

@@ -601,6 +601,10 @@ namespace UniversalDreamcastPatcher
                             // Store full path of current file.
                             string patchedFullFilePath = patchedGDIFiles[i];
 
+                            // Store relative filename of current file being patched, then update patching progress details.
+                            string currentPatchingFile = patchedFullFilePath.Replace(appTempFolder + "_extracted\\", "").Replace(".xdelta", "");
+                            patchingProgressDetails.Text = "Patching " + currentPatchingFile + "...\n";
+
                             // Current file is an xdelta patch.
                             if(patchedFullFilePath.ToLower().EndsWith(".xdelta"))
                             {
@@ -759,6 +763,9 @@ namespace UniversalDreamcastPatcher
                         // Stop function's execution.
                         return;
                     }
+
+                    // Update patching progress details.
+                    patchingProgressDetails.Text = "Patching extracted GDI files with new data...";
 
                     // Set hardcoded timestamp for all folders and subfolders in game data before building GDI.
                     DateTime hardcodedDirectoryTimestamp = new DateTime(1999, 9, 9, 12, 12, 12, DateTimeKind.Utc);
