@@ -46,18 +46,18 @@
             this.groupboxStep1 = new System.Windows.Forms.GroupBox();
             this.groupboxStep2 = new System.Windows.Forms.GroupBox();
             this.groupboxStep3 = new System.Windows.Forms.GroupBox();
+            this.ipbinTree5 = new System.Windows.Forms.Label();
+            this.ipbinTree4 = new System.Windows.Forms.Label();
+            this.textboxGameNameIPBIN = new System.Windows.Forms.TextBox();
+            this.checkboxCustomNameIPBIN = new System.Windows.Forms.CheckBox();
+            this.ipbinTree3 = new System.Windows.Forms.Label();
+            this.ipbinTree2 = new System.Windows.Forms.Label();
+            this.ipbinTree1 = new System.Windows.Forms.Label();
+            this.checkboxVGAIPBIN = new System.Windows.Forms.CheckBox();
+            this.checkboxRegionFreeIPBIN = new System.Windows.Forms.CheckBox();
+            this.dropdownPatchedIPBINSource = new System.Windows.Forms.ComboBox();
             this.checkboxAdditionalPatchingIPBIN = new System.Windows.Forms.CheckBox();
             this.checkboxUsePatchedIPBIN = new System.Windows.Forms.CheckBox();
-            this.dropdownPatchedIPBINSource = new System.Windows.Forms.ComboBox();
-            this.checkboxRegionFreeIPBIN = new System.Windows.Forms.CheckBox();
-            this.checkboxVGAIPBIN = new System.Windows.Forms.CheckBox();
-            this.ipbinTree1 = new System.Windows.Forms.Label();
-            this.ipbinTree2 = new System.Windows.Forms.Label();
-            this.ipbinTree3 = new System.Windows.Forms.Label();
-            this.checkboxCustomNameIPBIN = new System.Windows.Forms.CheckBox();
-            this.textboxGameNameIPBIN = new System.Windows.Forms.TextBox();
-            this.ipbinTree4 = new System.Windows.Forms.Label();
-            this.ipbinTree5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -115,7 +115,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(424, 24);
             this.label2.TabIndex = 15;
-            this.label2.Text = "v1.3 - Derek Pascarella (ateam)";
+            this.label2.Text = "v1.4 - Derek Pascarella (ateam)";
             this.label2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // buttonSelectUnpatchedGDI
@@ -286,6 +286,118 @@
             this.groupboxStep3.TabStop = false;
             this.groupboxStep3.Text = "Step 3";
             // 
+            // ipbinTree5
+            // 
+            this.ipbinTree5.BackColor = System.Drawing.Color.Silver;
+            this.ipbinTree5.ForeColor = System.Drawing.Color.Black;
+            this.ipbinTree5.Location = new System.Drawing.Point(24, 200);
+            this.ipbinTree5.Name = "ipbinTree5";
+            this.ipbinTree5.Size = new System.Drawing.Size(16, 1);
+            this.ipbinTree5.TabIndex = 37;
+            this.ipbinTree5.Text = "dd\r\ndd\r\ndd";
+            // 
+            // ipbinTree4
+            // 
+            this.ipbinTree4.BackColor = System.Drawing.Color.Silver;
+            this.ipbinTree4.ForeColor = System.Drawing.Color.Black;
+            this.ipbinTree4.Location = new System.Drawing.Point(24, 184);
+            this.ipbinTree4.Name = "ipbinTree4";
+            this.ipbinTree4.Size = new System.Drawing.Size(1, 17);
+            this.ipbinTree4.TabIndex = 36;
+            this.ipbinTree4.Text = "dd\r\ndd\r\ndd";
+            // 
+            // textboxGameNameIPBIN
+            // 
+            this.textboxGameNameIPBIN.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
+            this.textboxGameNameIPBIN.Enabled = false;
+            this.textboxGameNameIPBIN.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.textboxGameNameIPBIN.Location = new System.Drawing.Point(48, 192);
+            this.textboxGameNameIPBIN.MaxLength = 128;
+            this.textboxGameNameIPBIN.Name = "textboxGameNameIPBIN";
+            this.textboxGameNameIPBIN.Size = new System.Drawing.Size(360, 26);
+            this.textboxGameNameIPBIN.TabIndex = 26;
+            this.textboxGameNameIPBIN.Text = "MY GAME NAME (ENGLISH)";
+            // 
+            // checkboxCustomNameIPBIN
+            // 
+            this.checkboxCustomNameIPBIN.AutoSize = true;
+            this.checkboxCustomNameIPBIN.Enabled = false;
+            this.checkboxCustomNameIPBIN.Location = new System.Drawing.Point(16, 160);
+            this.checkboxCustomNameIPBIN.Name = "checkboxCustomNameIPBIN";
+            this.checkboxCustomNameIPBIN.Size = new System.Drawing.Size(271, 24);
+            this.checkboxCustomNameIPBIN.TabIndex = 35;
+            this.checkboxCustomNameIPBIN.Text = "Use custom game name in IP.BIN.";
+            this.checkboxCustomNameIPBIN.UseVisualStyleBackColor = true;
+            this.checkboxCustomNameIPBIN.CheckedChanged += new System.EventHandler(this.CheckboxCustomNameIPBIN_CheckedChanged);
+            // 
+            // ipbinTree3
+            // 
+            this.ipbinTree3.BackColor = System.Drawing.Color.Silver;
+            this.ipbinTree3.ForeColor = System.Drawing.Color.Black;
+            this.ipbinTree3.Location = new System.Drawing.Point(24, 136);
+            this.ipbinTree3.Name = "ipbinTree3";
+            this.ipbinTree3.Size = new System.Drawing.Size(16, 1);
+            this.ipbinTree3.TabIndex = 34;
+            this.ipbinTree3.Text = "dd\r\ndd\r\ndd";
+            // 
+            // ipbinTree2
+            // 
+            this.ipbinTree2.BackColor = System.Drawing.Color.Silver;
+            this.ipbinTree2.ForeColor = System.Drawing.Color.Black;
+            this.ipbinTree2.Location = new System.Drawing.Point(24, 104);
+            this.ipbinTree2.Name = "ipbinTree2";
+            this.ipbinTree2.Size = new System.Drawing.Size(16, 1);
+            this.ipbinTree2.TabIndex = 33;
+            this.ipbinTree2.Text = "dd\r\ndd\r\ndd";
+            // 
+            // ipbinTree1
+            // 
+            this.ipbinTree1.BackColor = System.Drawing.Color.Silver;
+            this.ipbinTree1.ForeColor = System.Drawing.Color.Black;
+            this.ipbinTree1.Location = new System.Drawing.Point(24, 88);
+            this.ipbinTree1.Name = "ipbinTree1";
+            this.ipbinTree1.Size = new System.Drawing.Size(1, 49);
+            this.ipbinTree1.TabIndex = 29;
+            this.ipbinTree1.Text = "dd\r\ndd\r\ndd";
+            // 
+            // checkboxVGAIPBIN
+            // 
+            this.checkboxVGAIPBIN.AutoSize = true;
+            this.checkboxVGAIPBIN.Enabled = false;
+            this.checkboxVGAIPBIN.Location = new System.Drawing.Point(48, 128);
+            this.checkboxVGAIPBIN.Name = "checkboxVGAIPBIN";
+            this.checkboxVGAIPBIN.Size = new System.Drawing.Size(117, 24);
+            this.checkboxVGAIPBIN.TabIndex = 32;
+            this.checkboxVGAIPBIN.Text = "Enable VGA";
+            this.checkboxVGAIPBIN.UseVisualStyleBackColor = true;
+            // 
+            // checkboxRegionFreeIPBIN
+            // 
+            this.checkboxRegionFreeIPBIN.AutoSize = true;
+            this.checkboxRegionFreeIPBIN.Enabled = false;
+            this.checkboxRegionFreeIPBIN.Location = new System.Drawing.Point(48, 96);
+            this.checkboxRegionFreeIPBIN.Name = "checkboxRegionFreeIPBIN";
+            this.checkboxRegionFreeIPBIN.Size = new System.Drawing.Size(112, 24);
+            this.checkboxRegionFreeIPBIN.TabIndex = 31;
+            this.checkboxRegionFreeIPBIN.Text = "Region-free";
+            this.checkboxRegionFreeIPBIN.UseVisualStyleBackColor = true;
+            // 
+            // dropdownPatchedIPBINSource
+            // 
+            this.dropdownPatchedIPBINSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.dropdownPatchedIPBINSource.DropDownWidth = 200;
+            this.dropdownPatchedIPBINSource.Enabled = false;
+            this.dropdownPatchedIPBINSource.FormattingEnabled = true;
+            this.dropdownPatchedIPBINSource.ItemHeight = 20;
+            this.dropdownPatchedIPBINSource.Items.AddRange(new object[] {
+            "patched GDI as source",
+            "unpatched GDI as source"});
+            this.dropdownPatchedIPBINSource.Location = new System.Drawing.Point(248, 32);
+            this.dropdownPatchedIPBINSource.MaxDropDownItems = 2;
+            this.dropdownPatchedIPBINSource.Name = "dropdownPatchedIPBINSource";
+            this.dropdownPatchedIPBINSource.Size = new System.Drawing.Size(160, 28);
+            this.dropdownPatchedIPBINSource.TabIndex = 29;
+            // 
             // checkboxAdditionalPatchingIPBIN
             // 
             this.checkboxAdditionalPatchingIPBIN.AutoSize = true;
@@ -309,118 +421,6 @@
             this.checkboxUsePatchedIPBIN.UseVisualStyleBackColor = true;
             this.checkboxUsePatchedIPBIN.CheckedChanged += new System.EventHandler(this.CheckboxUsePatchedIPBIN_CheckedChanged);
             // 
-            // dropdownPatchedIPBINSource
-            // 
-            this.dropdownPatchedIPBINSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.dropdownPatchedIPBINSource.DropDownWidth = 200;
-            this.dropdownPatchedIPBINSource.Enabled = false;
-            this.dropdownPatchedIPBINSource.FormattingEnabled = true;
-            this.dropdownPatchedIPBINSource.ItemHeight = 20;
-            this.dropdownPatchedIPBINSource.Items.AddRange(new object[] {
-            "patched GDI as source",
-            "unpatched GDI as source"});
-            this.dropdownPatchedIPBINSource.Location = new System.Drawing.Point(248, 32);
-            this.dropdownPatchedIPBINSource.MaxDropDownItems = 2;
-            this.dropdownPatchedIPBINSource.Name = "dropdownPatchedIPBINSource";
-            this.dropdownPatchedIPBINSource.Size = new System.Drawing.Size(160, 28);
-            this.dropdownPatchedIPBINSource.TabIndex = 29;
-            // 
-            // checkboxRegionFreeIPBIN
-            // 
-            this.checkboxRegionFreeIPBIN.AutoSize = true;
-            this.checkboxRegionFreeIPBIN.Enabled = false;
-            this.checkboxRegionFreeIPBIN.Location = new System.Drawing.Point(48, 96);
-            this.checkboxRegionFreeIPBIN.Name = "checkboxRegionFreeIPBIN";
-            this.checkboxRegionFreeIPBIN.Size = new System.Drawing.Size(112, 24);
-            this.checkboxRegionFreeIPBIN.TabIndex = 31;
-            this.checkboxRegionFreeIPBIN.Text = "Region-free";
-            this.checkboxRegionFreeIPBIN.UseVisualStyleBackColor = true;
-            // 
-            // checkboxVGAIPBIN
-            // 
-            this.checkboxVGAIPBIN.AutoSize = true;
-            this.checkboxVGAIPBIN.Enabled = false;
-            this.checkboxVGAIPBIN.Location = new System.Drawing.Point(48, 128);
-            this.checkboxVGAIPBIN.Name = "checkboxVGAIPBIN";
-            this.checkboxVGAIPBIN.Size = new System.Drawing.Size(117, 24);
-            this.checkboxVGAIPBIN.TabIndex = 32;
-            this.checkboxVGAIPBIN.Text = "Enable VGA";
-            this.checkboxVGAIPBIN.UseVisualStyleBackColor = true;
-            // 
-            // ipbinTree1
-            // 
-            this.ipbinTree1.BackColor = System.Drawing.Color.Silver;
-            this.ipbinTree1.ForeColor = System.Drawing.Color.Black;
-            this.ipbinTree1.Location = new System.Drawing.Point(24, 88);
-            this.ipbinTree1.Name = "ipbinTree1";
-            this.ipbinTree1.Size = new System.Drawing.Size(1, 49);
-            this.ipbinTree1.TabIndex = 29;
-            this.ipbinTree1.Text = "dd\r\ndd\r\ndd";
-            // 
-            // ipbinTree2
-            // 
-            this.ipbinTree2.BackColor = System.Drawing.Color.Silver;
-            this.ipbinTree2.ForeColor = System.Drawing.Color.Black;
-            this.ipbinTree2.Location = new System.Drawing.Point(24, 104);
-            this.ipbinTree2.Name = "ipbinTree2";
-            this.ipbinTree2.Size = new System.Drawing.Size(16, 1);
-            this.ipbinTree2.TabIndex = 33;
-            this.ipbinTree2.Text = "dd\r\ndd\r\ndd";
-            // 
-            // ipbinTree3
-            // 
-            this.ipbinTree3.BackColor = System.Drawing.Color.Silver;
-            this.ipbinTree3.ForeColor = System.Drawing.Color.Black;
-            this.ipbinTree3.Location = new System.Drawing.Point(24, 136);
-            this.ipbinTree3.Name = "ipbinTree3";
-            this.ipbinTree3.Size = new System.Drawing.Size(16, 1);
-            this.ipbinTree3.TabIndex = 34;
-            this.ipbinTree3.Text = "dd\r\ndd\r\ndd";
-            // 
-            // checkboxCustomNameIPBIN
-            // 
-            this.checkboxCustomNameIPBIN.AutoSize = true;
-            this.checkboxCustomNameIPBIN.Enabled = false;
-            this.checkboxCustomNameIPBIN.Location = new System.Drawing.Point(16, 160);
-            this.checkboxCustomNameIPBIN.Name = "checkboxCustomNameIPBIN";
-            this.checkboxCustomNameIPBIN.Size = new System.Drawing.Size(271, 24);
-            this.checkboxCustomNameIPBIN.TabIndex = 35;
-            this.checkboxCustomNameIPBIN.Text = "Use custom game name in IP.BIN.";
-            this.checkboxCustomNameIPBIN.UseVisualStyleBackColor = true;
-            this.checkboxCustomNameIPBIN.CheckedChanged += new System.EventHandler(this.CheckboxCustomNameIPBIN_CheckedChanged);
-            // 
-            // textboxGameNameIPBIN
-            // 
-            this.textboxGameNameIPBIN.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
-            this.textboxGameNameIPBIN.Enabled = false;
-            this.textboxGameNameIPBIN.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.textboxGameNameIPBIN.Location = new System.Drawing.Point(48, 192);
-            this.textboxGameNameIPBIN.MaxLength = 128;
-            this.textboxGameNameIPBIN.Name = "textboxGameNameIPBIN";
-            this.textboxGameNameIPBIN.Size = new System.Drawing.Size(360, 26);
-            this.textboxGameNameIPBIN.TabIndex = 26;
-            this.textboxGameNameIPBIN.Text = "MY GAME NAME (ENGLISH)";
-            // 
-            // ipbinTree4
-            // 
-            this.ipbinTree4.BackColor = System.Drawing.Color.Silver;
-            this.ipbinTree4.ForeColor = System.Drawing.Color.Black;
-            this.ipbinTree4.Location = new System.Drawing.Point(24, 184);
-            this.ipbinTree4.Name = "ipbinTree4";
-            this.ipbinTree4.Size = new System.Drawing.Size(1, 17);
-            this.ipbinTree4.TabIndex = 36;
-            this.ipbinTree4.Text = "dd\r\ndd\r\ndd";
-            // 
-            // ipbinTree5
-            // 
-            this.ipbinTree5.BackColor = System.Drawing.Color.Silver;
-            this.ipbinTree5.ForeColor = System.Drawing.Color.Black;
-            this.ipbinTree5.Location = new System.Drawing.Point(24, 200);
-            this.ipbinTree5.Name = "ipbinTree5";
-            this.ipbinTree5.Size = new System.Drawing.Size(16, 1);
-            this.ipbinTree5.TabIndex = 37;
-            this.ipbinTree5.Text = "dd\r\ndd\r\ndd";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -440,7 +440,7 @@
             this.Controls.Add(this.patchBuildProgressDetails);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "Universal Dreamcast Patch Builder (v1.3)";
+            this.Text = "Universal Dreamcast Patch Builder (v1.4)";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
