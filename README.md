@@ -1,5 +1,5 @@
 # Universal Dreamcast Patcher
-<img align="right" width="350" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/screenshot.png?raw=true">Universal Dreamcast Patcher aims to provide an easy, cross-format game patching solution for the Dreamcast community. Such patches typically come in the form of English translations and other ROM hacks.
+<img align="right" width="349" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/screenshot.png?raw=true">Universal Dreamcast Patcher aims to provide an easy, cross-format game patching solution for the Dreamcast community. Such patches typically come in the form of English translations and other ROM hacks.
 
 Universal Dreamcast Patcher is designed to accept any disc image as its source, whether it be formatted as a TOSEC-style GDI or a Redump-style CUE. This application will extract any disc image meeting those standards, overwrite and/or add to its data according to a given patch (DCP file), and then rebuild the disc image with the new data. Due to the flexible nature of acceptable disc image input, file hashes are not utilized for pre/post-patching verification.
 
@@ -19,9 +19,11 @@ Under the hood, this application utilizes [gditools](https://sourceforge.net/pro
    - [Manual Method](https://github.com/DerekPascarella/UniversalDreamcastPatcher#manual-method)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [1.3](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/1.3/Universal.Dreamcast.Patcher.v1.3.zip).
+The latest version of Universal Dreamcast Patcher is [1.4](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/1.3/Universal.Dreamcast.Patcher.v1.4.zip).
 
 ## Changelog
+* Version 1.4 (2022-11-24)
+  * Added current filename being patched to the progress status message to avoid appearance of failure for patches that alter many files.
 * Version 1.3 (2022-05-06)
   * Added xdelta support to reduce patch size, as well as eliminate the potential distribution of whole files containing copyrighted material.
   * Introduced separate patch-building utility for developers to automatically produce patch files, analyzing changes between original retail disc image and modified one.
@@ -99,7 +101,7 @@ Details on the current step of the patching process will be updated as they prog
 The DCP patch format was designed specifically for Universal Dreamcast Patcher.  Presently, there is both an automatic and a manual method one can use to build a patch.
 
 ### Automatic Method
-<img width="222" align="right" src="https://raw.githubusercontent.com/DerekPascarella/UniversalDreamcastPatcher/main/screenshots/screenshot_builder.png">Use this method when:
+<img width="225" align="right" src="https://raw.githubusercontent.com/DerekPascarella/UniversalDreamcastPatcher/main/screenshots/screenshot_builder.png">Use this method when:
 * You do not wish to distribute whole files containing copyrighted content.
 * Your aim is to keep patch files as small as possible.
 * You want all the work done for you!
