@@ -24,6 +24,7 @@ The latest version of Universal Dreamcast Patcher is [1.5](https://github.com/De
 ## Changelog
 * Version 1.5 (2023-05-13)
   * Eliminated IP.BIN-patching helper tools in patch-building utility, with code now directly implemented in the application itself.
+  * Changed some labels in patch-building utility for clarity ("Unpatched GDI" is now "Original GDI" and "Patched GDI" is now "Modified GDI").
 * Version 1.4 (2022-11-24)
   * If patch utilizes xdelta, the current filename being patched is now displayed in the progress status message, avoiding the appearance of failure when processing large quantity of files.
 * Version 1.3 (2022-05-06)
