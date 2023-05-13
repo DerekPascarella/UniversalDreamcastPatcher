@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices.ComTypes;
 
 
 namespace UDP_Patcher
@@ -37,21 +38,6 @@ namespace UDP_Patcher
             if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\tools\\xdelta.exe"))
             {
                 missingFiles = missingFiles + "\n - xdelta.exe";
-            }
-
-            if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\tools\\ip_patch.exe"))
-            {
-                missingFiles = missingFiles + "\n - ip_patch.exe";
-            }
-
-            if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\tools\\ip_patch_with_vga.exe"))
-            {
-                missingFiles = missingFiles + "\n - ip_patch_with_vga.exe";
-            }
-
-            if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\tools\\ip_patch_with_name.exe"))
-            {
-                missingFiles = missingFiles + "\n - ip_patch_with_vga_and_name.exe";
             }
 
             if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\tools\\gditools.exe"))
@@ -822,77 +808,53 @@ namespace UDP_Patcher
                 // Update patching progress details.
                 patchBuildProgressDetails.Text = "Applying patches to IP.BIN...";
 
-                // Patch region.
-                if(checkboxRegionFreeIPBIN.Checked == true)
+                // Open IP.BIN file being used to build patch.
+                using(var ipFileStream = File.Open(appTempFolder + "_patch\\bootsector\\IP.BIN", FileMode.Open))
                 {
-                    // Execute process to patch IP.BIN per user's selection.
-                    System.Diagnostics.Process processPatchIPBIN_REGION = new System.Diagnostics.Process();
-                    System.Diagnostics.ProcessStartInfo startInfoPatchIPBIN_REGION = new System.Diagnostics.ProcessStartInfo();
-                    startInfoPatchIPBIN_REGION.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                    startInfoPatchIPBIN_REGION.FileName = appBaseFolder + "\\tools\\ip_patch.exe";
-                    startInfoPatchIPBIN_REGION.Arguments = "JUE \"" + appTempFolder + "_patch\\bootsector\\IP.BIN\"";
-                    startInfoPatchIPBIN_REGION.UseShellExecute = false;
-                    startInfoPatchIPBIN_REGION.CreateNoWindow = true;
-                    processPatchIPBIN_REGION.StartInfo = startInfoPatchIPBIN_REGION;
-                    processPatchIPBIN_REGION.Start();
-
-                    // Wait for process to exit, checking every half a second.
-                    while(!processPatchIPBIN_REGION.HasExited)
+                    // Patch region flag and text.
+                    if(checkboxRegionFreeIPBIN.Checked == true)
                     {
-                        wait(500);
+                        byte[] regionFlagsJUE = StringToByteArray("4a5545");
+                        ipFileStream.Position = 48;
+                        ipFileStream.Write(regionFlagsJUE, 0, regionFlagsJUE.Length);
+
+                        byte[] regionStringJ = StringToByteArray("466F72204A4150414E2C54414957414E2C5048494C4950494E45532E");
+                        ipFileStream.Position = 14084;
+                        ipFileStream.Write(regionStringJ, 0, regionStringJ.Length);
+
+                        byte[] regionStringU = StringToByteArray("466F722055534120616E642043414E4144412E202020202020202020");
+                        ipFileStream.Position = 14116;
+                        ipFileStream.Write(regionStringU, 0, regionStringU.Length);
+
+                        byte[] regionStringE = StringToByteArray("466F72204555524F50452E2020202020202020202020202020202020");
+                        ipFileStream.Position = 14148;
+                        ipFileStream.Write(regionStringE, 0, regionStringE.Length);
                     }
 
-                    // Close process.
-                    processPatchIPBIN_REGION.Close();
+                    // Patch VGA flag.
+                    if(checkboxVGAIPBIN.Checked == true)
+                    {
+                        byte[] vgaFlag = StringToByteArray("31");
+                        ipFileStream.Position = 61;
+                        ipFileStream.Write(vgaFlag, 0, vgaFlag.Length);
+                    }
+
+                    // Patch name text.
+                    if(checkboxCustomNameIPBIN.Checked == true)
+                    {
+                        string gameName = textboxGameNameIPBIN.Text;
+                        int gameNamePadding = 128 - gameName.Length;
+
+                        for(int i = 0; i < gameNamePadding; i++)
+                        {
+                            gameName += " ";
+                        }
+
+                        byte[] gameNameByteArray = System.Text.Encoding.ASCII.GetBytes(gameName);
+                        ipFileStream.Position = 128;
+                        ipFileStream.Write(gameNameByteArray, 0, gameNameByteArray.Length);
+                    }
                 }
-
-                // Patch VGA.
-                if(checkboxVGAIPBIN.Checked == true)
-                {
-                    // Execute process to patch IP.BIN per user's selection.
-                    System.Diagnostics.Process processPatchIPBIN_VGA = new System.Diagnostics.Process();
-                    System.Diagnostics.ProcessStartInfo startInfoPatchIPBIN_VGA = new System.Diagnostics.ProcessStartInfo();
-                    startInfoPatchIPBIN_VGA.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                    startInfoPatchIPBIN_VGA.FileName = appBaseFolder + "\\tools\\ip_patch_with_vga.exe";
-                    startInfoPatchIPBIN_VGA.Arguments = "JUE \"" + appTempFolder + "_patch\\bootsector\\IP.BIN\"";
-                    startInfoPatchIPBIN_VGA.UseShellExecute = false;
-                    startInfoPatchIPBIN_VGA.CreateNoWindow = true;
-                    processPatchIPBIN_VGA.StartInfo = startInfoPatchIPBIN_VGA;
-                    processPatchIPBIN_VGA.Start();
-
-                    // Wait for process to exit, checking every half a second.
-                    while(!processPatchIPBIN_VGA.HasExited)
-                    {
-                        wait(500);
-                    }
-
-                    // Close process.
-                    processPatchIPBIN_VGA.Close();
-                }
-
-                // Patch name.
-                if(checkboxCustomNameIPBIN.Checked == true)
-                {
-                    // Execute process to patch IP.BIN per user's selection.
-                    System.Diagnostics.Process processPatchIPBIN_NAME = new System.Diagnostics.Process();
-                    System.Diagnostics.ProcessStartInfo startInfoPatchIPBIN_NAME = new System.Diagnostics.ProcessStartInfo();
-                    startInfoPatchIPBIN_NAME.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                    startInfoPatchIPBIN_NAME.FileName = appBaseFolder + "\\tools\\ip_patch_with_name.exe";
-                    startInfoPatchIPBIN_NAME.Arguments = "JUE \"" + appTempFolder + "_patch\\bootsector\\IP.BIN\" \"" + textboxGameNameIPBIN.Text + "\"";
-                    startInfoPatchIPBIN_NAME.UseShellExecute = false;
-                    startInfoPatchIPBIN_NAME.CreateNoWindow = true;
-                    processPatchIPBIN_NAME.StartInfo = startInfoPatchIPBIN_NAME;
-                    processPatchIPBIN_NAME.Start();
-
-                    // Wait for process to exit, checking every half a second.
-                    while(!processPatchIPBIN_NAME.HasExited)
-                    {
-                        wait(500);
-                    }
-
-                    // Close process.
-                    processPatchIPBIN_NAME.Close();
-                }                    
             }
 
             // Sleep for half a second.
@@ -1142,6 +1104,15 @@ namespace UDP_Patcher
                     WalkDirectoryTree(dirInfo);
                 }
             }
+        }
+
+        // Return byte array of a hex string.
+        public static byte[] StringToByteArray(string hex)
+        {
+            return Enumerable.Range(0, hex.Length)
+                             .Where(x => x % 2 == 0)
+                             .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
+                             .ToArray();
         }
 
         private void CheckboxUsePatchedIPBIN_CheckedChanged(object sender, EventArgs e)

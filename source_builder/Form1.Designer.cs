@@ -115,7 +115,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(424, 24);
             this.label2.TabIndex = 15;
-            this.label2.Text = "v1.4 - Derek Pascarella (ateam)";
+            this.label2.Text = "v1.5 - Derek Pascarella (ateam)";
             this.label2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // buttonSelectUnpatchedGDI
@@ -126,7 +126,7 @@
             this.buttonSelectUnpatchedGDI.Name = "buttonSelectUnpatchedGDI";
             this.buttonSelectUnpatchedGDI.Size = new System.Drawing.Size(192, 40);
             this.buttonSelectUnpatchedGDI.TabIndex = 17;
-            this.buttonSelectUnpatchedGDI.Text = "Select Unpatched GDI";
+            this.buttonSelectUnpatchedGDI.Text = "Select Original GDI";
             this.buttonSelectUnpatchedGDI.UseVisualStyleBackColor = true;
             this.buttonSelectUnpatchedGDI.Click += new System.EventHandler(this.ButtonSelectUnpatchedGDI_Click);
             // 
@@ -187,7 +187,7 @@
             this.buttonSelectPatchedGDI.Name = "buttonSelectPatchedGDI";
             this.buttonSelectPatchedGDI.Size = new System.Drawing.Size(192, 40);
             this.buttonSelectPatchedGDI.TabIndex = 21;
-            this.buttonSelectPatchedGDI.Text = "Select Patched GDI";
+            this.buttonSelectPatchedGDI.Text = "Select Modified GDI";
             this.buttonSelectPatchedGDI.UseVisualStyleBackColor = true;
             this.buttonSelectPatchedGDI.Click += new System.EventHandler(this.ButtonSelectPatchedGDI_Click);
             // 
@@ -392,10 +392,10 @@
             this.dropdownPatchedIPBINSource.Items.AddRange(new object[] {
             "patched GDI as source",
             "unpatched GDI as source"});
-            this.dropdownPatchedIPBINSource.Location = new System.Drawing.Point(248, 32);
+            this.dropdownPatchedIPBINSource.Location = new System.Drawing.Point(208, 32);
             this.dropdownPatchedIPBINSource.MaxDropDownItems = 2;
             this.dropdownPatchedIPBINSource.Name = "dropdownPatchedIPBINSource";
-            this.dropdownPatchedIPBINSource.Size = new System.Drawing.Size(160, 28);
+            this.dropdownPatchedIPBINSource.Size = new System.Drawing.Size(200, 28);
             this.dropdownPatchedIPBINSource.TabIndex = 29;
             // 
             // checkboxAdditionalPatchingIPBIN
@@ -415,9 +415,9 @@
             this.checkboxUsePatchedIPBIN.AutoSize = true;
             this.checkboxUsePatchedIPBIN.Location = new System.Drawing.Point(16, 32);
             this.checkboxUsePatchedIPBIN.Name = "checkboxUsePatchedIPBIN";
-            this.checkboxUsePatchedIPBIN.Size = new System.Drawing.Size(228, 24);
+            this.checkboxUsePatchedIPBIN.Size = new System.Drawing.Size(195, 24);
             this.checkboxUsePatchedIPBIN.TabIndex = 29;
-            this.checkboxUsePatchedIPBIN.Text = "Include custom IP.BIN using";
+            this.checkboxUsePatchedIPBIN.Text = "Customize IP.BIN using";
             this.checkboxUsePatchedIPBIN.UseVisualStyleBackColor = true;
             this.checkboxUsePatchedIPBIN.CheckedChanged += new System.EventHandler(this.CheckboxUsePatchedIPBIN_CheckedChanged);
             // 
@@ -440,7 +440,7 @@
             this.Controls.Add(this.patchBuildProgressDetails);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "Universal Dreamcast Patch Builder (v1.4)";
+            this.Text = "Universal Dreamcast Patch Builder (v1.5)";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
