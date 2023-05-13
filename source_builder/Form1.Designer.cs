@@ -390,8 +390,8 @@
             this.dropdownPatchedIPBINSource.FormattingEnabled = true;
             this.dropdownPatchedIPBINSource.ItemHeight = 20;
             this.dropdownPatchedIPBINSource.Items.AddRange(new object[] {
-            "patched GDI as source",
-            "unpatched GDI as source"});
+            "modified GDI as source",
+            "original GDI as source"});
             this.dropdownPatchedIPBINSource.Location = new System.Drawing.Point(208, 32);
             this.dropdownPatchedIPBINSource.MaxDropDownItems = 2;
             this.dropdownPatchedIPBINSource.Name = "dropdownPatchedIPBINSource";
