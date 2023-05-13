@@ -5,7 +5,7 @@ Universal Dreamcast Patcher is designed to accept any disc image as its source, 
 
 As of version 1.3, Universal Dreamcast Patcher now ships bundled with its own dedicated patch-building utility. This utility, Universal Dreamcast Patch Builder, produces a DCP patch file based on changes between two disc images (modified and original).
 
-Under the hood, this application utilizes [gditools](https://sourceforge.net/projects/dcisotools/), [buildgdi](https://projects.sappharad.com/tools/gdibuilder.html), [bin2iso](http://jj1odm.qp.land.to/#dcpprip), [xdelta](http://xdelta.org/), extract, a version of [RedumpCUE2GDI](https://github.com/AwfulBear/RedumpCUE2GDI) modified by me, and my own [Dreamcast IP.BIN Patcher](https://github.com/DerekPascarella/Dreamcast-IP.BIN-Patcher) utility.
+Under the hood, this application utilizes [gditools](https://sourceforge.net/projects/dcisotools/), [buildgdi](https://projects.sappharad.com/tools/gdibuilder.html), [bin2iso](http://jj1odm.qp.land.to/#dcpprip), [xdelta](http://xdelta.org/), extract, and a version of [RedumpCUE2GDI](https://github.com/AwfulBear/RedumpCUE2GDI) modified by me.
 
 ## Table of Contents
 1. [Latest Version](https://github.com/DerekPascarella/UniversalDreamcastPatcher#latest-version)
@@ -19,9 +19,12 @@ Under the hood, this application utilizes [gditools](https://sourceforge.net/pro
    - [Manual Method](https://github.com/DerekPascarella/UniversalDreamcastPatcher#manual-method)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [1.4](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/1.4/Universal.Dreamcast.Patcher.v1.4.zip).
+The latest version of Universal Dreamcast Patcher is [1.5](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/1.5/Universal.Dreamcast.Patcher.v1.5.zip).
 
 ## Changelog
+* Version 1.5 (2023-05-13)
+  * Eliminated IP.BIN-patching helper utilities in patch-building utility, with code now directly implemented.
+  * Recompiled buildgdi helper utility with the goal of reducing or eliminating false-positive malware identification by various anti-virus applications.
 * Version 1.4 (2022-11-24)
   * If patch utilizes xdelta, the current filename being patched is now displayed in the progress status message, avoiding the appearance of failure when processing large quantity of files.
 * Version 1.3 (2022-05-06)
@@ -101,7 +104,7 @@ Details on the current step of the patching process will be updated as they prog
 The DCP patch format was designed specifically for Universal Dreamcast Patcher.  Presently, there is both an automatic and a manual method one can use to build a patch.
 
 ### Automatic Method
-<img width="225" align="right" src="https://raw.githubusercontent.com/DerekPascarella/UniversalDreamcastPatcher/main/screenshots/screenshot_builder.png">Use this method when:
+<img width="220" align="right" src="https://raw.githubusercontent.com/DerekPascarella/UniversalDreamcastPatcher/main/screenshots/screenshot_builder.png">Use this method when:
 * You do not wish to distribute whole files containing copyrighted content.
 * Your aim is to keep patch files as small as possible.
 * You want all the work done for you!
@@ -114,7 +117,7 @@ Furthermore, Universal Dreamcast Patch Builder includes options to apply additio
 
 The steps for automatically creating a patch are as follows.
 
-1. In the "Step 1" box, select the original, unmodified disc image as "Unpatched GDI".  Then, select the modified disc image as "Patched GDI".
+1. In the "Step 1" box, select the original, unmodified disc image as "Original GDI".  Then, select the modified disc image as "Modified GDI".
 2. In the "Step 2" box, supply a filename for the DCP patch.  Note that the base filename of the DCP will be used when the patching application generates the patched GDI (e.g. a patch file named "My Game (v1.0).dcp" will result in a patched GDI folder named "My Game (v1.0) [GDI]").
 3. In the "Step 3" box, select whether a custom IP.BIN file should be used when building the patch.  In many cases, patch developers won't bother with this step, but there are several advantages in enabling these options:
    * **Region-Free** - Patched disc image (output) can be booted on any ODE or emulator, regardless of region setting, and without enabling region-free options within the ODE or emulator itself.
