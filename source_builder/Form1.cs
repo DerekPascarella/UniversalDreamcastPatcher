@@ -168,7 +168,7 @@ namespace UDP_Patcher
             // If user selected to use custom IP.BIN from unpatched GDI with no additional options, show warning.
             if(checkboxUsePatchedIPBIN.Checked == true && dropdownPatchedIPBINSource.SelectedIndex == 1 && checkboxRegionFreeIPBIN.Checked == false && checkboxVGAIPBIN.Checked == false && checkboxCustomNameIPBIN.Checked == false)
             {
-                DialogResult confirmIPBINPatch = MessageBox.Show("You have selected to use a custom IP.BIN using the unpatched GDI as source.  However, you haven't selected any other patching options for the IP.BIN file.\n\nAs a result, no custom IP.BIN will be included in this patch, as it would introduce no changes to that of the original retail GDI.\n\nDo you want to proceed with your current settings?", "Universal Dreamcast Patch Builder", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                DialogResult confirmIPBINPatch = MessageBox.Show("You have selected to use a custom IP.BIN using the original GDI as source.  However, you haven't selected any other patching options for the IP.BIN file.\n\nAs a result, no custom IP.BIN will be included in this patch, as it would introduce no changes to that of the original retail GDI.\n\nDo you want to proceed with your current settings?", "Universal Dreamcast Patch Builder", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 // User does not want to proceed as is.
                 if(confirmIPBINPatch == DialogResult.No)
@@ -190,7 +190,7 @@ namespace UDP_Patcher
             }
             
             // Prompt for confirmation to proceed with patching.
-            DialogResult confirmPatch = MessageBox.Show("This process wil not modify the selected unpatched GDI nor the selected patched GDI in any way.  Both GDIs will be scanned to automatically build a DCP patch file containing deltas for modified files, as well as the full version of any brand-new files detected.\n\nThe final patch file will be generated in this application's working directory with the following filename:\n\n" + patchFilename + "\n\n" + "Are you ready to proceed?", "Universal Dreamcast Patch Builder", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult confirmPatch = MessageBox.Show("This process wil not modify the selected original GDI nor the selected modified GDI in any way.  Both GDIs will be scanned to automatically build a DCP patch file containing deltas for modified files, as well as the full version of any brand-new files detected.\n\nThe final patch file will be generated in this application's working directory with the following filename:\n\n" + patchFilename + "\n\n" + "Are you ready to proceed?", "Universal Dreamcast Patch Builder", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             // Confirm user wants to proceed.
             if(confirmPatch == DialogResult.No)
@@ -314,7 +314,7 @@ namespace UDP_Patcher
             patchBuildProgressPercentage.Text = patchBuildProgressBar.Value + "%";
 
             // Update patching progress details.
-            patchBuildProgressDetails.Text = "Verifying integrity of unpatched GDI...";
+            patchBuildProgressDetails.Text = "Verifying integrity of original GDI...";
 
             // Sleep for half a second.
             wait(500);
@@ -358,7 +358,7 @@ namespace UDP_Patcher
             if(!compatibleUnpatchedGDI)
             {
                 // Display error message.
-                MessageBox.Show("The selected unpatched GDI is either malformed or incompatible.", "Universal Dreamcast Patch Builder", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("The selected original GDI is either malformed or incompatible.", "Universal Dreamcast Patch Builder", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 // Hide progress bar and reset it.
                 patchBuildProgressBar.Value = 0;
@@ -420,7 +420,7 @@ namespace UDP_Patcher
             patchBuildProgressPercentage.Text = patchBuildProgressBar.Value + "%";
 
             // Update patching progress details.
-            patchBuildProgressDetails.Text = "Verifying integrity of patched GDI...";
+            patchBuildProgressDetails.Text = "Verifying integrity of modified GDI...";
 
             // Sleep for half a second.
             wait(500);
@@ -464,7 +464,7 @@ namespace UDP_Patcher
             if(!compatiblePatchedGDI)
             {
                 // Display error message.
-                MessageBox.Show("The selected patched GDI is either malformed or incompatible.", "Universal Dreamcast Patch Builder", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("The selected modified GDI is either malformed or incompatible.", "Universal Dreamcast Patch Builder", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 // Hide progress bar and reset it.
                 patchBuildProgressBar.Value = 0;
@@ -511,7 +511,7 @@ namespace UDP_Patcher
                 string trackFilenameUnpatched = trackInfoUnpatched[4];
 
                 // Update patching progress details.
-                patchBuildProgressDetails.Text = "Copying " + trackFilenameUnpatched.ToLower() + " from unpatched GDI...";
+                patchBuildProgressDetails.Text = "Copying " + trackFilenameUnpatched.ToLower() + " from original GDI...";
 
                 // Sleep for 1 second.
                 wait(1000);
@@ -551,7 +551,7 @@ namespace UDP_Patcher
                 string trackFilenamePatched = trackInfoPatched[4];
 
                 // Update patching progress details.
-                patchBuildProgressDetails.Text = "Copying " + trackFilenamePatched.ToLower() + " from patched GDI...";
+                patchBuildProgressDetails.Text = "Copying " + trackFilenamePatched.ToLower() + " from modified GDI...";
 
                 // Sleep for 1 second.
                 wait(1000);
@@ -578,7 +578,7 @@ namespace UDP_Patcher
             wait(500);
 
             // Update patching progress details.
-            patchBuildProgressDetails.Text = "Extracting unpatched GDI...";
+            patchBuildProgressDetails.Text = "Extracting original GDI...";
 
             // Update progress bar.
             patchBuildProgressBar.Value += 6;
@@ -690,7 +690,7 @@ namespace UDP_Patcher
             wait(500);
 
             // Update patching progress details.
-            patchBuildProgressDetails.Text = "Extracting patched GDI...";
+            patchBuildProgressDetails.Text = "Extracting modified GDI...";
 
             // Update progress bar.
             patchBuildProgressBar.Value += 6;
