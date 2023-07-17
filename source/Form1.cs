@@ -246,6 +246,38 @@ namespace UniversalDreamcastPatcher
                             // Update value of "gdiFile" to point to the newly converted GDI.
                             gdiFile = appTempFolder + "\\disc.gdi";
 
+                            // For fixing broken track filenames, store each line of the source GDI file into an element of "gdiArrayFix".
+                            string[] gdiArrayFix = File.ReadAllLines(gdiFile);
+
+                            // Iterate through each track of the GDI to fix potentially broken filenames.
+                            for(int i = 1; i < gdiArrayFix.Length; i ++)
+                            {
+                                // Extract filename and extension.
+                                var trackInfoFix = gdiArrayFix[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                                string trackFilenameFix = trackInfoFix[4];
+                                string trackFileExtensionFix = Path.GetExtension(trackFilenameFix).ToLower();
+                                string trackNumberFix = trackFilenameFix.Replace("track", "");
+                                trackNumberFix = trackNumberFix.Replace(trackFileExtensionFix, "");
+
+                                // Track number length is erroneously greater than three digits.
+                                if(trackNumberFix.Length > 2)
+                                {
+                                    // Remove first digit from track number.
+                                    trackNumberFix = trackNumberFix.Substring(1);
+
+                                    // Store fixed track filename.
+                                    string newTrackFilenameFix = "track" + trackNumberFix + trackFileExtensionFix;
+
+                                    // Rename track file.
+                                    File.Move(appTempFolder + "\\" + trackFilenameFix, appTempFolder + "\\" + newTrackFilenameFix);
+
+                                    // Replace reference to filename in GDI.
+                                    string gdiContents = File.ReadAllText(gdiFile);
+                                    gdiContents = gdiContents.Replace(trackFilenameFix, newTrackFilenameFix);
+                                    File.WriteAllText(gdiFile, gdiContents);
+                                }
+                            }
+
                             // Update value of "gdiBaseFolder" to point to the temporary location containing the newly converted GDI.
                             gdiBaseFolder = appTempFolder;
 
@@ -838,6 +870,7 @@ namespace UniversalDreamcastPatcher
                     startInfoBuild.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
                     startInfoBuild.FileName = appBaseFolder + "tools\\buildgdi.exe";
                     startInfoBuild.Arguments = command_BUILD;
+                    startInfoBuild.RedirectStandardError = true;
                     startInfoBuild.UseShellExecute = false;
                     startInfoBuild.CreateNoWindow = true;
                     processBuild.StartInfo = startInfoBuild;
@@ -849,60 +882,104 @@ namespace UniversalDreamcastPatcher
                         wait(500);
                     }
 
+                    // Store error output of "buildgdi.exe".
+                    var gdiBuildErrorOutput = processBuild.StandardError.ReadToEnd();
+
                     // Close process.
                     processBuild.Close();
 
-                    // Remove temporary extracted GDI folder and all of its contents.
-                    Directory.Delete(appTempFolder + "_extracted", true);
-
-                    // Remove temporary extracted patch folder and all of its contents.
-                    Directory.Delete(appTempFolder + "_patch", true);
-
-                    // Remove temporary IP.BIN folder and all of its contents.
-                    Directory.Delete(appTempFolder + "_bootsector", true);
-
-                    // Remove patched GDI folder and all of its contents if it already exists.
-                    if(Directory.Exists(appBaseFolder + "\\" + patchFilename + " [GDI]"))
+                    // If error output isn't empty, show message, clean-up files, and reset UI.
+                    if(!String.IsNullOrEmpty(gdiBuildErrorOutput))
                     {
-                        Directory.Delete(appBaseFolder + "\\" + patchFilename + " [GDI]", true);
+                        // Display error message.
+                        MessageBox.Show("An unknown error occurred when attempting to build patched GDI.\n\nTry again with a different source disc image.", "Universal Dreamcast Patcher", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                        // Hide progress bar and reset it.
+                        patchingProgressBar.Value = 0;
+                        patchingProgressBar.Visible = false;
+                        patchingProgressDetails.Visible = false;
+                        patchingProgressPercentage.Visible = false;
+
+                        // Show previously hidden buttons.
+                        buttonSelectGDI.Visible = true;
+                        buttonApplyPatch.Visible = true;
+                        buttonQuit.Visible = true;
+
+                        // Change enabled/disabled status of buttons.
+                        buttonSelectGDI.Enabled = true;
+                        buttonApplyPatch.Enabled = false;
+                        buttonQuit.Enabled = true;
+
+                        // Return to normal logo.
+                        pictureBox1.Image = pictureBox3.Image;
+
+                        // Remove temporary GDI folder and all of its contents.
+                        Directory.Delete(appTempFolder, true);
+
+                        // Remove temporary extracted GDI folder and all of its contents.
+                        Directory.Delete(appTempFolder + "_extracted", true);
+
+                        // Remove temporary extracted patch folder and all of its contents.
+                        Directory.Delete(appTempFolder + "_patch", true);
+
+                        // Stop function's execution.
+                        return;
                     }
+                    else
+                    {
 
-                    // Rename temporary GDI folder based on the name of the patch.
-                    Directory.CreateDirectory(appBaseFolder + "\\" + patchFilename + " [GDI]");
-                    RecursiveCopy(appTempFolder, appBaseFolder + "\\" + patchFilename + " [GDI]");
-                    Directory.Delete(appTempFolder, true);
+                        // Remove temporary extracted GDI folder and all of its contents.
+                        Directory.Delete(appTempFolder + "_extracted", true);
 
-                    // Update patching progress details.
-                    patchingProgressDetails.Text = "Done!";
+                        // Remove temporary extracted patch folder and all of its contents.
+                        Directory.Delete(appTempFolder + "_patch", true);
 
-                    // Complete progress bar.
-                    patchingProgressBar.Value = 100;
-                    patchingProgressPercentage.Text = patchingProgressBar.Value + "%";
+                        // Remove temporary IP.BIN folder and all of its contents.
+                        Directory.Delete(appTempFolder + "_bootsector", true);
 
-                    // Sleep for 1 second.
-                    wait(1000);
+                        // Remove patched GDI folder and all of its contents if it already exists.
+                        if(Directory.Exists(appBaseFolder + "\\" + patchFilename + " [GDI]"))
+                        {
+                            Directory.Delete(appBaseFolder + "\\" + patchFilename + " [GDI]", true);
+                        }
 
-                    // Display final success message.
-                    MessageBox.Show("Congratulations, the patch was successfully applied!\n\nThe new GDI is in this application's directory within the following folder:\n\n" + patchFilename + " [GDI]\n\n" + "Have fun!", "Universal Dreamcast Patcher", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        // Rename temporary GDI folder based on the name of the patch.
+                        Directory.CreateDirectory(appBaseFolder + "\\" + patchFilename + " [GDI]");
+                        RecursiveCopy(appTempFolder, appBaseFolder + "\\" + patchFilename + " [GDI]");
+                        Directory.Delete(appTempFolder, true);
 
-                    // Hide the progress bar and progress details.
-                    patchingProgressBar.Visible = false;
-                    patchingProgressDetails.Visible = false;
-                    patchingProgressPercentage.Visible = false;
+                        // Update patching progress details.
+                        patchingProgressDetails.Text = "Done!";
 
-                    // Remove wait cursor.
-                    Cursor.Current = Cursors.Default;
+                        // Complete progress bar.
+                        patchingProgressBar.Value = 100;
+                        patchingProgressPercentage.Text = patchingProgressBar.Value + "%";
 
-                    // Unide buttons.
-                    buttonSelectGDI.Visible = true;
-                    buttonApplyPatch.Visible = true;
-                    buttonQuit.Visible = true;
+                        // Sleep for 1 second.
+                        wait(1000);
 
-                    // Re-enable the "Quit" button.
-                    buttonQuit.Enabled = true;
+                        // Display final success message.
+                        MessageBox.Show("Congratulations, the patch was successfully applied!\n\nThe new GDI is in this application's directory within the following folder:\n\n" + patchFilename + " [GDI]\n\n" + "Have fun!", "Universal Dreamcast Patcher", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    // Return to normal logo.
-                    pictureBox1.Image = pictureBox3.Image;
+                        // Hide the progress bar and progress details.
+                        patchingProgressBar.Visible = false;
+                        patchingProgressDetails.Visible = false;
+                        patchingProgressPercentage.Visible = false;
+
+                        // Remove wait cursor.
+                        Cursor.Current = Cursors.Default;
+
+                        // Unide buttons.
+                        buttonSelectGDI.Visible = true;
+                        buttonApplyPatch.Visible = true;
+                        buttonQuit.Visible = true;
+
+                        // Re-enable the "Quit" button.
+                        buttonQuit.Enabled = true;
+
+                        // Return to normal logo.
+                        pictureBox1.Image = pictureBox3.Image;
+                    }
                 }
             }
             // User selected "No".
