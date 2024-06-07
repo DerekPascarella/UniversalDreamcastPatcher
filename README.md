@@ -112,7 +112,7 @@ The DCP patch format was designed specifically for Universal Dreamcast Patcher. 
 * Your aim is to keep patch files as small as possible.
 * You want all the work done for you!
 
-As of version 1.3, Universal Dreamcast Patcher now ships bundled with its own dedicated patch-building utility.  This utility, Universal Dreamcast Patch Builder, produces a DCP patch file based on changes between two disc images (unpatched and patched).
+As of version 1.3, Universal Dreamcast Patcher now ships bundled with its own dedicated patch-building utility.  This utility, Universal Dreamcast Patch Builder, produces a DCP patch file based on changes between two disc images (original and modified).
 
 For example, a translation patch developer would supply the original retail disc image along with their modified one.  Universal Dreamcast Patch Builder would analyze the two for changes and then automatically generate the DCP patch file.
 
