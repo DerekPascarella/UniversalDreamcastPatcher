@@ -346,7 +346,7 @@ namespace UDP_Patcher
                     string trackFileExtensionSanityCheckUnpatchedGDI = Path.GetExtension(trackFilenameSanityCheckUnpatchedGDI).ToLower();
 
                     // GDI track file either doesn't exist or has the wrong file extension.
-                    if(!File.Exists(gdiBaseFolderUnpatched + "\\" + trackFilenameSanityCheckUnpatchedGDI) || (trackFileExtensionSanityCheckUnpatchedGDI != ".bin" && trackFileExtensionSanityCheckUnpatchedGDI != ".raw"))
+                    if(!File.Exists(gdiBaseFolderUnpatched + "\\" + trackFilenameSanityCheckUnpatchedGDI) || (trackFileExtensionSanityCheckUnpatchedGDI != ".bin" && trackFileExtensionSanityCheckUnpatchedGDI != ".iso" && trackFileExtensionSanityCheckUnpatchedGDI != ".raw"))
                     {
                         // Set flag to "false".
                         compatibleUnpatchedGDI = false;
@@ -452,7 +452,7 @@ namespace UDP_Patcher
                     string trackFileExtensionSanityCheckPatchedGDI = Path.GetExtension(trackFilenameSanityCheckPatchedGDI).ToLower();
 
                     // GDI track file either doesn't exist or has the wrong file extension.
-                    if(!File.Exists(gdiBaseFolderPatched + "\\" + trackFilenameSanityCheckPatchedGDI) || (trackFileExtensionSanityCheckPatchedGDI != ".bin" && trackFileExtensionSanityCheckPatchedGDI != ".raw"))
+                    if(!File.Exists(gdiBaseFolderPatched + "\\" + trackFilenameSanityCheckPatchedGDI) || (trackFileExtensionSanityCheckPatchedGDI != ".bin" && trackFileExtensionSanityCheckPatchedGDI != ".iso" && trackFileExtensionSanityCheckPatchedGDI != ".raw"))
                     {
                         // Set flag to "false".
                         compatiblePatchedGDI = false;
@@ -596,7 +596,7 @@ namespace UDP_Patcher
             // Create counter for number of data tracks found in the GDI.
             int extractionDataTrackCountUnpatched = 0;
 
-            // Iterate through each track of the GDI to convert data tracks to ".iso" in the temporary extraction folder.
+            // Iterate through each track of the GDI, converting ".bin" data tracks to ".iso" in the temporary extraction folder.
             for(int i = 1; i < gdiArrayUnpatched.Length; i ++)
             {
                 // Extract filename and extension.
@@ -626,6 +626,16 @@ namespace UDP_Patcher
 
                     // Close process.
                     processBIN2ISOUnpatched.Close();
+                }
+
+                // Append data track files to list for extraction.
+                if((trackFileExtensionExtractionUnpatched == ".iso" || trackFileExtensionExtractionUnpatched == ".bin") && trackFilenameExtractionUnpatched.ToLower() != "track01.bin" && trackFilenameExtractionUnpatched.ToLower() != "track01.iso")
+                {
+                    // Rename ".iso" file that was not renamed automatically during conversion from ".bin".
+                    if(trackFileExtensionExtractionUnpatched == ".iso")
+                    {
+                        File.Move(appTempFolder + "_gdi_unpatched\\" + trackFilenameExtractionUnpatched, appTempFolder + "_extracted_unpatched\\UDP_" + trackFilenameExtractionUnpatched.ToLower());
+                    }
 
                     // Append filename to "isoExtractionList".
                     isoExtractionListUnpatched += " UDP_" + trackFilenameExtractionUnpatched.ToLower().Replace(".bin", ".iso");
@@ -671,8 +681,9 @@ namespace UDP_Patcher
             // Delete "extract.exe" from temporary extraction folder.
             File.Delete(appTempFolder + "_extracted_unpatched\\extract.exe");
 
-            // Delete all converted ".iso" files from the temporary extraction folder.
+            // Delete all data track files from the temporary extraction folder.
             Directory.GetFiles(appTempFolder + "_extracted_unpatched\\", "UDP_*.iso", SearchOption.TopDirectoryOnly).ToList().ForEach(File.Delete);
+            Directory.GetFiles(appTempFolder + "_extracted_unpatched\\", "UDP_*.bin", SearchOption.TopDirectoryOnly).ToList().ForEach(File.Delete);
 
             // User has selected to use unpatched GDI's IP.BIN for patch file, so move it to patch folder.
             if(checkboxUsePatchedIPBIN.Checked == true && dropdownPatchedIPBINSource.SelectedIndex == 1)
@@ -708,7 +719,7 @@ namespace UDP_Patcher
             // Create counter for number of data tracks found in the GDI.
             int extractionDataTrackCountPatched = 0;
 
-            // Iterate through each track of the GDI to convert data tracks to ".iso" in the temporary extraction folder.
+            // Iterate through each track of the GDI, converting ".bin" data tracks to ".iso" in the temporary extraction folder.
             for(int i = 1; i < gdiArrayPatched.Length; i ++)
             {
                 // Extract filename and extension.
@@ -738,6 +749,16 @@ namespace UDP_Patcher
 
                     // Close process.
                     processBIN2ISOPatched.Close();
+                }
+
+                // Append data track files to list for extraction.
+                if((trackFileExtensionExtractionPatched == ".iso" || trackFileExtensionExtractionPatched == ".bin") && trackFilenameExtractionPatched.ToLower() != "track01.bin" && trackFilenameExtractionPatched.ToLower() != "track01.iso")
+                {
+                    // Rename ".iso" file that was not renamed automatically during conversion from ".bin".
+                    if(trackFileExtensionExtractionPatched == ".iso")
+                    {
+                        File.Move(appTempFolder + "_gdi_patched\\" + trackFilenameExtractionPatched, appTempFolder + "_extracted_patched\\UDP_" + trackFilenameExtractionPatched.ToLower());
+                    }
 
                     // Append filename to "isoExtractionList".
                     isoExtractionListPatched += " UDP_" + trackFilenameExtractionPatched.ToLower().Replace(".bin", ".iso");
@@ -746,7 +767,7 @@ namespace UDP_Patcher
                     extractionLastDataTrackLBPPatched = trackInfoExtractionPatched[1].ToString();
 
                     // Increase data track counter by 1.
-                    extractionDataTrackCountPatched ++;
+                    extractionDataTrackCountPatched++;
                 }
             }
 
@@ -783,8 +804,9 @@ namespace UDP_Patcher
             // Delete "extract.exe" from temporary extraction folder.
             File.Delete(appTempFolder + "_extracted_patched\\extract.exe");
 
-            // Delete all converted ".iso" files from the temporary extraction folder.
+            // Delete all data track files from the temporary extraction folder.
             Directory.GetFiles(appTempFolder + "_extracted_patched\\", "UDP_*.iso", SearchOption.TopDirectoryOnly).ToList().ForEach(File.Delete);
+            Directory.GetFiles(appTempFolder + "_extracted_patched\\", "UDP_*.bin", SearchOption.TopDirectoryOnly).ToList().ForEach(File.Delete);
 
             // User has selected to use unpatched GDI's IP.BIN for patch file, so move it to patch folder.
             if(checkboxUsePatchedIPBIN.Checked == true && dropdownPatchedIPBINSource.SelectedIndex == 0)

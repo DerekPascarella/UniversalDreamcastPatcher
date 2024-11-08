@@ -115,7 +115,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(424, 24);
             this.label2.TabIndex = 15;
-            this.label2.Text = "v1.6 - Derek Pascarella (ateam)";
+            this.label2.Text = "v1.7 - Derek Pascarella (ateam)";
             this.label2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // buttonSelectUnpatchedGDI
@@ -440,7 +440,7 @@
             this.Controls.Add(this.patchBuildProgressDetails);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "Universal Dreamcast Patch Builder (v1.6)";
+            this.Text = "Universal Dreamcast Patch Builder (v1.7)";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
