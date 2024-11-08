@@ -111,7 +111,7 @@ namespace UDP_Patcher
             textboxGameNameIPBIN.Text = Regex.Replace(textboxGameNameIPBIN.Text, @"^\s+|\s+$|\s+(?=\s)", "");
 
             // Patch filename is empty, do not proceed.
-            if(textboxPatchFilename.Text.Length < 1)
+            if (textboxPatchFilename.Text.Length < 1)
             {
                 MessageBox.Show("The patch filename cannot be empty!", "Universal Dreamcast Patch Builder", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
@@ -125,7 +125,7 @@ namespace UDP_Patcher
                 return;
             }
             // Custom game name has been enabled but is empty, do not proceed.
-            else if(textboxGameNameIPBIN.Text.Length < 1 && checkboxCustomNameIPBIN.Checked == true)
+            else if (textboxGameNameIPBIN.Text.Length < 1 && checkboxCustomNameIPBIN.Checked == true)
             {
                 MessageBox.Show("The custom game name for IP.BIN cannot be empty!", "Universal Dreamcast Patch Builder", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
@@ -140,7 +140,7 @@ namespace UDP_Patcher
             }
 
             // Remove file extension from patch filename if it was erroneously entered.
-            if(textboxPatchFilename.Text.ToLower().EndsWith(".dcp"))
+            if (textboxPatchFilename.Text.ToLower().EndsWith(".dcp"))
             {
                 patchFilename = Path.GetFileNameWithoutExtension(textboxPatchFilename.Text) + ".dcp";
                 textboxPatchFilename.Text = Path.GetFileNameWithoutExtension(textboxPatchFilename.Text);
@@ -151,7 +151,7 @@ namespace UDP_Patcher
             }
 
             // Patch filename contains invalid characters, do not proceed.
-            if(!IsValidFilename(patchFilename))
+            if (!IsValidFilename(patchFilename))
             {
                 MessageBox.Show("The filename \"" + patchFilename + "\" contains invalid characters!  Please enter a new one.", "Universal Dreamcast Patch Builder", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
@@ -166,12 +166,12 @@ namespace UDP_Patcher
             }
 
             // If user selected to use custom IP.BIN from unpatched GDI with no additional options, show warning.
-            if(checkboxUsePatchedIPBIN.Checked == true && dropdownPatchedIPBINSource.SelectedIndex == 1 && checkboxRegionFreeIPBIN.Checked == false && checkboxVGAIPBIN.Checked == false && checkboxCustomNameIPBIN.Checked == false)
+            if (checkboxUsePatchedIPBIN.Checked == true && dropdownPatchedIPBINSource.SelectedIndex == 1 && checkboxRegionFreeIPBIN.Checked == false && checkboxVGAIPBIN.Checked == false && checkboxCustomNameIPBIN.Checked == false)
             {
                 DialogResult confirmIPBINPatch = MessageBox.Show("You have selected to use a custom IP.BIN using the original GDI as source.  However, you haven't selected any other patching options for the IP.BIN file.\n\nAs a result, no custom IP.BIN will be included in this patch, as it would introduce no changes to that of the original retail GDI.\n\nDo you want to proceed with your current settings?", "Universal Dreamcast Patch Builder", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 // User does not want to proceed as is.
-                if(confirmIPBINPatch == DialogResult.No)
+                if (confirmIPBINPatch == DialogResult.No)
                 {
                     // Re-enable buttons, textboxes, and groups.
                     groupboxStep1.Enabled = true;
@@ -188,12 +188,12 @@ namespace UDP_Patcher
                     checkboxUsePatchedIPBIN.Checked = false;
                 }
             }
-            
+
             // Prompt for confirmation to proceed with patching.
             DialogResult confirmPatch = MessageBox.Show("This process wil not modify the selected original GDI nor the selected modified GDI in any way.  Both GDIs will be scanned to automatically build a DCP patch file containing deltas for modified files, as well as the full version of any brand-new files detected.\n\nThe final patch file will be generated in this application's working directory with the following filename:\n\n" + patchFilename + "\n\n" + "Are you ready to proceed?", "Universal Dreamcast Patch Builder", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             // Confirm user wants to proceed.
-            if(confirmPatch == DialogResult.No)
+            if (confirmPatch == DialogResult.No)
             {
                 // Re-enable buttons, textboxes, and groups.
                 buttonQuit.Enabled = true;
@@ -327,7 +327,7 @@ namespace UDP_Patcher
             wait(500);
 
             // If standard error of "gditools.exe" isn't empty, consider the unpatched GDI incompatible.
-            if(!String.IsNullOrEmpty(gdiValidateUnpatchedGDIErrorOutput))
+            if (!String.IsNullOrEmpty(gdiValidateUnpatchedGDIErrorOutput))
             {
                 compatibleUnpatchedGDI = false;
             }
@@ -338,7 +338,7 @@ namespace UDP_Patcher
                 gdiBaseFolderUnpatched = Path.GetDirectoryName(gdiFileUnpatched);
 
                 // Iterate through each track in the GDI for validation.
-                for(int i = 1; i < gdiArrayUnpatched.Length; i ++)
+                for (int i = 1; i < gdiArrayUnpatched.Length; i++)
                 {
                     // Extract filename.
                     var trackInfoSanityCheckUnpatchedGDI = gdiArrayUnpatched[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
@@ -346,7 +346,7 @@ namespace UDP_Patcher
                     string trackFileExtensionSanityCheckUnpatchedGDI = Path.GetExtension(trackFilenameSanityCheckUnpatchedGDI).ToLower();
 
                     // GDI track file either doesn't exist or has the wrong file extension.
-                    if(!File.Exists(gdiBaseFolderUnpatched + "\\" + trackFilenameSanityCheckUnpatchedGDI) || (trackFileExtensionSanityCheckUnpatchedGDI != ".bin" && trackFileExtensionSanityCheckUnpatchedGDI != ".iso" && trackFileExtensionSanityCheckUnpatchedGDI != ".raw"))
+                    if (!File.Exists(gdiBaseFolderUnpatched + "\\" + trackFilenameSanityCheckUnpatchedGDI) || (trackFileExtensionSanityCheckUnpatchedGDI != ".bin" && trackFileExtensionSanityCheckUnpatchedGDI != ".iso" && trackFileExtensionSanityCheckUnpatchedGDI != ".raw"))
                     {
                         // Set flag to "false".
                         compatibleUnpatchedGDI = false;
@@ -355,7 +355,7 @@ namespace UDP_Patcher
             }
 
             // If the unpatched GDI is malformed or incompatible, throw an error.
-            if(!compatibleUnpatchedGDI)
+            if (!compatibleUnpatchedGDI)
             {
                 // Display error message.
                 MessageBox.Show("The selected original GDI is either malformed or incompatible.", "Universal Dreamcast Patch Builder", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -433,7 +433,7 @@ namespace UDP_Patcher
             wait(500);
 
             // If standard error of "gditools.exe" isn't empty, consider the patched GDI incompatible.
-            if(!String.IsNullOrEmpty(gdiValidatePatchedGDIErrorOutput))
+            if (!String.IsNullOrEmpty(gdiValidatePatchedGDIErrorOutput))
             {
                 compatiblePatchedGDI = false;
             }
@@ -444,7 +444,7 @@ namespace UDP_Patcher
                 gdiBaseFolderPatched = Path.GetDirectoryName(gdiFilePatched);
 
                 // Iterate through each track in the GDI for validation.
-                for(int i = 1; i < gdiArrayPatched.Length; i ++)
+                for (int i = 1; i < gdiArrayPatched.Length; i++)
                 {
                     // Extract filename.
                     var trackInfoSanityCheckPatchedGDI = gdiArrayPatched[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
@@ -452,7 +452,7 @@ namespace UDP_Patcher
                     string trackFileExtensionSanityCheckPatchedGDI = Path.GetExtension(trackFilenameSanityCheckPatchedGDI).ToLower();
 
                     // GDI track file either doesn't exist or has the wrong file extension.
-                    if(!File.Exists(gdiBaseFolderPatched + "\\" + trackFilenameSanityCheckPatchedGDI) || (trackFileExtensionSanityCheckPatchedGDI != ".bin" && trackFileExtensionSanityCheckPatchedGDI != ".iso" && trackFileExtensionSanityCheckPatchedGDI != ".raw"))
+                    if (!File.Exists(gdiBaseFolderPatched + "\\" + trackFilenameSanityCheckPatchedGDI) || (trackFileExtensionSanityCheckPatchedGDI != ".bin" && trackFileExtensionSanityCheckPatchedGDI != ".iso" && trackFileExtensionSanityCheckPatchedGDI != ".raw"))
                     {
                         // Set flag to "false".
                         compatiblePatchedGDI = false;
@@ -461,7 +461,7 @@ namespace UDP_Patcher
             }
 
             // If the patched GDI is malformed or incompatible, throw an error.
-            if(!compatiblePatchedGDI)
+            if (!compatiblePatchedGDI)
             {
                 // Display error message.
                 MessageBox.Show("The selected modified GDI is either malformed or incompatible.", "Universal Dreamcast Patch Builder", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -504,7 +504,7 @@ namespace UDP_Patcher
             int gdiUnpatchedCopyProgress = 15 / (gdiArrayUnpatched.Length - 1);
 
             // Copy each track file to temporary folder.
-            for(int i = 1; i < gdiArrayUnpatched.Length; i ++)
+            for (int i = 1; i < gdiArrayUnpatched.Length; i++)
             {
                 // Extract filename.
                 var trackInfoUnpatched = gdiArrayUnpatched[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
@@ -520,7 +520,7 @@ namespace UDP_Patcher
                 File.Copy(gdiBaseFolderUnpatched + "\\" + trackFilenameUnpatched, appTempFolder + "_gdi_unpatched\\" + trackFilenameUnpatched.ToLower());
 
                 // If track count exceeds 30, add "1" to the progress bar for every other file.
-                if(i % 2 == 0 && gdiUnpatchedCopyProgress == 0)
+                if (i % 2 == 0 && gdiUnpatchedCopyProgress == 0)
                 {
                     patchBuildProgressBar.Value += 1;
                 }
@@ -544,7 +544,7 @@ namespace UDP_Patcher
             int gdiPatchedCopyProgress = 15 / (gdiArrayPatched.Length - 1);
 
             // Copy each track file to temporary folder.
-            for(int i = 1; i < gdiArrayPatched.Length; i ++)
+            for (int i = 1; i < gdiArrayPatched.Length; i++)
             {
                 // Extract filename.
                 var trackInfoPatched = gdiArrayPatched[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
@@ -560,9 +560,12 @@ namespace UDP_Patcher
                 File.Copy(gdiBaseFolderPatched + "\\" + trackFilenamePatched, appTempFolder + "_gdi_patched\\" + trackFilenamePatched.ToLower());
 
                 // If track count exceeds 30, add "1" to the progress bar for every other file.
-                if(i % 2 == 0 && gdiPatchedCopyProgress == 0)
+                if (i % 2 == 0 && gdiPatchedCopyProgress == 0)
                 {
-                    patchBuildProgressBar.Value += 1;
+                    if (patchBuildProgressBar.Value + 1 < 100)
+                    {
+                        patchBuildProgressBar.Value += 1;
+                    }
                 }
                 // Otherwise, add calculated interval to progress bar.
                 else
@@ -581,7 +584,11 @@ namespace UDP_Patcher
             patchBuildProgressDetails.Text = "Extracting original GDI...";
 
             // Update progress bar.
-            patchBuildProgressBar.Value += 6;
+            if (patchBuildProgressBar.Value + 6 < 100)
+            {
+                patchBuildProgressBar.Value += 6;
+            }
+
             patchBuildProgressPercentage.Text = patchBuildProgressBar.Value + "%";
 
             // Sleep for half a second.
@@ -597,7 +604,7 @@ namespace UDP_Patcher
             int extractionDataTrackCountUnpatched = 0;
 
             // Iterate through each track of the GDI, converting ".bin" data tracks to ".iso" in the temporary extraction folder.
-            for(int i = 1; i < gdiArrayUnpatched.Length; i ++)
+            for (int i = 1; i < gdiArrayUnpatched.Length; i++)
             {
                 // Extract filename and extension.
                 var trackInfoExtractionUnpatched = gdiArrayUnpatched[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
@@ -605,7 +612,7 @@ namespace UDP_Patcher
                 string trackFileExtensionExtractionUnpatched = Path.GetExtension(trackFilenameExtractionUnpatched).ToLower();
 
                 // If file is a ".bin" and not the first track of the GDI, convert it to ".iso".
-                if(trackFileExtensionExtractionUnpatched == ".bin" && trackFilenameExtractionUnpatched.ToLower() != "track01.bin")
+                if (trackFileExtensionExtractionUnpatched == ".bin" && trackFilenameExtractionUnpatched.ToLower() != "track01.bin")
                 {
                     // Execute "bin2iso.exe" to convert source GDI data track.
                     System.Diagnostics.Process processBIN2ISOUnpatched = new System.Diagnostics.Process();
@@ -619,7 +626,7 @@ namespace UDP_Patcher
                     processBIN2ISOUnpatched.Start();
 
                     // Wait for process to exit, checking every half a second.
-                    while(!processBIN2ISOUnpatched.HasExited)
+                    while (!processBIN2ISOUnpatched.HasExited)
                     {
                         wait(500);
                     }
@@ -629,10 +636,10 @@ namespace UDP_Patcher
                 }
 
                 // Append data track files to list for extraction.
-                if((trackFileExtensionExtractionUnpatched == ".iso" || trackFileExtensionExtractionUnpatched == ".bin") && trackFilenameExtractionUnpatched.ToLower() != "track01.bin" && trackFilenameExtractionUnpatched.ToLower() != "track01.iso")
+                if ((trackFileExtensionExtractionUnpatched == ".iso" || trackFileExtensionExtractionUnpatched == ".bin") && trackFilenameExtractionUnpatched.ToLower() != "track01.bin" && trackFilenameExtractionUnpatched.ToLower() != "track01.iso")
                 {
                     // Rename ".iso" file that was not renamed automatically during conversion from ".bin".
-                    if(trackFileExtensionExtractionUnpatched == ".iso")
+                    if (trackFileExtensionExtractionUnpatched == ".iso")
                     {
                         File.Move(appTempFolder + "_gdi_unpatched\\" + trackFilenameExtractionUnpatched, appTempFolder + "_extracted_unpatched\\UDP_" + trackFilenameExtractionUnpatched.ToLower());
                     }
@@ -644,12 +651,12 @@ namespace UDP_Patcher
                     extractionLastDataTrackLBAUnpatched = trackInfoExtractionUnpatched[1].ToString();
 
                     // Increase data track counter by 1.
-                    extractionDataTrackCountUnpatched ++;
+                    extractionDataTrackCountUnpatched++;
                 }
             }
 
             // If more than one data track is found in the source GDI, append its LBA (plus 150) to the "extract.exe" command's arguments.
-            if(extractionDataTrackCountUnpatched > 1)
+            if (extractionDataTrackCountUnpatched > 1)
             {
                 isoExtractionListUnpatched += " " + (Int32.Parse(extractionLastDataTrackLBAUnpatched) + 150).ToString();
             }
@@ -670,7 +677,7 @@ namespace UDP_Patcher
             processExtractUnpatched.Start();
 
             // Wait for process to exit, checking every half a second.
-            while(!processExtractUnpatched.HasExited)
+            while (!processExtractUnpatched.HasExited)
             {
                 wait(500);
             }
@@ -686,7 +693,7 @@ namespace UDP_Patcher
             Directory.GetFiles(appTempFolder + "_extracted_unpatched\\", "UDP_*.bin", SearchOption.TopDirectoryOnly).ToList().ForEach(File.Delete);
 
             // User has selected to use unpatched GDI's IP.BIN for patch file, so move it to patch folder.
-            if(checkboxUsePatchedIPBIN.Checked == true && dropdownPatchedIPBINSource.SelectedIndex == 1)
+            if (checkboxUsePatchedIPBIN.Checked == true && dropdownPatchedIPBINSource.SelectedIndex == 1)
             {
                 Directory.CreateDirectory(appTempFolder + "_patch\\bootsector");
                 File.Move(appTempFolder + "_extracted_unpatched\\IP.BIN", appTempFolder + "_patch\\bootsector\\IP.BIN");
@@ -704,7 +711,11 @@ namespace UDP_Patcher
             patchBuildProgressDetails.Text = "Extracting modified GDI...";
 
             // Update progress bar.
-            patchBuildProgressBar.Value += 6;
+            if (patchBuildProgressBar.Value + 6 < 100)
+            {
+                patchBuildProgressBar.Value += 6;
+            }
+
             patchBuildProgressPercentage.Text = patchBuildProgressBar.Value + "%";
 
             // Sleep for half a second.
@@ -720,7 +731,7 @@ namespace UDP_Patcher
             int extractionDataTrackCountPatched = 0;
 
             // Iterate through each track of the GDI, converting ".bin" data tracks to ".iso" in the temporary extraction folder.
-            for(int i = 1; i < gdiArrayPatched.Length; i ++)
+            for (int i = 1; i < gdiArrayPatched.Length; i++)
             {
                 // Extract filename and extension.
                 var trackInfoExtractionPatched = gdiArrayPatched[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
@@ -728,7 +739,7 @@ namespace UDP_Patcher
                 string trackFileExtensionExtractionPatched = Path.GetExtension(trackFilenameExtractionPatched).ToLower();
 
                 // If file is a ".bin" and not the first track of the GDI, convert it to ".iso".
-                if(trackFileExtensionExtractionPatched == ".bin" && trackFilenameExtractionPatched.ToLower() != "track01.bin")
+                if (trackFileExtensionExtractionPatched == ".bin" && trackFilenameExtractionPatched.ToLower() != "track01.bin")
                 {
                     // Execute "bin2iso.exe" to convert source GDI data track.
                     System.Diagnostics.Process processBIN2ISOPatched = new System.Diagnostics.Process();
@@ -742,7 +753,7 @@ namespace UDP_Patcher
                     processBIN2ISOPatched.Start();
 
                     // Wait for process to exit, checking every half a second.
-                    while(!processBIN2ISOPatched.HasExited)
+                    while (!processBIN2ISOPatched.HasExited)
                     {
                         wait(500);
                     }
@@ -752,10 +763,10 @@ namespace UDP_Patcher
                 }
 
                 // Append data track files to list for extraction.
-                if((trackFileExtensionExtractionPatched == ".iso" || trackFileExtensionExtractionPatched == ".bin") && trackFilenameExtractionPatched.ToLower() != "track01.bin" && trackFilenameExtractionPatched.ToLower() != "track01.iso")
+                if ((trackFileExtensionExtractionPatched == ".iso" || trackFileExtensionExtractionPatched == ".bin") && trackFilenameExtractionPatched.ToLower() != "track01.bin" && trackFilenameExtractionPatched.ToLower() != "track01.iso")
                 {
                     // Rename ".iso" file that was not renamed automatically during conversion from ".bin".
-                    if(trackFileExtensionExtractionPatched == ".iso")
+                    if (trackFileExtensionExtractionPatched == ".iso")
                     {
                         File.Move(appTempFolder + "_gdi_patched\\" + trackFilenameExtractionPatched, appTempFolder + "_extracted_patched\\UDP_" + trackFilenameExtractionPatched.ToLower());
                     }
@@ -772,7 +783,7 @@ namespace UDP_Patcher
             }
 
             // If more than one data track is found in the source GDI, append its LBA (plus 150) to the "extract.exe" command's arguments.
-            if(extractionDataTrackCountPatched > 1)
+            if (extractionDataTrackCountPatched > 1)
             {
                 isoExtractionListPatched += " " + (Int32.Parse(extractionLastDataTrackLBPPatched) + 150).ToString();
             }
@@ -793,7 +804,7 @@ namespace UDP_Patcher
             processExtractPatched.Start();
 
             // Wait for process to exit, checking every half a second.
-            while(!processExtractPatched.HasExited)
+            while (!processExtractPatched.HasExited)
             {
                 wait(500);
             }
@@ -809,7 +820,7 @@ namespace UDP_Patcher
             Directory.GetFiles(appTempFolder + "_extracted_patched\\", "UDP_*.bin", SearchOption.TopDirectoryOnly).ToList().ForEach(File.Delete);
 
             // User has selected to use unpatched GDI's IP.BIN for patch file, so move it to patch folder.
-            if(checkboxUsePatchedIPBIN.Checked == true && dropdownPatchedIPBINSource.SelectedIndex == 0)
+            if (checkboxUsePatchedIPBIN.Checked == true && dropdownPatchedIPBINSource.SelectedIndex == 0)
             {
                 Directory.CreateDirectory(appTempFolder + "_patch\\bootsector");
                 File.Move(appTempFolder + "_extracted_patched\\IP.BIN", appTempFolder + "_patch\\bootsector\\IP.BIN");
@@ -821,20 +832,24 @@ namespace UDP_Patcher
             }
 
             // Update progress bar.
-            patchBuildProgressBar.Value += 5;
+            if (patchBuildProgressBar.Value + 5 < 100)
+            {
+                patchBuildProgressBar.Value += 5;
+            }
+
             patchBuildProgressPercentage.Text = patchBuildProgressBar.Value + "%";
 
             // Perform additional IP.BIN patching per user's selection.
-            if(checkboxAdditionalPatchingIPBIN.Checked == true && (checkboxRegionFreeIPBIN.Checked == true || checkboxVGAIPBIN.Checked == true || checkboxCustomNameIPBIN.Checked == true))
+            if (checkboxAdditionalPatchingIPBIN.Checked == true && (checkboxRegionFreeIPBIN.Checked == true || checkboxVGAIPBIN.Checked == true || checkboxCustomNameIPBIN.Checked == true))
             {
                 // Update patching progress details.
                 patchBuildProgressDetails.Text = "Applying patches to IP.BIN...";
 
                 // Open IP.BIN file being used to build patch.
-                using(var ipFileStream = File.Open(appTempFolder + "_patch\\bootsector\\IP.BIN", FileMode.Open))
+                using (var ipFileStream = File.Open(appTempFolder + "_patch\\bootsector\\IP.BIN", FileMode.Open))
                 {
                     // Patch region flag and text.
-                    if(checkboxRegionFreeIPBIN.Checked == true)
+                    if (checkboxRegionFreeIPBIN.Checked == true)
                     {
                         byte[] regionFlagsJUE = StringToByteArray("4a5545");
                         ipFileStream.Position = 48;
@@ -854,7 +869,7 @@ namespace UDP_Patcher
                     }
 
                     // Patch VGA flag.
-                    if(checkboxVGAIPBIN.Checked == true)
+                    if (checkboxVGAIPBIN.Checked == true)
                     {
                         byte[] vgaFlag = StringToByteArray("31");
                         ipFileStream.Position = 61;
@@ -862,12 +877,12 @@ namespace UDP_Patcher
                     }
 
                     // Patch name text.
-                    if(checkboxCustomNameIPBIN.Checked == true)
+                    if (checkboxCustomNameIPBIN.Checked == true)
                     {
                         string gameName = textboxGameNameIPBIN.Text;
                         int gameNamePadding = 128 - gameName.Length;
 
-                        for(int i = 0; i < gameNamePadding; i++)
+                        for (int i = 0; i < gameNamePadding; i++)
                         {
                             gameName += " ";
                         }
@@ -886,7 +901,11 @@ namespace UDP_Patcher
             patchBuildProgressDetails.Text = "Building patch data based on modifications to GDI...";
 
             // Update progress bar.
-            patchBuildProgressBar.Value += 5;
+            if (patchBuildProgressBar.Value + 5 < 100)
+            {
+                patchBuildProgressBar.Value += 5;
+            }
+
             patchBuildProgressPercentage.Text = patchBuildProgressBar.Value + "%";
 
             // Store recursive list of all files/folders from extracted patched GDI.
@@ -894,7 +913,7 @@ namespace UDP_Patcher
             WalkDirectoryTree(diExtractedPatchedGDI);
 
             // Iterate through each file/folder from extracted patched GDI for comparison to original unpatched GDI.
-            for(int i = 0; i < patchedGDIFiles.Count; i ++)
+            for (int i = 0; i < patchedGDIFiles.Count; i++)
             {
                 // Store paths, respective to extracted patched/unpatched GDI files/folders.
                 string patchedFullFilePath = patchedGDIFiles[i];
@@ -906,10 +925,10 @@ namespace UDP_Patcher
                 string patchFileParentFolder = Path.GetDirectoryName(patchFullFilePath);
 
                 // Current file from extracted patched GDI has a counterpart in original GDI.
-                if(File.Exists(unpatchedFullFilePath))
+                if (File.Exists(unpatchedFullFilePath))
                 {
                     // Current file has been modified in patched GDI, so create delta.
-                    if(GetMD5HashFromFile(patchedFullFilePath) != GetMD5HashFromFile(unpatchedFullFilePath))
+                    if (GetMD5HashFromFile(patchedFullFilePath) != GetMD5HashFromFile(unpatchedFullFilePath))
                     {
                         // Ensure parent directory exists by creating it, ignoring errors if already present.
                         LanguageUtils.IgnoreErrors(() => Directory.CreateDirectory(patchFileParentFolder));
@@ -926,7 +945,7 @@ namespace UDP_Patcher
                         processXDELTA.Start();
 
                         // Wait for process to exit, checking every half a second.
-                        while(!processXDELTA.HasExited)
+                        while (!processXDELTA.HasExited)
                         {
                             wait(500);
                         }
@@ -935,9 +954,9 @@ namespace UDP_Patcher
                         processXDELTA.Close();
 
                         // Update progress bar.
-                        if(patchBuildProgressBar.Value < 85)
+                        if (patchBuildProgressBar.Value < 85)
                         {
-                            patchBuildProgressBar.Value ++;
+                            patchBuildProgressBar.Value++;
                             patchBuildProgressPercentage.Text = patchBuildProgressBar.Value + "%";
                         }
                     }
@@ -946,7 +965,7 @@ namespace UDP_Patcher
                 else
                 {
                     // Ignore "BOOTSECTOR\IP.BIN" if it was erroneously placed in root of patched GDI.
-                    if(patchedFileRelativePath.ToUpper() != "BOOTSECTOR\\IP.BIN")
+                    if (patchedFileRelativePath.ToUpper() != "BOOTSECTOR\\IP.BIN")
                     {
                         // Ensure parent directory exists by creating it, ignoring errors if already present.
                         LanguageUtils.IgnoreErrors(() => Directory.CreateDirectory(patchFileParentFolder));
@@ -955,9 +974,9 @@ namespace UDP_Patcher
                         File.Copy(patchedFullFilePath, patchFullFilePath);
 
                         // Update progress bar.
-                        if(patchBuildProgressBar.Value < 85)
+                        if (patchBuildProgressBar.Value < 85)
                         {
-                            patchBuildProgressBar.Value ++;
+                            patchBuildProgressBar.Value++;
                             patchBuildProgressPercentage.Text = patchBuildProgressBar.Value + "%";
                         }
                     }
@@ -971,7 +990,11 @@ namespace UDP_Patcher
             patchBuildProgressDetails.Text = "Compiling patch data...";
 
             // Update progress bar.
-            patchBuildProgressBar.Value += 5;
+            if(patchBuildProgressBar.Value + 5 < 100)
+            {
+                patchBuildProgressBar.Value += 5;
+            }
+
             patchBuildProgressPercentage.Text = patchBuildProgressBar.Value + "%";
 
             // Delete any previously existing version of the same patch.
@@ -987,7 +1010,11 @@ namespace UDP_Patcher
             patchBuildProgressDetails.Text = "Cleaning up temporary files...";
 
             // Update progress bar.
-            patchBuildProgressBar.Value += 5;
+            if(patchBuildProgressBar.Value + 5 < 100)
+            {
+                patchBuildProgressBar.Value += 5;
+            }
+
             patchBuildProgressPercentage.Text = patchBuildProgressBar.Value + "%";
 
             // Perform clean-up.
