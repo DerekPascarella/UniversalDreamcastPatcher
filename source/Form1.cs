@@ -401,7 +401,7 @@ namespace UniversalDreamcastPatcher
                 }
 
                 // If the source GDI is malformed or incompatible, throw an error.
-                if(!compatibleGDI)
+                if (!compatibleGDI)
                 {
                     // Hide progress bar and reset it.
                     patchingProgressBar.Value = 0;
@@ -441,7 +441,7 @@ namespace UniversalDreamcastPatcher
                 else
                 {
                     // Skip GDI copying if source image is CUE, as it's already in the temporary folder from conversion.
-                    if(sourceImageIsCUE)
+                    if (sourceImageIsCUE)
                     {
                         // Update patching progress details.
                         patchingProgressDetails.Text = "Verifying integrity of converted GDI...";
@@ -466,7 +466,7 @@ namespace UniversalDreamcastPatcher
                         int gdiCopyProgress = 30 / (gdiArray.Length - 1);
 
                         // Copy each track file to temporary folder.
-                        for(int i = 1; i < gdiArray.Length; i ++)
+                        for (int i = 1; i < gdiArray.Length; i++)
                         {
                             // Extract filename.
                             var trackInfo = gdiArray[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
@@ -482,7 +482,7 @@ namespace UniversalDreamcastPatcher
                             File.Copy(gdiBaseFolder + "\\" + trackFilename, appTempFolder + "\\" + trackFilename.ToLower());
 
                             // If track count exceeds 30, add "1" to the progress bar for every other file.
-                            if(i % 2 == 0 && gdiCopyProgress == 0)
+                            if (i % 2 == 0 && gdiCopyProgress == 0)
                             {
                                 patchingProgressBar.Value += 1;
                             }
@@ -520,7 +520,7 @@ namespace UniversalDreamcastPatcher
                     int extractionDataTrackCount = 0;
 
                     // Iterate through each track of the GDI, converting data tracks to ".iso" in the temporary extraction folder.
-                    for(int i = 1; i < gdiArray.Length; i ++)
+                    for (int i = 1; i < gdiArray.Length; i++)
                     {
                         // Extract filename and extension.
                         var trackInfoExtraction = gdiArray[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
@@ -528,7 +528,7 @@ namespace UniversalDreamcastPatcher
                         string trackFileExtensionExtraction = Path.GetExtension(trackFilenameExtraction).ToLower();
 
                         // If file is a ".bin" and not the first track of the GDI, convert it to ".iso".
-                        if(trackFileExtensionExtraction == ".bin" && trackFilenameExtraction.ToLower() != "track01.bin")
+                        if (trackFileExtensionExtraction == ".bin" && trackFilenameExtraction.ToLower() != "track01.bin")
                         {
                             // Execute "bin2iso.exe" to convert source GDI data track.
                             System.Diagnostics.Process processBIN2ISO = new System.Diagnostics.Process();
@@ -542,7 +542,7 @@ namespace UniversalDreamcastPatcher
                             processBIN2ISO.Start();
 
                             // Wait for process to exit, checking every half a second.
-                            while(!processBIN2ISO.HasExited)
+                            while (!processBIN2ISO.HasExited)
                             {
                                 wait(500);
                             }
@@ -552,10 +552,10 @@ namespace UniversalDreamcastPatcher
                         }
 
                         // Append data track files to list for extraction.
-                        if((trackFileExtensionExtraction == ".iso" || trackFileExtensionExtraction == ".bin") && trackFilenameExtraction.ToLower() != "track01.bin" && trackFilenameExtraction.ToLower() != "track01.iso")
+                        if ((trackFileExtensionExtraction == ".iso" || trackFileExtensionExtraction == ".bin") && trackFilenameExtraction.ToLower() != "track01.bin" && trackFilenameExtraction.ToLower() != "track01.iso")
                         {
                             // Rename ".iso" file that was not renamed automatically during conversion from ".bin".
-                            if(trackFileExtensionExtraction == ".iso")
+                            if (trackFileExtensionExtraction == ".iso")
                             {
                                 File.Move(appTempFolder + "\\" + trackFilenameExtraction, appTempFolder + "_extracted\\UDP_" + trackFilenameExtraction.ToLower());
                             }
@@ -567,12 +567,12 @@ namespace UniversalDreamcastPatcher
                             extractionLastDataTrackLBA = trackInfoExtraction[1].ToString();
 
                             // Increase data track counter by 1.
-                            extractionDataTrackCount ++;
+                            extractionDataTrackCount++;
                         }
                     }
 
                     // If more than one data track is found in the source GDI, append its LBA (plus 150) to the "extract.exe" command's arguments.
-                    if(extractionDataTrackCount > 1)
+                    if (extractionDataTrackCount > 1)
                     {
                         isoExtractionList += " " + (Int32.Parse(extractionLastDataTrackLBA) + 150).ToString();
                     }
@@ -593,7 +593,7 @@ namespace UniversalDreamcastPatcher
                     processExtract.Start();
 
                     // Wait for process to exit, checking every half a second.
-                    while(!processExtract.HasExited)
+                    while (!processExtract.HasExited)
                     {
                         wait(500);
                     }
@@ -639,7 +639,7 @@ namespace UniversalDreamcastPatcher
                         WalkDirectoryTree(diExtractedPatchedGDI);
 
                         // Iterate through each file/folder from extracted patched GDI so that xdeltas can be applied.
-                        for(int i = 0; i < patchedGDIFiles.Count; i ++)
+                        for (int i = 0; i < patchedGDIFiles.Count; i++)
                         {
                             // Store full path of current file.
                             string patchedFullFilePath = patchedGDIFiles[i];
@@ -649,13 +649,13 @@ namespace UniversalDreamcastPatcher
                             patchingProgressDetails.Text = "Patching " + currentPatchingFile + "...\n";
 
                             // Current file is an xdelta patch.
-                            if(patchedFullFilePath.ToLower().EndsWith(".xdelta"))
+                            if (patchedFullFilePath.ToLower().EndsWith(".xdelta"))
                             {
                                 // Store full path of corresponding original file.
                                 string patchedFullFilePath_ORIGINAL = patchedFullFilePath.Replace(".xdelta", "");
 
                                 // Corresponding original file exists.
-                                if(File.Exists(patchedFullFilePath_ORIGINAL))
+                                if (File.Exists(patchedFullFilePath_ORIGINAL))
                                 {
                                     // Execute process to apply xdelta patch.
                                     System.Diagnostics.Process processXDELTA = new System.Diagnostics.Process();
@@ -671,7 +671,7 @@ namespace UniversalDreamcastPatcher
                                     processXDELTA.Start();
 
                                     // Wait for process to exit, checking every half a second.
-                                    while(!processXDELTA.HasExited)
+                                    while (!processXDELTA.HasExited)
                                     {
                                         wait(500);
                                     }
@@ -683,7 +683,7 @@ namespace UniversalDreamcastPatcher
                                     var xdeltaErrorOutput = processValidate.StandardError.ReadToEnd();
 
                                     // If error output isn't empty, an error has occurred and patching should not proceed.
-                                    if(!String.IsNullOrEmpty(xdeltaErrorOutput))
+                                    if (!String.IsNullOrEmpty(xdeltaErrorOutput))
                                     {
                                         // Display error message.
                                         MessageBox.Show("The selected source disc image contains a different version of one or more files than what's expected by the selected DCP patch.  Patching process cannot proceed.", "Universal Dreamcast Patcher", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -817,7 +817,7 @@ namespace UniversalDreamcastPatcher
                     string[] gameDataFolders = Directory.GetDirectories(appTempFolder + "_extracted", "*", SearchOption.AllDirectories);
 
                     // Iterate through "gameDataFolders" array to apply timestamps to all folders and subfolders in game data before building GDI.
-                    for(int i = 0; i < gameDataFolders.Length; i ++)
+                    for (int i = 0; i < gameDataFolders.Length; i++)
                     {
                         Directory.SetCreationTimeUtc(gameDataFolders[i], hardcodedDirectoryTimestamp);
                         Directory.SetLastAccessTimeUtc(gameDataFolders[i], hardcodedDirectoryTimestamp);
@@ -828,7 +828,7 @@ namespace UniversalDreamcastPatcher
                     string[] gameDataFiles = Directory.GetFiles(appTempFolder + "_extracted", "*", SearchOption.AllDirectories);
 
                     // Iterate through "gameDataFolders" array to apply timestamps to all folders and subfolders in game data before building GDI.
-                    for(int i = 0; i < gameDataFiles.Length; i ++)
+                    for (int i = 0; i < gameDataFiles.Length; i++)
                     {
                         File.SetCreationTimeUtc(gameDataFiles[i], hardcodedDirectoryTimestamp);
                         File.SetLastAccessTimeUtc(gameDataFiles[i], hardcodedDirectoryTimestamp);
@@ -839,7 +839,15 @@ namespace UniversalDreamcastPatcher
                     patchingProgressDetails.Text = "Building patched GDI...";
 
                     // Update progress bar.
-                    patchingProgressBar.Value += 14;
+                    if(patchingProgressBar.Value >= 90 && patchingProgressBar.Value < 100)
+                    {
+                        patchingProgressBar.Value = 97;
+                    }
+                    else
+                    {
+                        patchingProgressBar.Value += 14;
+                    }
+
                     patchingProgressPercentage.Text = patchingProgressBar.Value + "%";
 
                     // Sleep for half a second.
