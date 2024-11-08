@@ -19,7 +19,7 @@ Under the hood, this application utilizes [gditools](https://sourceforge.net/pro
    - [Manual Method](https://github.com/DerekPascarella/UniversalDreamcastPatcher#manual-method)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [1.8](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/1.7/Universal.Dreamcast.Patcher.v1.8.zip).
+The latest version of Universal Dreamcast Patcher is [1.8](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/1.8/Universal.Dreamcast.Patcher.v1.8.zip).
 
 ## Changelog
 * Version 1.8 (2024-11-08)
