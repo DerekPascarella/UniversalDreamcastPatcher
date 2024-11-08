@@ -19,9 +19,11 @@ Under the hood, this application utilizes [gditools](https://sourceforge.net/pro
    - [Manual Method](https://github.com/DerekPascarella/UniversalDreamcastPatcher#manual-method)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [1.7](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/1.7/Universal.Dreamcast.Patcher.v1.7.zip).
+The latest version of Universal Dreamcast Patcher is [1.8](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/1.7/Universal.Dreamcast.Patcher.v1.8.zip).
 
 ## Changelog
+* Version 1.8 (2024-11-08)
+  * Fixed bug in both patcher and patch builder when processing GDIs with over 90 CDDA tracks.
 * Version 1.7 (2024-11-08)
   * For both the patcher and patch builder, added support for GDI source disc images that use 2048-byte-per-sector ISO data tracks instead of standard 2352-byte-per-sector BIN data tracks.
 * Version 1.6 (2023-07-17)
