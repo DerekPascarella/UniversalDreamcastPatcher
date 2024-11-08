@@ -23,18 +23,18 @@ The latest version of Universal Dreamcast Patcher is [1.7](https://github.com/De
 
 ## Changelog
 * Version 1.7 (2024-11-08)
-  * Added support for GDI source disc images that use 2048-byte-per-sector ISO data tracks instead of standard 2352-byte-per-sector BIN data tracks.
+  * For both the patcher and patch builder, added support for GDI source disc images that use 2048-byte-per-sector ISO data tracks instead of standard 2352-byte-per-sector BIN data tracks.
 * Version 1.6 (2023-07-17)
   * Fixed bug in processing Redump-style CUE disc images with more than 10 tracks (<a href="https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/2">Issue #2</a>).
   * Enhanced integrity checking of patched GDI output.
 * Version 1.5 (2023-05-13)
   * Eliminated IP.BIN-patching helper tools in patch-building utility, with code now directly implemented in the application itself.
-  * Changed some labels in patch-building utility for clarity ("Unpatched GDI" is now "Original GDI" and "Patched GDI" is now "Modified GDI").
+  * Changed some labels in ilding utility for clarity ("Unpatched GDI" is now "Original GDI" and "Patched GDI" is now "Modified GDI").
 * Version 1.4 (2022-11-24)
   * If patch utilizes xdelta, the current filename being patched is now displayed in the progress status message, avoiding the appearance of failure when processing large quantity of files.
 * Version 1.3 (2022-05-06)
   * Added xdelta support to reduce patch size, as well as eliminate the potential distribution of whole files containing copyrighted material.
-  * Introduced separate patch-building utility for developers to automatically produce patch files, analyzing changes between original retail disc image and modified one.
+  * Introduced separate ilding utility for developers to automatically produce patch files, analyzing changes between original retail disc image and modified one.
 * Version 1.2 (2022-03-19)
   * Enhanced GDI compatibility and integrity checking.
 * Version 1.1 (2022-03-17)
