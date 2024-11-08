@@ -392,7 +392,7 @@ namespace UniversalDreamcastPatcher
                         string trackFileExtensionSanityCheck = Path.GetExtension(trackFilenameSanityCheck).ToLower();
 
                         // GDI track file either doesn't exist or has the wrong file extension.
-                        if(!File.Exists(gdiBaseFolder + "\\" + trackFilenameSanityCheck) || (trackFileExtensionSanityCheck != ".bin" && trackFileExtensionSanityCheck != ".raw"))
+                        if(!File.Exists(gdiBaseFolder + "\\" + trackFilenameSanityCheck) || (trackFileExtensionSanityCheck != ".bin" && trackFileExtensionSanityCheck != ".iso" && trackFileExtensionSanityCheck != ".raw"))
                         {
                             // Set flag to "false".
                             compatibleGDI = false;
@@ -519,7 +519,7 @@ namespace UniversalDreamcastPatcher
                     // Create counter for number of data tracks found in the GDI.
                     int extractionDataTrackCount = 0;
 
-                    // Iterate through each track of the GDI to convert data tracks to ".iso" in the temporary extraction folder.
+                    // Iterate through each track of the GDI, converting data tracks to ".iso" in the temporary extraction folder.
                     for(int i = 1; i < gdiArray.Length; i ++)
                     {
                         // Extract filename and extension.
@@ -549,6 +549,16 @@ namespace UniversalDreamcastPatcher
 
                             // Close process.
                             processBIN2ISO.Close();
+                        }
+
+                        // Append data track files to list for extraction.
+                        if((trackFileExtensionExtraction == ".iso" || trackFileExtensionExtraction == ".bin") && trackFilenameExtraction.ToLower() != "track01.bin" && trackFilenameExtraction.ToLower() != "track01.iso")
+                        {
+                            // Rename ".iso" file that was not renamed automatically during conversion from ".bin".
+                            if(trackFileExtensionExtraction == ".iso")
+                            {
+                                File.Move(appTempFolder + "\\" + trackFilenameExtraction, appTempFolder + "_extracted\\UDP_" + trackFilenameExtraction.ToLower());
+                            }
 
                             // Append filename to "isoExtractionList".
                             isoExtractionList += " UDP_" + trackFilenameExtraction.ToLower().Replace(".bin", ".iso");
@@ -594,11 +604,12 @@ namespace UniversalDreamcastPatcher
                     // Delete "extract.exe" from temporary extraction folder.
                     File.Delete(appTempFolder + "_extracted\\extract.exe");
 
-                    // Delete all converted ".iso" files from the temporary extraction folder.
+                    // Delete all data track files from the temporary extraction folder.
                     Directory.GetFiles(appTempFolder + "_extracted\\", "UDP_*.iso", SearchOption.TopDirectoryOnly).ToList().ForEach(File.Delete);
+                    Directory.GetFiles(appTempFolder + "_extracted\\", "UDP_*.bin", SearchOption.TopDirectoryOnly).ToList().ForEach(File.Delete);
 
                     // Remove "bootsector" folder and all of its contents from temporary extraction folder if it already exists.
-                    if(Directory.Exists(appTempFolder + "_extracted\\bootsector"))
+                    if (Directory.Exists(appTempFolder + "_extracted\\bootsector"))
                     {
                         Directory.Delete(appTempFolder + "_extracted\\bootsector", true);
                     }
