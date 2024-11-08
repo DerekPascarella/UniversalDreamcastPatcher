@@ -19,9 +19,11 @@ Under the hood, this application utilizes [gditools](https://sourceforge.net/pro
    - [Manual Method](https://github.com/DerekPascarella/UniversalDreamcastPatcher#manual-method)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [1.6](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/1.6/Universal.Dreamcast.Patcher.v1.6.zip).
+The latest version of Universal Dreamcast Patcher is [1.7](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/download/1.7/Universal.Dreamcast.Patcher.v1.7.zip).
 
 ## Changelog
+* Version 1.7 (2024-11-08)
+  * Added support for GDI source disc images that use 2048-byte-per-sector ISO data tracks instead of standard 2352-byte-per-sector BIN data tracks.
 * Version 1.6 (2023-07-17)
   * Fixed bug in processing Redump-style CUE disc images with more than 10 tracks (<a href="https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/2">Issue #2</a>).
   * Enhanced integrity checking of patched GDI output.
