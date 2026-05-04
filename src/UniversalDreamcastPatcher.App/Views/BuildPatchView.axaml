@@ -1,0 +1,96 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="UniversalDreamcastPatcher.App.Views.BuildPatchView">
+
+    <StackPanel Margin="12" Spacing="12">
+
+        <!-- Original GDI -->
+        <StackPanel Spacing="4">
+            <TextBlock Text="Original disc image" FontWeight="SemiBold" />
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBox Grid.Column="0" x:Name="OriginalGdiPath" Watermark="Select the unpatched .gdi, .cue, or .chd..." IsReadOnly="True" />
+                <Button Grid.Column="1" Content="Browse..." Margin="6,0,0,0" MinWidth="90" x:Name="BrowseOriginalGdi" />
+            </Grid>
+        </StackPanel>
+
+        <!-- Modified GDI -->
+        <StackPanel Spacing="4">
+            <TextBlock Text="Modified disc image" FontWeight="SemiBold" />
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBox Grid.Column="0" x:Name="ModifiedGdiPath" Watermark="Select the modified .gdi, .cue, or .chd..." IsReadOnly="True" />
+                <Button Grid.Column="1" Content="Browse..." Margin="6,0,0,0" MinWidth="90" x:Name="BrowseModifiedGdi" />
+            </Grid>
+        </StackPanel>
+
+        <!-- Output file -->
+        <StackPanel Spacing="4">
+            <TextBlock Text="Output DCP patch file" FontWeight="SemiBold" />
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBox Grid.Column="0" x:Name="OutputDcpPath" Watermark="Choose where to save the .dcp..." IsReadOnly="True" />
+                <Button Grid.Column="1" Content="Browse..." Margin="6,0,0,0" MinWidth="90" x:Name="BrowseBuildOutputFile" />
+            </Grid>
+        </StackPanel>
+
+        <!-- IP.BIN options -->
+        <StackPanel Spacing="4">
+            <TextBlock Text="IP.BIN customization" FontWeight="SemiBold" />
+            <Border BorderBrush="#999" BorderThickness="1" Padding="10">
+                <StackPanel Spacing="4">
+                    <CheckBox x:Name="UseCustomIpBin" Content="Include custom IP.BIN in patch" />
+
+                    <StackPanel Margin="20,4,0,0" Spacing="4" IsEnabled="{Binding #UseCustomIpBin.IsChecked}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="Source:" VerticalAlignment="Center" />
+                            <RadioButton x:Name="IpBinFromModified" Content="modified disc image" GroupName="IpBinSource" IsChecked="True" />
+                            <RadioButton x:Name="IpBinFromOriginal" Content="original disc image" GroupName="IpBinSource" />
+                        </StackPanel>
+
+                        <CheckBox x:Name="ApplyIpBinPatches" Content="Apply additional IP.BIN patches" Margin="0,6,0,0" />
+
+                        <StackPanel Margin="20,0,0,0" Spacing="2" IsEnabled="{Binding #ApplyIpBinPatches.IsChecked}">
+                            <CheckBox x:Name="IpBinRegionFree" Content="Region-free" />
+                            <CheckBox x:Name="IpBinVga" Content="Enable VGA" />
+                        </StackPanel>
+
+                        <CheckBox x:Name="UseCustomGameName" Content="Use custom game name" Margin="0,6,0,0" />
+
+                        <TextBox x:Name="CustomGameName"
+                                 Margin="20,0,0,0"
+                                 Watermark="MY GAME NAME (ENGLISH)"
+                                 MaxLength="128"
+                                 IsEnabled="{Binding #UseCustomGameName.IsChecked}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <!-- Action area -->
+        <Grid x:Name="BuildActionArea" MinHeight="60" Margin="0,4,0,0">
+
+            <Button x:Name="BuildPatchButton"
+                    Content="Build Patch"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    IsEnabled="False" />
+
+            <StackPanel x:Name="BuildBusyPanel"
+                        IsVisible="False"
+                        VerticalAlignment="Center"
+                        Spacing="6">
+                <ProgressBar IsIndeterminate="True"
+                             Height="16" />
+                <TextBlock x:Name="BuildProgressLabel"
+                           HorizontalAlignment="Center"
+                           Foreground="#333"
+                           Text="" />
+            </StackPanel>
+
+        </Grid>
+
+    </StackPanel>
+
+</UserControl>

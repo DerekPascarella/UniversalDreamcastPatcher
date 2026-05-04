@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+
+    <PackageId>UdpNatives</PackageId>
+    <Version>2.0.0</Version>
+    <Authors>Derek Pascarella (ateam)</Authors>
+    <Description>Native xdelta3, liblzma, and libchdr libraries for Universal Dreamcast Patcher, packed per RID under runtimes/&lt;rid&gt;/native/.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\src\UniversalDreamcastPatcher.Core\runtimes\**\*"
+          Pack="true"
+          PackagePath="runtimes" />
+  </ItemGroup>
+
+</Project>

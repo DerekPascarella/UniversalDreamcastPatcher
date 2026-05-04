@@ -1,0 +1,23 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="UniversalDreamcastPatcher.App.Views.UpdateWizardWindow"
+        Title="Updating Universal Dreamcast Patcher" SizeToContent="Height" Width="500"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Icon="avares://UniversalDreamcastPatcher/Assets/sega_dreamcast.ico">
+    <StackPanel Margin="20">
+        <TextBlock x:Name="StatusText" TextWrapping="Wrap" Margin="0,0,0,10"/>
+
+        <ProgressBar x:Name="DownloadProgress" Height="22" Margin="0,0,0,5" Minimum="0" Maximum="100"/>
+
+        <TextBlock x:Name="SpeedText" Margin="0,0,0,5" Foreground="Gray"/>
+        <TextBlock x:Name="SizeText" Foreground="Gray"/>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button x:Name="CancelDownloadButton" Content="Cancel" Click="CancelDownloadButton_Click"
+                    MinWidth="90" Margin="0,0,10,0" HorizontalContentAlignment="Center"/>
+            <Button x:Name="InstallButton" Content="Install Now" Click="InstallButton_Click"
+                    MinWidth="100" HorizontalContentAlignment="Center" IsVisible="False"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

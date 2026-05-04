@@ -1,0 +1,4 @@
+LIBRARY xdelta3
+EXPORTS
+    xd3_encode_memory
+    xd3_decode_memory

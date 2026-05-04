@@ -1,0 +1,59 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="using:UniversalDreamcastPatcher.App.Views"
+        x:Class="UniversalDreamcastPatcher.App.MainWindow"
+        Title="Universal Dreamcast Patcher"
+        Width="640"
+        SizeToContent="Height"
+        CanResize="False"
+        WindowStartupLocation="CenterScreen"
+        Icon="avares://UniversalDreamcastPatcher/Assets/sega_dreamcast.ico">
+
+    <Window.Styles>
+        <Style Selector="TextBlock.about-link">
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="TextBlock.about-link:pointerover">
+            <Setter Property="Foreground" Value="#1E88E5"/>
+            <Setter Property="TextDecorations" Value="Underline"/>
+        </Style>
+    </Window.Styles>
+
+    <DockPanel LastChildFill="True">
+
+        <!-- Logo fills full width, no side margins -->
+        <Image DockPanel.Dock="Top"
+               x:Name="HeaderLogo"
+               Source="avares://UniversalDreamcastPatcher/Assets/udp_logo.png"
+               Stretch="Uniform"
+               HorizontalAlignment="Stretch" />
+
+        <!-- Footer strip -->
+        <StackPanel DockPanel.Dock="Bottom" Margin="12,6,12,12">
+            <TextBlock x:Name="VersionLine"
+                       Classes="about-link"
+                       HorizontalAlignment="Center"
+                       FontSize="13"
+                       Foreground="#555"
+                       ToolTip.Tip="About Universal Dreamcast Patcher"
+                       PointerPressed="VersionLine_PointerPressed" />
+        </StackPanel>
+
+        <!-- Tabs -->
+        <TabControl x:Name="MainTabs" SelectedIndex="0" Margin="12,8,12,0">
+            <TabControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" />
+                </ItemsPanelTemplate>
+            </TabControl.ItemsPanel>
+            <TabItem Header="Apply Patch" x:Name="ApplyTab">
+                <views:ApplyPatchView />
+            </TabItem>
+            <TabItem Header="Build Patch" x:Name="BuildTab">
+                <views:BuildPatchView />
+            </TabItem>
+        </TabControl>
+
+    </DockPanel>
+
+</Window>

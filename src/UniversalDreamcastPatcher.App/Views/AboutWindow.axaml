@@ -1,0 +1,20 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="UniversalDreamcastPatcher.App.Views.AboutWindow"
+        Title="About" SizeToContent="Height" Width="470" CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Icon="avares://UniversalDreamcastPatcher/Assets/sega_dreamcast.ico">
+    <StackPanel Margin="15,8">
+        <TextBlock FontWeight="Bold" FontSize="16">
+            <Run Text="Universal Dreamcast Patcher"/>
+            <Run x:Name="VersionRun"/>
+        </TextBlock>
+        <TextBlock Margin="0,4,0,0">by Derek Pascarella (ateam)</TextBlock>
+        <TextBlock Margin="0,10,0,0" TextWrapping="Wrap">A utility for creating and applying Dreamcast disc image patches.</TextBlock>
+        <TextBlock Margin="0,10,0,0">Documentation:</TextBlock>
+        <TextBlock Margin="0,2,0,0" Foreground="#1E88E5" TextDecorations="Underline"
+                   Cursor="Hand" PointerPressed="LinkText_PointerPressed">https://github.com/DerekPascarella/UniversalDreamcastPatcher</TextBlock>
+        <Button Content="Check for Updates" Click="CheckForUpdatesButton_Click"
+                Margin="0,15,0,0" HorizontalAlignment="Right"/>
+    </StackPanel>
+</Window>

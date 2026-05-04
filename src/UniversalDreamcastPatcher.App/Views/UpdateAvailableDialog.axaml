@@ -1,0 +1,53 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="UniversalDreamcastPatcher.App.Views.UpdateAvailableDialog"
+        Title="Update Available" SizeToContent="Height" Width="470"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Icon="avares://UniversalDreamcastPatcher/Assets/sega_dreamcast.ico">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBlock Text="A new version of Universal Dreamcast Patcher ("/>
+                <TextBlock x:Name="VersionText" FontWeight="SemiBold"/>
+                <TextBlock Text=") is available."/>
+            </StackPanel>
+
+            <TextBlock TextWrapping="Wrap" Text="Would you like to update now? Your settings will be preserved."/>
+
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <TextBlock Text="See the "/>
+                <TextBlock x:Name="ChangelogLink"
+                           Foreground="#1E88E5"
+                           TextDecorations="Underline"
+                           Cursor="Hand"
+                           ToolTip.Tip="Open changelog in your browser"
+                           PointerPressed="ChangelogLink_PointerPressed"
+                           Text="changelog"/>
+                <TextBlock Text=" for what's new in this release."/>
+            </StackPanel>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="0,15,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="Skip This Version" Click="SkipButton_Click"
+                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                    Margin="0,0,5,0"/>
+            <Button Grid.Column="1" Content="Update Later" Click="RemindButton_Click"
+                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                    Margin="5,0,5,0"/>
+            <Button Grid.Column="2" Content="Update Now" Click="UpdateButton_Click"
+                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                    Margin="5,0,0,0"/>
+        </Grid>
+    </Grid>
+</Window>

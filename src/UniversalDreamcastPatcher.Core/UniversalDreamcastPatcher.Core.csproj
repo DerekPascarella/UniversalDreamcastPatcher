@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RootNamespace>UniversalDreamcastPatcher.Core</RootNamespace>
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- Vendored DiscUtils / CHD source predates nullable reference types. Silence the noise.
+         Plus SYSLIB0051 from DiscUtils' obsolete serialization ctor we don't actually invoke. -->
+    <NoWarn>$(NoWarn);CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8619;CS8625;CS8714;CS8765;CS8766;CS8767;CS8669;CS0169;CS0219;CS0414;CS0649;SYSLIB0051</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="UdpNatives" Version="2.0.0" />
+  </ItemGroup>
+
+  <!-- Per-RID xdelta3 native binaries are staged by xdelta3.targets, imported by downstream
+       app and test projects. That file evaluates $(RuntimeIdentifier) correctly at publish
+       time, which this .csproj cannot do because RID isn't propagated here. -->
+
+</Project>

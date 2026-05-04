@@ -1,0 +1,63 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="UniversalDreamcastPatcher.App.Views.ApplyPatchView">
+
+    <StackPanel Margin="12" Spacing="12">
+
+        <!-- Source disc image row -->
+        <StackPanel Spacing="4">
+            <TextBlock Text="Source disc image" FontWeight="SemiBold" />
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBox Grid.Column="0" x:Name="SourceImagePath" Watermark="Select a .gdi, .cue, or .chd file..." IsReadOnly="True" />
+                <Button Grid.Column="1" Content="Browse..." Margin="6,0,0,0" MinWidth="90" x:Name="BrowseSourceImage" />
+            </Grid>
+        </StackPanel>
+
+        <!-- DCP patch file row -->
+        <StackPanel Spacing="4">
+            <TextBlock Text="DCP patch file" FontWeight="SemiBold" />
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBox Grid.Column="0" x:Name="PatchFilePath" Watermark="Select a .dcp file..." IsReadOnly="True" />
+                <Button Grid.Column="1" Content="Browse..." Margin="6,0,0,0" MinWidth="90" x:Name="BrowsePatchFile" />
+            </Grid>
+        </StackPanel>
+
+        <!-- Output folder row -->
+        <StackPanel Spacing="4">
+            <TextBlock Text="Patched disc image output folder" FontWeight="SemiBold" />
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBox Grid.Column="0" x:Name="OutputFolderPath" Watermark="Where to write the patched GDI folder..." IsReadOnly="True" />
+                <Button Grid.Column="1" Content="Browse..." Margin="6,0,0,0" MinWidth="90" x:Name="BrowseOutputFolder" />
+            </Grid>
+        </StackPanel>
+
+        <!-- Action area: tall button by default, progress UI when busy. -->
+        <Grid x:Name="ApplyActionArea" MinHeight="60" Margin="0,4,0,0">
+
+            <Button x:Name="ApplyPatchButton"
+                    Content="Apply Patch"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    IsEnabled="False" />
+
+            <StackPanel x:Name="ApplyBusyPanel"
+                        IsVisible="False"
+                        VerticalAlignment="Center"
+                        Spacing="6">
+                <ProgressBar IsIndeterminate="True"
+                             Height="16" />
+                <TextBlock x:Name="ApplyProgressLabel"
+                           HorizontalAlignment="Center"
+                           Foreground="#333"
+                           Text="" />
+            </StackPanel>
+
+        </Grid>
+
+    </StackPanel>
+
+</UserControl>
