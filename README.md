@@ -18,10 +18,10 @@ As of version 2.0.0, Universal Dreamcast Patcher is a cross-platform application
 8. [Legal and Licensing](https://github.com/DerekPascarella/UniversalDreamcastPatcher#legal-and-licensing)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [2.0.0](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.0).
+The latest version of Universal Dreamcast Patcher is [2.0.0](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.0.0).
 
 ## Changelog
-* **Version 2.0.0** (2026-XX-XX)
+* **Version 2.0.0** (2026-05-04)
   * Complete rewrite, combining the patcher and patch builder into a single cross-platform application (Windows, Linux, macOS).
   * Removed all dependencies on external helper utilities, natively implementing all disc-image extract, rebuild, and binary diffing operations.
   * Added support for CHD as a source disc image format (automatically decompressed and, if necessary, converted to GDI from CUE/BIN).
