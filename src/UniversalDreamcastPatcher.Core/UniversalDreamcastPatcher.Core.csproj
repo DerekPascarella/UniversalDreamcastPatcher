@@ -1,6 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!-- Read and parse version from ../../version.txt (e.g. v2.0.0 -> 2.0.0.0). -->
+    <VersionFileContent>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)\..\..\version.txt').Trim())</VersionFileContent>
+    <NumericVersion>$([System.Text.RegularExpressions.Regex]::Match('$(VersionFileContent)', '\d+\.\d+(\.\d+)?').Value)</NumericVersion>
+    <HasPatch>$([System.Text.RegularExpressions.Regex]::IsMatch('$(NumericVersion)', '\d+\.\d+\.\d+'))</HasPatch>
+    <Version Condition="'$(HasPatch)' == 'True'">$(NumericVersion).0</Version>
+    <Version Condition="'$(HasPatch)' != 'True'">$(NumericVersion).0.0</Version>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
@@ -21,5 +32,12 @@
   <!-- Per-RID xdelta3 native binaries are staged by xdelta3.targets, imported by downstream
        app and test projects. That file evaluates $(RuntimeIdentifier) correctly at publish
        time, which this .csproj cannot do because RID isn't propagated here. -->
+
+  <!-- Regenerate Constants.cs from ../../version.txt before build (Windows only;
+       on Linux/macOS Constants.cs is reused as-is from the last Windows build). -->
+  <Target Name="UpdateVersionFromFile" BeforeTargets="BeforeBuild;BeforeRebuild"
+          Condition="'$(OS)' == 'Windows_NT'">
+    <Exec Command="powershell -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\UpdateVersion.ps1&quot;" />
+  </Target>
 
 </Project>

@@ -16,7 +16,7 @@ public partial class AboutWindow : Window
     {
         InitializeComponent();
 
-        VersionRun.Text = $" v{Constants.Version}";
+        VersionRun.Text = $"v{Constants.Version}";
         KeyDown += AboutWindow_KeyDown;
     }
 

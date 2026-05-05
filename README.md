@@ -18,76 +18,78 @@ As of version 2.0.0, Universal Dreamcast Patcher is a cross-platform application
 8. [Legal and Licensing](https://github.com/DerekPascarella/UniversalDreamcastPatcher#legal-and-licensing)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [2.0.0](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.0.0).
+The latest version of Universal Dreamcast Patcher is [2.0.1](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.0.1).
 
 ## Changelog
-* **Version 2.0.0** (2026-05-04)
-  * Complete rewrite, combining the patcher and patch builder into a single cross-platform application (Windows, Linux, macOS).
-  * Removed all dependencies on external helper utilities, natively implementing all disc-image extract, rebuild, and binary diffing operations.
-  * Added support for CHD as a source disc image format (automatically decompressed and, if necessary, converted to GDI from CUE/BIN).
-  * Added built-in auto-update on Windows and Linux.
-  * Patched disc images and DCP files are now byte-identical across platforms for the same inputs, finally delivering reliable checksums.
-* **Version 1.8** (2024-11-08)
-  * Fixed bug in both patcher and patch builder when processing GDIs with over 90 CDDA tracks.
-* **Version 1.7** (2024-11-08)
-  * For both the patcher and patch builder, added support for GDI source disc images that use 2048-byte-per-sector ISO data tracks instead of standard 2352-byte-per-sector BIN data tracks.
-* **Version 1.6** (2023-07-17)
-  * Fixed bug in processing Redump-style CUE disc images with more than 10 tracks (<a href="https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/2">Issue #2</a>).
-  * Enhanced integrity checking of patched GDI output.
-* **Version 1.5** (2023-05-13)
-  * Eliminated IP.BIN-patching helper tools in patch-building utility, with code now directly implemented in the application itself.
-  * Changed some labels in the patch-building utility for clarity ("Unpatched GDI" is now "Original GDI" and "Patched GDI" is now "Modified GDI").
-* **Version 1.4** (2022-11-24)
-  * If patch utilizes xdelta, the current filename being patched is now displayed in the progress status message, avoiding the appearance of failure when processing large quantity of files.
-* **Version 1.3** (2022-05-06)
-  * Added xdelta support to reduce patch size, as well as eliminate the potential distribution of whole files containing copyrighted material.
-  * Introduced separate patch-building utility for developers to automatically produce patch files, analyzing changes between original retail disc image and modified one.
-* **Version 1.2** (2022-03-19)
-  * Enhanced GDI compatibility and integrity checking.
-* **Version 1.1** (2022-03-17)
-  * Eliminated GUI lockup that occurred at different stages of the patching process.
-* **Version 1.0** (2021-11-26)
-  * Fixed bug in LBA calculation used for extracting GDI data tracks.
-* **Version 0.9** (2021-11-22)
-  * Due to many anti-virus tools erroneously flagging the modified version of gditools from v0.8 as malware, this version uses an alternative method for GDI extraction that still delivers the same level of compatibility, leveraging bin2iso and extract.
-* **Version 0.8** (2021-11-19)
-  * Now using modified version of gditools (thanks to [mrneo240](https://github.com/mrneo240)) that can extract the dozen-or-so problematic GDIs which previously failed.
-* **Version 0.7** (2021-06-01)
-  * Fixed bug with temporary folders/files if they're written to a different disk drive than the one from which the application is launched.
-* **Version 0.6** (2021-05-26)
-  * Changed location of temporary folders/files to use Windows' default location rather than the application's working directory.
-  * Updated logo (also, watch what happens when the "Apply Patch" button is clicked).
-* **Version 0.5** (2021-05-19)
-  * Fixed bug in file path parsing.
-* **Version 0.4** (2021-05-18)
-  * Fixed bug with incorrect GDI building when source disc image contains CDDA.
-* **Version 0.3** (2021-05-17)
-  * The "bootsector" folder and its IP.BIN were erroneously being included as a folder and file in the patched GDI's filesystem.
-* **Version 0.2** (2021-05-17)
-  * Added support for source disc images with CDDA.
-  * Fixed bug with source disc image integrity verification.
-* **Version 0.1** (2021-05-16)
-  * Initial release.
+- **Version 2.0.1** (2026-05-05)
+  - Fixed potential auto-updater breakage in the future due to build pipeline version mismatch (see [Issue 4](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/4)).
+- **Version 2.0.0** (2026-05-04)
+  - Complete rewrite, combining the patcher and patch builder into a single cross-platform application (Windows, Linux, macOS).
+  - Removed all dependencies on external helper utilities, natively implementing all disc-image extract, rebuild, and binary diffing operations.
+  - Added support for CHD as a source disc image format (automatically decompressed and, if necessary, converted to GDI from CUE/BIN).
+  - Added built-in auto-update on Windows and Linux.
+  - Patched disc images and DCP files are now byte-identical across platforms for the same inputs, finally delivering reliable checksums.
+- **Version 1.8** (2024-11-08)
+  - Fixed bug in both patcher and patch builder when processing GDIs with over 90 CDDA tracks.
+- **Version 1.7** (2024-11-08)
+  - For both the patcher and patch builder, added support for GDI source disc images that use 2048-byte-per-sector ISO data tracks instead of standard 2352-byte-per-sector BIN data tracks.
+- **Version 1.6** (2023-07-17)
+  - Fixed bug in processing Redump-style CUE disc images with more than 10 tracks (<a href="https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/2">Issue #2</a>).
+  - Enhanced integrity checking of patched GDI output.
+- **Version 1.5** (2023-05-13)
+  - Eliminated IP.BIN-patching helper tools in patch-building utility, with code now directly implemented in the application itself.
+  - Changed some labels in the patch-building utility for clarity ("Unpatched GDI" is now "Original GDI" and "Patched GDI" is now "Modified GDI").
+- **Version 1.4** (2022-11-24)
+  - If patch utilizes xdelta, the current filename being patched is now displayed in the progress status message, avoiding the appearance of failure when processing large quantity of files.
+- **Version 1.3** (2022-05-06)
+  - Added xdelta support to reduce patch size, as well as eliminate the potential distribution of whole files containing copyrighted material.
+  - Introduced separate patch-building utility for developers to automatically produce patch files, analyzing changes between original retail disc image and modified one.
+- **Version 1.2** (2022-03-19)
+  - Enhanced GDI compatibility and integrity checking.
+- **Version 1.1** (2022-03-17)
+  - Eliminated GUI lockup that occurred at different stages of the patching process.
+- **Version 1.0** (2021-11-26)
+  - Fixed bug in LBA calculation used for extracting GDI data tracks.
+- **Version 0.9** (2021-11-22)
+  - Due to many anti-virus tools erroneously flagging the modified version of gditools from v0.8 as malware, this version uses an alternative method for GDI extraction that still delivers the same level of compatibility, leveraging bin2iso and extract.
+- **Version 0.8** (2021-11-19)
+  - Now using modified version of gditools (thanks to [mrneo240](https://github.com/mrneo240)) that can extract the dozen-or-so problematic GDIs which previously failed.
+- **Version 0.7** (2021-06-01)
+  - Fixed bug with temporary folders/files if they're written to a different disk drive than the one from which the application is launched.
+- **Version 0.6** (2021-05-26)
+  - Changed location of temporary folders/files to use Windows' default location rather than the application's working directory.
+  - Updated logo (also, watch what happens when the "Apply Patch" button is clicked).
+- **Version 0.5** (2021-05-19)
+  - Fixed bug in file path parsing.
+- **Version 0.4** (2021-05-18)
+  - Fixed bug with incorrect GDI building when source disc image contains CDDA.
+- **Version 0.3** (2021-05-17)
+  - The "bootsector" folder and its IP.BIN were erroneously being included as a folder and file in the patched GDI's filesystem.
+- **Version 0.2** (2021-05-17)
+  - Added support for source disc images with CDDA.
+  - Fixed bug with source disc image integrity verification.
+- **Version 0.1** (2021-05-16)
+  - Initial release.
 
 ## Existing Features
 Below is a specific list of Universal Dreamcast Patcher's current features.
 
-* Cross-platform support (Windows, Linux, macOS).
-* Unified GUI for both applying and creating patches.
-* Source disc image integrity verification.
-* Support for source disc images (input) with CDDA.
-* Disc image patching with custom `IP.BIN`.
-* Support for xdeltas in order to reduce patch size and mitigate copyright concerns.
-* Built-in auto-update (Windows and Linux).
-* Deterministic, byte-identical output across all platforms for the same inputs.
-* Supported formats for source disc image (input):
-  * TOSEC-style GDI
-  * Redump-style CUE
-  * CHD (GD-ROM)
-* Supported formats for patched disc image (output):
-  * TOSEC-style GDI
-* Supported formats for patch files:
-  * DCP
+- Cross-platform support (Windows, Linux, macOS).
+- Unified GUI for both applying and creating patches.
+- Source disc image integrity verification.
+- Support for source disc images (input) with CDDA.
+- Disc image patching with custom `IP.BIN`.
+- Support for xdeltas in order to reduce patch size and mitigate copyright concerns.
+- Built-in auto-update (Windows and Linux).
+- Deterministic, byte-identical output across all platforms for the same inputs.
+- Supported formats for source disc image (input):
+  - TOSEC-style GDI
+  - Redump-style CUE
+  - CHD (GD-ROM)
+- Supported formats for patched disc image (output):
+  - TOSEC-style GDI
+- Supported formats for patch files:
+  - DCP
 
 ## Known Issues and Limitations
 While Universal Dreamcast Patcher delivers its core features reliably, all known issues and limitations of the application are listed below.

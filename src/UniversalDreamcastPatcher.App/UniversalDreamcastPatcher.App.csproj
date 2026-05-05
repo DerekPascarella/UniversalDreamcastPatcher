@@ -1,6 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!-- Read and parse version from ../../version.txt (e.g. v2.0.0 -> 2.0.0.0). -->
+    <VersionFileContent>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)\..\..\version.txt').Trim())</VersionFileContent>
+    <NumericVersion>$([System.Text.RegularExpressions.Regex]::Match('$(VersionFileContent)', '\d+\.\d+(\.\d+)?').Value)</NumericVersion>
+    <HasPatch>$([System.Text.RegularExpressions.Regex]::IsMatch('$(NumericVersion)', '\d+\.\d+\.\d+'))</HasPatch>
+    <Version Condition="'$(HasPatch)' == 'True'">$(NumericVersion).0</Version>
+    <Version Condition="'$(HasPatch)' != 'True'">$(NumericVersion).0.0</Version>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -10,7 +21,6 @@
     <AssemblyName>UniversalDreamcastPatcher</AssemblyName>
     <RootNamespace>UniversalDreamcastPatcher.App</RootNamespace>
     <ApplicationIcon>Assets\sega_dreamcast.ico</ApplicationIcon>
-    <Version>2.0.0</Version>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 
     <!-- Publish settings: one self-contained exe, natives extracted on first run, no pdb/xml clutter. -->

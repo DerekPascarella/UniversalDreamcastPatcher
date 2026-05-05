@@ -8,6 +8,8 @@ rem Written by Derek Pascarella (ateam)
 setlocal EnableDelayedExpansion
 
 set /p VERSION=<version.txt
+rem Strip leading 'v' so a version.txt of either "2.0.1" or "v2.0.1" works.
+if /i "%VERSION:~0,1%"=="v" set "VERSION=%VERSION:~1%"
 
 echo ================================================
 echo Universal Dreamcast Patcher v%VERSION% - Full release build
