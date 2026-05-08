@@ -8,22 +8,11 @@ using System.Threading.Tasks;
 
 namespace UniversalDreamcastPatcher.Core
 {
-    /// <summary>
-    /// Converts Redump GD-ROM CUE/BIN format to GDI format.
-    /// </summary>
     public static class GdiConverter
     {
         private const int SectorSize = 2352;
         private const int HighDensityAreaLba = 45000;
 
-        /// <summary>
-        /// Convert a GD-ROM CUE/BIN to GDI format.
-        /// </summary>
-        /// <param name="cuePath">Path to the CUE file</param>
-        /// <param name="outputDirectory">Directory to write GDI files to</param>
-        /// <param name="progress">Optional progress callback (0-100)</param>
-        /// <param name="cancellationToken">Optional cancellation token</param>
-        /// <returns>Success status and error message if failed</returns>
         public static async Task<(bool Success, string Message)> ConvertToGdi(
             string cuePath,
             string outputDirectory,
@@ -125,9 +114,8 @@ namespace UniversalDreamcastPatcher.Core
             }
         }
 
-        /// <summary>
-        /// Parse a CUE file with full index tracking.
-        /// </summary>
+        // Parses the CUE with full index tracking so multi-index tracks
+        // (audio with pregap) can be split correctly later.
         private static CueData ParseCueFile(string cuePath)
         {
             var cueData = new CueData
@@ -200,9 +188,6 @@ namespace UniversalDreamcastPatcher.Core
             return cueData;
         }
 
-        /// <summary>
-        /// Split a CUE line, handling quoted strings.
-        /// </summary>
         private static string[] SplitCueLine(string line)
         {
             var parts = new List<string>();
@@ -235,9 +220,7 @@ namespace UniversalDreamcastPatcher.Core
             return parts.ToArray();
         }
 
-        /// <summary>
-        /// Parse MSF (MM:SS:FF) timestamp to total frames.
-        /// </summary>
+        // MSF format is MM:SS:FF where FF is frame count (75 frames per second).
         private static int ParseMsfToFrames(string msf)
         {
             var parts = msf.Split(':');
@@ -252,9 +235,6 @@ namespace UniversalDreamcastPatcher.Core
             return (minutes * 60 * 75) + (seconds * 75) + frames;
         }
 
-        /// <summary>
-        /// Copy a file asynchronously.
-        /// </summary>
         private static async Task CopyFileAsync(string source, string destination, CancellationToken cancellationToken)
         {
             const int bufferSize = 81920; // 80KB buffer
@@ -264,10 +244,9 @@ namespace UniversalDreamcastPatcher.Core
             await sourceStream.CopyToAsync(destStream, bufferSize, cancellationToken);
         }
 
-        /// <summary>
-        /// Copy a file with an offset (skip frames from start).
-        /// Returns the number of sectors written.
-        /// </summary>
+        // Skips the requested number of frames from the start of the source
+        // (used to drop pregap data from multi-index tracks). Returns the
+        // sector count actually written.
         private static async Task<int> CopyFileWithOffsetAsync(string source, string destination, int framesToSkip, CancellationToken cancellationToken)
         {
             const int bufferSize = 81920; // 80KB buffer
@@ -287,9 +266,6 @@ namespace UniversalDreamcastPatcher.Core
             return sectorsToWrite;
         }
 
-        /// <summary>
-        /// Check if a CUE file represents a GD-ROM image.
-        /// </summary>
         public static bool IsGdRomCue(string cuePath)
         {
             try

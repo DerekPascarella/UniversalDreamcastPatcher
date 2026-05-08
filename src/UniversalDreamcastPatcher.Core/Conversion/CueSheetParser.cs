@@ -6,9 +6,6 @@ using System.Text;
 
 namespace UniversalDreamcastPatcher.Core
 {
-    /// <summary>
-    /// Represents a track in a CUE sheet.
-    /// </summary>
     public class CueTrack
     {
         public int TrackNumber { get; set; }
@@ -23,9 +20,7 @@ namespace UniversalDreamcastPatcher.Core
         public bool IsHighDensityArea => Comments.Any(c => c.Contains("HIGH-DENSITY AREA", StringComparison.OrdinalIgnoreCase));
     }
 
-    /// <summary>
-    /// Simple CUE sheet parser for Redump format disc images.
-    /// </summary>
+    // CUE sheet parser for Redump-format disc images.
     public class CueSheetParser
     {
         public const int SectorSize = 2352;
@@ -37,9 +32,6 @@ namespace UniversalDreamcastPatcher.Core
         public bool IsGdRom { get; private set; }
         public bool IsCdRom => !IsGdRom;
 
-        /// <summary>
-        /// Parse a CUE file.
-        /// </summary>
         public void Parse(string cuePath)
         {
             if (!File.Exists(cuePath))
@@ -112,9 +104,7 @@ namespace UniversalDreamcastPatcher.Core
             IsGdRom = Tracks.Any(t => t.IsHighDensityArea);
         }
 
-        /// <summary>
-        /// Split a CUE line, handling quoted strings.
-        /// </summary>
+        // Splits on whitespace, but keeps quoted segments (filenames) intact.
         private string[] SplitCueLine(string line)
         {
             var parts = new List<string>();
@@ -147,9 +137,7 @@ namespace UniversalDreamcastPatcher.Core
             return parts.ToArray();
         }
 
-        /// <summary>
-        /// Parse MSF (MM:SS:FF) timestamp to total frames.
-        /// </summary>
+        // MSF format is MM:SS:FF where FF is frame count (75 frames per second).
         private int ParseMsfToFrames(string msf)
         {
             var parts = msf.Split(':');
@@ -164,9 +152,8 @@ namespace UniversalDreamcastPatcher.Core
             return (minutes * 60 * 75) + (seconds * 75) + frames;
         }
 
-        /// <summary>
-        /// Get the first data track (for CD-ROM) or the HD area data track (for GD-ROM).
-        /// </summary>
+        // For CD-ROM, returns the first data track.
+        // For GD-ROM, returns the HD area data track if present, falling back to the first data track.
         public CueTrack GetPrimaryDataTrack()
         {
             if (IsGdRom)
@@ -185,10 +172,8 @@ namespace UniversalDreamcastPatcher.Core
         // Dreamcast IP.BIN signature.
         private static readonly byte[] DreamcastSignature = Encoding.ASCII.GetBytes("SEGA SEGAKATANA SEGA ENTERPRISES");
 
-        /// <summary>
-        /// Read IP.BIN data from the primary data track.
-        /// Searches for the Dreamcast "SEGA SEGAKATANA" signature.
-        /// </summary>
+        // Locates the Dreamcast "SEGA SEGAKATANA" signature in the primary data
+        // track and returns 512 bytes from that offset.
         public byte[] ReadIpBin()
         {
             var dataTrack = GetPrimaryDataTrack();
@@ -220,9 +205,6 @@ namespace UniversalDreamcastPatcher.Core
             return buffer;
         }
 
-        /// <summary>
-        /// Search for a byte signature in a stream.
-        /// </summary>
         private static long FindSignature(Stream stream, byte[] signature, long maxSearchLength)
         {
             stream.Seek(0, SeekOrigin.Begin);
@@ -256,9 +238,6 @@ namespace UniversalDreamcastPatcher.Core
             return -1; // Not found
         }
 
-        /// <summary>
-        /// Get total size of all BIN files referenced by this CUE sheet.
-        /// </summary>
         public long GetTotalBinSize()
         {
             long total = 0;
@@ -280,9 +259,6 @@ namespace UniversalDreamcastPatcher.Core
             return total;
         }
 
-        /// <summary>
-        /// Get all BIN files referenced by this CUE sheet.
-        /// </summary>
         public List<string> GetAllBinFiles()
         {
             var files = new List<string>();

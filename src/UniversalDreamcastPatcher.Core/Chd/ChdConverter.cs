@@ -8,9 +8,6 @@ using System.Threading.Tasks;
 
 namespace UniversalDreamcastPatcher.Core
 {
-    /// <summary>
-    /// Converts CHD disc images to GDI (GD-ROM) or CUE/BIN (CD-ROM) format.
-    /// </summary>
     public static class ChdConverter
     {
         private const int SectorSize = 2352;
@@ -18,9 +15,6 @@ namespace UniversalDreamcastPatcher.Core
         private const int SectorsPerBatch = 256; // ~588KB per batch
         private const int TrackPadding = 4; // chdman aligns each track to 4-frame boundaries
 
-        /// <summary>
-        /// Convert a GD-ROM CHD to GDI format.
-        /// </summary>
         public static async Task<(bool Success, string Message)> ConvertToGdi(
             string chdPath,
             string outputDirectory,
@@ -105,10 +99,7 @@ namespace UniversalDreamcastPatcher.Core
             }
         }
 
-        /// <summary>
-        /// Convert a CD-ROM CHD to CUE/BIN format.
-        /// The resulting CUE/BIN can then be converted to CDI via Redump2CdiConverter.
-        /// </summary>
+        // The resulting CUE/BIN pair can be fed to Redump2CdiConverter for CDI output.
         public static async Task<(bool Success, string Message, string CuePath)> ConvertToCueBin(
             string chdPath,
             string outputDirectory,
@@ -185,9 +176,6 @@ namespace UniversalDreamcastPatcher.Core
             }
         }
 
-        /// <summary>
-        /// Check if a CHD file contains a GD-ROM image.
-        /// </summary>
         public static bool IsGdRomChd(string chdPath)
         {
             try
@@ -201,9 +189,8 @@ namespace UniversalDreamcastPatcher.Core
             }
         }
 
-        /// <summary>
-        /// Extract track data from CHD to a file, reading in batches for memory efficiency.
-        /// </summary>
+        // Streams the track data out in fixed-size batches so a multi-GB CHD
+        // doesn't have to be held in memory all at once.
         private static void ExtractTrackData(
             ChdReader chd,
             long startSector,
@@ -235,10 +222,8 @@ namespace UniversalDreamcastPatcher.Core
             }
         }
 
-        /// <summary>
-        /// Byte-swap 16-bit audio samples (big-endian to little-endian).
-        /// CHD v5+ stores audio in big-endian; BIN/RAW files expect little-endian.
-        /// </summary>
+        // CHD v5+ stores audio big-endian, but BIN/RAW files expect little-endian,
+        // so each 16-bit sample needs its bytes flipped.
         private static void SwapAudioEndianness(byte[] data)
         {
             for (int i = 0; i < data.Length - 1; i += 2)
@@ -249,19 +234,14 @@ namespace UniversalDreamcastPatcher.Core
             }
         }
 
-        /// <summary>
-        /// Calculate the extra zero-filled alignment frames chdman appends
-        /// after a track to round up to a 4-frame boundary.
-        /// </summary>
+        // chdman pads each track up to a 4-frame boundary; those padding
+        // frames are part of the data stream and must be stepped over.
         private static int GetExtraFrames(int totalFrames)
         {
             return ((totalFrames + TrackPadding - 1) / TrackPadding) * TrackPadding - totalFrames;
         }
 
-        /// <summary>
-        /// Convert frame count to CUE MSF format (MM:SS:FF).
-        /// 75 frames per second, 60 seconds per minute.
-        /// </summary>
+        // CUE MSF format is MM:SS:FF at 75 frames per second.
         private static string FramesToMsf(int frames)
         {
             int minutes = frames / (75 * 60);

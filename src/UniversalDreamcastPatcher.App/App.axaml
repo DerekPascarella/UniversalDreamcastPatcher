@@ -4,6 +4,15 @@
              Name="Universal Dreamcast Patcher"
              RequestedThemeVariant="Light">
 
+    <!-- Override Avalonia's hardcoded "About Avalonia" entry in the macOS app menu.
+         Defining a NativeMenu here suppresses CreateDefaultAppMenu(); the standard
+         Services/Hide/Quit items are still appended automatically. -->
+    <NativeMenu.Menu>
+        <NativeMenu>
+            <NativeMenuItem Header="About Universal Dreamcast Patcher" Click="AboutMenuItem_Click"/>
+        </NativeMenu>
+    </NativeMenu.Menu>
+
     <Application.Styles>
         <FluentTheme />
 

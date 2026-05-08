@@ -78,7 +78,7 @@ public partial class MainWindow : Window
         {
             e.Cancel = true;
 
-            // Guard against reentry (e.g. Cmd-Q while the prompt is already up).
+            // Guard against reentry, like Cmd-Q while the prompt is already up.
             if (_confirmInFlight) return;
             _confirmInFlight = true;
 
@@ -106,7 +106,7 @@ public partial class MainWindow : Window
         }
 
         // Reload before saving so a setting changed by a dialog this session
-        // (e.g. SkippedUpdateVersion) isn't overwritten.
+        // (like SkippedUpdateVersion) isn't overwritten.
         var fresh = AppSettings.Load();
         fresh.WindowLeft = Position.X;
         fresh.WindowTop = Position.Y;

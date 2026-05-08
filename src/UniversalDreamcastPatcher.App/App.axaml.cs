@@ -1,6 +1,8 @@
+using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using UniversalDreamcastPatcher.App.Views;
 
 namespace UniversalDreamcastPatcher.App;
 
@@ -19,5 +21,14 @@ public partial class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void AboutMenuItem_Click(object? sender, EventArgs e)
+    {
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } main })
+        {
+            var about = new AboutWindow();
+            _ = about.ShowDialog(main);
+        }
     }
 }

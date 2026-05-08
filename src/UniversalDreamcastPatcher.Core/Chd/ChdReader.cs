@@ -164,9 +164,7 @@ namespace UniversalDreamcastPatcher.Core
             return track;
         }
 
-        /// <summary>
-        /// Read a single 2352-byte sector from the CHD at the given absolute sector index.
-        /// </summary>
+        // Returns a 2352-byte sector at the given absolute index in the CHD.
         public byte[] ReadSector(long sectorIndex)
         {
             int framesPerHunk = (int)(Header.HunkBytes / ChdFrameSize);
@@ -190,10 +188,8 @@ namespace UniversalDreamcastPatcher.Core
             }
         }
 
-        /// <summary>
-        /// Read a range of sectors efficiently, reusing the hunk buffer.
-        /// Returns raw 2352-byte sector data concatenated.
-        /// </summary>
+        // Batched sector read that reuses the hunk buffer across consecutive
+        // reads in the same hunk. Returns raw 2352-byte sectors concatenated.
         public byte[] ReadSectors(long startSector, int count)
         {
             byte[] result = new byte[count * ChdSectorDataSize];
@@ -227,12 +223,9 @@ namespace UniversalDreamcastPatcher.Core
             return result;
         }
 
-        /// <summary>
-        /// Extract the IP.BIN data from the appropriate data track.
-        /// For GD-ROM: first data track in the high-density area (TrackNumber >= 3).
-        /// For CD-ROM: first data track.
-        /// Returns raw 2352-byte sector data.
-        /// </summary>
+        // For GD-ROM, IP.BIN sits at the start of the first HD-area data track
+        // (TrackNumber >= 3). For CD-ROM, it's the first data track. Returns
+        // a single raw 2352-byte sector.
         public byte[] GetIpBin()
         {
             long ipSector = GetIpBinSectorOffset();
@@ -274,21 +267,16 @@ namespace UniversalDreamcastPatcher.Core
             throw new Exception("No data track found in CHD file");
         }
 
-        /// <summary>
-        /// Calculate the number of extra zero-filled alignment frames chdman appends
-        /// after a track to round up to a TrackPadding (4) frame boundary.
-        /// These frames ARE stored in the CHD data stream.
-        /// </summary>
+        // chdman pads each track up to a 4-frame boundary with zero-filled
+        // sectors that ARE stored in the data stream, so the conversion needs
+        // to skip past them when advancing.
         private static int GetExtraFrames(int frames)
         {
             return ((frames + TrackPadding - 1) / TrackPadding) * TrackPadding - frames;
         }
 
-        /// <summary>
-        /// Calculate the absolute sector offset for the start of a given track's data.
-        /// Each track's allocation in the CHD includes its FRAMES (which includes PAD)
-        /// plus extra alignment frames (chdman pads to 4-frame boundaries).
-        /// </summary>
+        // Each track's allocation in the CHD is FRAMES (which already includes
+        // PAD) plus the 4-frame alignment padding chdman appends.
         public long GetTrackDataStartSector(int trackIndex)
         {
             long currentSector = 0;

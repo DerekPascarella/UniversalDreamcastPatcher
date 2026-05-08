@@ -18,9 +18,12 @@ As of version 2.0.0, Universal Dreamcast Patcher is a cross-platform application
 8. [Legal and Licensing](https://github.com/DerekPascarella/UniversalDreamcastPatcher#legal-and-licensing)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [2.0.1](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.0.1).
+The latest version of Universal Dreamcast Patcher is [2.0.2](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.0.2).
 
 ## Changelog
+- **Version 2.0.2** (2026-05-08)
+  - In macOS, fixed System Bar's "About <Application Name>" string (see [Issue 5](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/5)).
+  - Fixed potentially destructive behavior in Windows/Linux auto-update (see [Issue 6](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/6)).
 - **Version 2.0.1** (2026-05-05)
   - Fixed potential auto-updater breakage in the future due to build pipeline version mismatch (see [Issue 4](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/4)).
 - **Version 2.0.0** (2026-05-04)

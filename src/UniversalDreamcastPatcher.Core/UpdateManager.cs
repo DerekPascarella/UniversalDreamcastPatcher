@@ -586,14 +586,15 @@ public static class UpdateManager
 
         // Wait-Process avoids parsing tasklist output and returns immediately
         // if the PID is already gone.
-        // robocopy /MIR mirrors the new release over the install dir, removing
-        // any files that are no longer present.
+        // xcopy overwrites the install dir's files in place. It does NOT remove
+        // unrelated files, so users who placed the exe inside a shared folder
+        // like Downloads keep their other files intact across updates.
         return $@"@echo off
 powershell -NoProfile -Command ""Wait-Process -Id {pid} -ErrorAction SilentlyContinue""
 
 echo {InstallMarker}> ""{lockPath}""
 
-robocopy ""{escaped_extracted}"" ""{escaped_app}"" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
+xcopy /E /Y ""{escaped_extracted}\*"" ""{escaped_app}\""
 
 rmdir /S /Q ""{escaped_extracted}"" 2>NUL
 rmdir /S /Q ""{stagingDir}"" 2>NUL
@@ -613,9 +614,10 @@ del ""%~f0""
         var lockPath = GetLockFilePath();
         var exePath = $"{escaped_app}/{Constants.AppExecutableBase}";
 
-        // rsync --delete mirrors the new release over the install dir.
-        // Fallback (no rsync): manually delete missing files, then copy
-        // everything including dotfiles via the "/." idiom.
+        // cp overwrites the install dir's files in place. It does NOT remove
+        // unrelated files, so users who placed the binary inside a shared folder
+        // like ~/Downloads keep their other files intact across updates. The
+        // "/." idiom copies dotfiles too.
         return $@"#!/bin/bash
 
 # Wait for the previous process to exit.
@@ -626,19 +628,7 @@ done
 # Mark the install in progress so a concurrent UDP launch stays out.
 echo {InstallMarker} > ""{lockPath}""
 
-if command -v rsync >/dev/null 2>&1; then
-    rsync -a --delete ""{extractedDir}/"" ""{escaped_app}/""
-else
-    # Remove any files in the install dir that the new release does not contain.
-    (cd ""{escaped_app}"" && find . -type f -print0) | while IFS= read -r -d '' f; do
-        rel=""${{f#./}}""
-        if [ ! -e ""{extractedDir}/$rel"" ]; then
-            rm -f ""{escaped_app}/$rel""
-        fi
-    done
-    # Copy everything from the staged release, including dotfiles.
-    cp -rf ""{extractedDir}/."" ""{escaped_app}/""
-fi
+cp -rf ""{extractedDir}/."" ""{escaped_app}/""
 
 # Clean up staging directory.
 rm -rf ""{stagingDir}""
