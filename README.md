@@ -11,8 +11,8 @@ As of version 2.0.0, Universal Dreamcast Patcher is a cross-platform application
 3. [Existing Features](https://github.com/DerekPascarella/UniversalDreamcastPatcher#existing-features)
 4. [Known Issues and Limitations](https://github.com/DerekPascarella/UniversalDreamcastPatcher#known-issues-and-limitations)
 5. [Roadmap](https://github.com/DerekPascarella/UniversalDreamcastPatcher#roadmap)
-6. [Usage: Patching](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-patching)
-7. [Usage: Creating Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#usage-creating-patches)
+6. [Applying Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#applying-patches)
+7. [Building Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#building-patches)
    - [Automatic Method](https://github.com/DerekPascarella/UniversalDreamcastPatcher#automatic-method)
    - [Manual Method](https://github.com/DerekPascarella/UniversalDreamcastPatcher#manual-method)
 8. [Legal and Licensing](https://github.com/DerekPascarella/UniversalDreamcastPatcher#legal-and-licensing)
@@ -105,8 +105,9 @@ As Universal Dreamcast Patcher evolves and improves over time, the list below re
 
 * Support for patched disc image (output) in Redump-style CUE format.
 * Extend DCP patch format to support modifying CDDA tracks.
+* Add a new "IP.BIN Editor" tab for modifying either `IP.BIN` files directly, or those already baked into a disc image.
 
-## Usage: Patching
+## Applying Patches
 Universal Dreamcast Patcher is simple to use. After launching the application, follow the steps below.
 
 1. The **Apply Patch** tab is selected by default.
@@ -119,7 +120,7 @@ The patched GDI will be written to a subfolder of the output folder, named after
 
 Details on the current step of the patching process will be updated as they progress. Any errors encountered during sanity or integrity checks will be presented and the patching process will be halted.
 
-## Usage: Creating Patches
+## Building Patches
 The DCP patch format was designed specifically for Universal Dreamcast Patcher. Presently, there is both an automatic and a manual method one can use to build a patch.
 
 ### Automatic Method
@@ -184,7 +185,7 @@ For the full license text, see [LICENSE.txt](LICENSE.txt).
 ### Third-Party Components
 Universal Dreamcast Patcher includes the following third-party code and libraries, each with its own license:
 
-- **DiscUtilsGD** (MIT) - ISO9660 / GD-ROM filesystem reader and builder. Copyright 2008–2011 Kenneth Bell, 2014 Quamotion, 2014–2024 Paul Kratt. Sourced from [Sappharad/GDIbuilder](https://github.com/Sappharad/GDIbuilder), itself a fork of upstream [DiscUtils](https://github.com/DiscUtils/DiscUtils).
+- **DiscUtilsGD** (MIT) - ISO9660 / GD-ROM filesystem reader and builder. Copyright 2008-2011 Kenneth Bell, 2014 Quamotion, 2014-2024 Paul Kratt. Sourced from [Sappharad/GDIbuilder](https://github.com/Sappharad/GDIbuilder), itself a fork of upstream [DiscUtils](https://github.com/DiscUtils/DiscUtils).
 - **xdelta3** (Apache 2.0) - VCDIFF binary diff and patch library. Copyright Joshua MacDonald. Sourced from [jmacd/xdelta](https://github.com/jmacd/xdelta).
 - **liblzma / XZ Utils** (0BSD) - LZMA compression library, used by xdelta3 for VCDIFF LZMA secondary compression. Copyright Lasse Collin; LZMA algorithm by Igor Pavlov. Sourced from [tukaani-project/xz](https://github.com/tukaani-project/xz).
 - **libchdr** (BSD 3-Clause) - native CHD disc image decompression library. Sourced from [rtissera/libchdr](https://github.com/rtissera/libchdr). Internally bundles zlib (zlib license) and FLAC (BSD).
