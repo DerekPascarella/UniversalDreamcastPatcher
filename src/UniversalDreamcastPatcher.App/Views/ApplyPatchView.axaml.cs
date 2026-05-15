@@ -8,6 +8,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
+using UniversalDreamcastPatcher.App.Views.Shared;
 using UniversalDreamcastPatcher.Core.Patching;
 
 // Written by Derek Pascarella (ateam)
@@ -19,6 +20,8 @@ public partial class ApplyPatchView : UserControl
     private TextBox? _sourceImagePath;
     private TextBox? _patchFilePath;
     private TextBox? _outputFolderPath;
+    private ComboBox? _outputFormatDropdown;
+    private Button? _formatInfoButton;
     private Button? _applyButton;
     private Button? _browseSource;
     private Button? _browsePatch;
@@ -35,6 +38,8 @@ public partial class ApplyPatchView : UserControl
         _sourceImagePath = this.FindControl<TextBox>("SourceImagePath");
         _patchFilePath = this.FindControl<TextBox>("PatchFilePath");
         _outputFolderPath = this.FindControl<TextBox>("OutputFolderPath");
+        _outputFormatDropdown = this.FindControl<ComboBox>("OutputFormatDropdown");
+        _formatInfoButton = this.FindControl<Button>("FormatInfoButton");
         _applyButton = this.FindControl<Button>("ApplyPatchButton");
         _browseSource = this.FindControl<Button>("BrowseSourceImage");
         _browsePatch = this.FindControl<Button>("BrowsePatchFile");
@@ -46,10 +51,39 @@ public partial class ApplyPatchView : UserControl
         if (_browsePatch != null) _browsePatch.Click += async (_, _) => await BrowsePatch();
         if (_browseOutput != null) _browseOutput.Click += async (_, _) => await BrowseOutput();
         if (_applyButton != null) _applyButton.Click += async (_, _) => await Apply();
+        if (_formatInfoButton != null) _formatInfoButton.Click += async (_, _) => await ShowFormatInfo();
 
-        if (_sourceImagePath != null) _sourceImagePath.TextChanged += (_, _) => UpdateGate();
+        if (_sourceImagePath != null)
+        {
+            _sourceImagePath.TextChanged += (_, _) => { RefreshOutputFormatDropdown(); UpdateGate(); };
+        }
         if (_patchFilePath != null) _patchFilePath.TextChanged += (_, _) => UpdateGate();
         if (_outputFolderPath != null) _outputFolderPath.TextChanged += (_, _) => UpdateGate();
+    }
+
+    private void RefreshOutputFormatDropdown()
+    {
+        if (_outputFormatDropdown == null) return;
+
+        var path = _sourceImagePath?.Text ?? string.Empty;
+        var detected = SourceFormatDetector.Detect(path);
+
+        if (detected == DetectedSourceFormat.Unknown)
+        {
+            _outputFormatDropdown.ItemsSource = null;
+            _outputFormatDropdown.IsEnabled = false;
+            if (_formatInfoButton != null) _formatInfoButton.IsEnabled = false;
+            _outputFormatDropdown.PlaceholderText = string.IsNullOrWhiteSpace(path)
+                ? "Select a source disc image first"
+                : "Source disc image is not a recognized format";
+            return;
+        }
+
+        var items = FormatOptionCatalog.ForApplyPatchSource(detected);
+        _outputFormatDropdown.ItemsSource = items;
+        _outputFormatDropdown.SelectedIndex = 0;  // first entry is always GDI per spec
+        _outputFormatDropdown.IsEnabled = true;
+        if (_formatInfoButton != null) _formatInfoButton.IsEnabled = true;
     }
 
     private void InitializeComponent()
@@ -141,6 +175,8 @@ public partial class ApplyPatchView : UserControl
             if (_progressLabel != null) _progressLabel.Text = msg;
         });
 
+        var format = (_outputFormatDropdown?.SelectedItem as FormatOption)?.Format ?? OutputDiscImageFormat.Gdi;
+
         PatchApplyResult result;
         try
         {
@@ -150,6 +186,7 @@ public partial class ApplyPatchView : UserControl
                     SourceDiscImagePath = src,
                     DcpPatchPath = dcp,
                     OutputFolder = outDir,
+                    OutputFormat = format,
                 },
                 progress,
                 _cts.Token);
@@ -172,14 +209,15 @@ public partial class ApplyPatchView : UserControl
 
         var owner = TopLevel.GetTopLevel(this) as Window;
 
+        string title = result.Success ? "Information" : "Error";
         string message = result.Success
             ? $"Patch applied successfully.\n\n" +
               $"Files patched: {result.FilesPatched}\n" +
               $"Files added: {result.FilesAdded}\n\n" +
-              $"GDI folder:\n{result.ProducedGdiFolder}"
+              $"Output folder:\n{result.ProducedOutputFolder}"
             : result.ErrorMessage ?? "Patching failed for an unknown reason.";
 
-        var box = MessageBoxManager.GetMessageBoxStandard("Universal Dreamcast Patcher", message, ButtonEnum.Ok, Icon.None);
+        var box = MessageBoxManager.GetMessageBoxStandard(title, message, ButtonEnum.Ok, Icon.None);
         if (owner != null)
             await box.ShowWindowDialogAsync(owner);
         else
@@ -200,5 +238,9 @@ public partial class ApplyPatchView : UserControl
         if (_browseSource != null) _browseSource.IsEnabled = enabled;
         if (_browsePatch != null) _browsePatch.IsEnabled = enabled;
         if (_browseOutput != null) _browseOutput.IsEnabled = enabled;
+        if (_outputFormatDropdown != null) _outputFormatDropdown.IsEnabled = enabled;
+        if (_formatInfoButton != null) _formatInfoButton.IsEnabled = enabled;
     }
+
+    private async System.Threading.Tasks.Task ShowFormatInfo() => await FormatInfoDialog.ShowAsync(this);
 }

@@ -3,6 +3,12 @@ rem Full cross-platform release build: win-x86, win-x64, linux-x64, osx-x64, osx
 rem Produces self-contained single-file publishes in _releases/.
 rem Requires: VS 2022 with .NET 8 SDK, WSL for the macOS .app bundle step.
 rem
+rem NOTE: This script does NOT rebuild the native libraries under
+rem src\UniversalDreamcastPatcher.Core\runtimes\<rid>\native\. If anything in
+rem native\libchdw\ has changed since the last release, run
+rem `bash native/libchdw/build-libchdw.sh` in WSL FIRST, otherwise the
+rem published bundles will ship the previous libchdw build.
+rem
 rem Written by Derek Pascarella (ateam)
 
 setlocal EnableDelayedExpansion
@@ -27,6 +33,13 @@ if not exist "_releases" mkdir "_releases"
 
 echo.
 echo Packing UdpNatives local NuGet (per-RID native binaries)...
+rem Wipe the previous local pack AND the extracted copy from NuGet's global
+rem cache. NuGet's resolver trusts the cached extraction whenever a matching
+rem version is already present, so without this step a fresh .nupkg with the
+rem same version number but different native-binary contents (e.g. an updated
+rem libchdw.dylib) would never reach the published output.
+if exist "_localpkg\UdpNatives.*.nupkg" del /q "_localpkg\UdpNatives.*.nupkg"
+if exist "%USERPROFILE%\.nuget\packages\udpnatives" rd /s /q "%USERPROFILE%\.nuget\packages\udpnatives"
 dotnet pack native\UdpNativesPackage\UdpNativesPackage.csproj -o _localpkg --nologo
 if %ERRORLEVEL% neq 0 goto :error
 

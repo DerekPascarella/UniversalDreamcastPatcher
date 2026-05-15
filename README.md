@@ -1,14 +1,14 @@
 # Universal Dreamcast Patcher
 <img align="right" width="349" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/screenshot.png?raw=true">Universal Dreamcast Patcher aims to provide an easy, cross-format game patching solution for the Dreamcast community. Such patches typically come in the form of English translations and other ROM hacks.
 
-Universal Dreamcast Patcher is designed to accept any disc image as its source, whether it be formatted as a TOSEC-style GDI, a Redump-style CUE, or a CHD. This application will extract any disc image meeting those standards, overwrite and/or add to its data according to a given patch (DCP file), and then rebuild the disc image with the new data.
+Universal Dreamcast Patcher is designed to accept any disc image as its source, whether it be formatted as a TOSEC-style GDI, a Redump-style CUE/BIN, or a compressed CHD. This application will extract any disc image meeting those standards, overwrite and/or add to its data according to a given patch (DCP file), and then rebuild the disc image with the new data.
 
 As of version 2.0.0, Universal Dreamcast Patcher is a cross-platform application that combines patch application and patch creation into a single unified GUI.
 
 ## Table of Contents
 1. [Latest Version](https://github.com/DerekPascarella/UniversalDreamcastPatcher#latest-version)
 2. [Changelog](https://github.com/DerekPascarella/UniversalDreamcastPatcher#changelog)
-3. [Existing Features](https://github.com/DerekPascarella/UniversalDreamcastPatcher#existing-features)
+3. [Current Features](https://github.com/DerekPascarella/UniversalDreamcastPatcher#current-features)
 4. [Known Issues and Limitations](https://github.com/DerekPascarella/UniversalDreamcastPatcher#known-issues-and-limitations)
 5. [Roadmap](https://github.com/DerekPascarella/UniversalDreamcastPatcher#roadmap)
 6. [Applying Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#applying-patches)
@@ -18,9 +18,15 @@ As of version 2.0.0, Universal Dreamcast Patcher is a cross-platform application
 8. [Legal and Licensing](https://github.com/DerekPascarella/UniversalDreamcastPatcher#legal-and-licensing)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [2.0.2](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.0.2).
+The latest version of Universal Dreamcast Patcher is [2.1.0](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.0).
 
 ## Changelog
+- **Version 2.1.0** (2026-05-15)
+  - Added tooltip text to all selectable UI elements (see [Issue 7](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/7)).
+  - Patched output disc image now supports writing CUE/BIN and CHD (see [Issue 8](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/8)).
+  - New "IP.BIN Editor" tab added (see [Issue 9](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/9)).
+  - New "Converter" tab added (see [Issue 10](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/10)).
+  - Dialog box titles modified for Information/Confirmation/Error consistency (see [Issue 11](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/11)).
 - **Version 2.0.2** (2026-05-08)
   - In macOS, fixed System Bar's "About <Application Name>" string (see [Issue 5](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/5)).
   - Fixed potentially destructive behavior in Windows/Linux auto-update (see [Issue 6](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/6)).
@@ -37,13 +43,13 @@ The latest version of Universal Dreamcast Patcher is [2.0.2](https://github.com/
 - **Version 1.7** (2024-11-08)
   - For both the patcher and patch builder, added support for GDI source disc images that use 2048-byte-per-sector ISO data tracks instead of standard 2352-byte-per-sector BIN data tracks.
 - **Version 1.6** (2023-07-17)
-  - Fixed bug in processing Redump-style CUE disc images with more than 10 tracks (<a href="https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/2">Issue #2</a>).
+  - Fixed bug in processing Redump-style CUE/BIN disc images with more than 10 tracks (<a href="https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/2">Issue #2</a>).
   - Enhanced integrity checking of patched GDI output.
 - **Version 1.5** (2023-05-13)
   - Eliminated IP.BIN-patching helper tools in patch-building utility, with code now directly implemented in the application itself.
   - Changed some labels in the patch-building utility for clarity ("Unpatched GDI" is now "Original GDI" and "Patched GDI" is now "Modified GDI").
 - **Version 1.4** (2022-11-24)
-  - If patch utilizes xdelta, the current filename being patched is now displayed in the progress status message, avoiding the appearance of failure when processing large quantity of files.
+  - If patch utilizes xdelta, the current filename being patched is now displayed in the progress status message, avoiding the appearance of failure when processing a large quantity of files.
 - **Version 1.3** (2022-05-06)
   - Added xdelta support to reduce patch size, as well as eliminate the potential distribution of whole files containing copyrighted material.
   - Introduced separate patch-building utility for developers to automatically produce patch files, analyzing changes between original retail disc image and modified one.
@@ -74,7 +80,7 @@ The latest version of Universal Dreamcast Patcher is [2.0.2](https://github.com/
 - **Version 0.1** (2021-05-16)
   - Initial release.
 
-## Existing Features
+## Current Features
 Below is a specific list of Universal Dreamcast Patcher's current features.
 
 - Cross-platform support (Windows, Linux, macOS).
@@ -85,27 +91,24 @@ Below is a specific list of Universal Dreamcast Patcher's current features.
 - Support for xdeltas in order to reduce patch size and mitigate copyright concerns.
 - Built-in auto-update (Windows and Linux).
 - Deterministic, byte-identical output across all platforms for the same inputs.
-- Supported formats for source disc image (input):
+- Supported formats for source disc image (input) and patched disc image (output):
   - TOSEC-style GDI
-  - Redump-style CUE
-  - CHD (GD-ROM)
-- Supported formats for patched disc image (output):
-  - TOSEC-style GDI
+  - Redump-style CUE/BIN
+  - CHD
 - Supported formats for patch files:
   - DCP
 
 ## Known Issues and Limitations
 While Universal Dreamcast Patcher delivers its core features reliably, all known issues and limitations of the application are listed below.
 
-* Patched disc image (output) cannot be created in Redump-style CUE format.
 * While source disc images (input) with CDDA are supported, the DCP patch format does not yet include a method for modifying CDDA tracks.
 
 ## Roadmap
 As Universal Dreamcast Patcher evolves and improves over time, the list below represents features which I'd like to implement.
 
-* Support for patched disc image (output) in Redump-style CUE format.
 * Extend DCP patch format to support modifying CDDA tracks.
 * Add a new "IP.BIN Editor" tab for modifying either `IP.BIN` files directly, or those already baked into a disc image.
+* Add a new "Disc Image Tools" tab for performing disc image format conversions and CHD compression/decompression, separate from applying patches.
 
 ## Applying Patches
 Universal Dreamcast Patcher is simple to use. After launching the application, follow the steps below.
@@ -113,10 +116,11 @@ Universal Dreamcast Patcher is simple to use. After launching the application, f
 1. The **Apply Patch** tab is selected by default.
 2. Next to **Source disc image**, click "Browse..." and select the .gdi, .cue, or .chd to be patched.
 3. Next to **Patch file**, click "Browse..." and select the .dcp patch file.
-4. Next to **Output folder**, click "Browse..." and select the folder where the patched GDI should be written.
-5. Click **Apply Patch**.
+4. Next to **Output folder**, click "Browse..." and select the folder where the patched disc image should be written.
+5. Next to **Patched disc image format**, select the format for the patched disc image (i.e., GDI, CUE/BIN, or CHD).
+6. Click **Apply Patch**.
 
-The patched GDI will be written to a subfolder of the output folder, named after the patch file (e.g. a patch file named "My Game (v1.0).dcp" produces a folder named "My Game (v1.0) [GDI]").
+The patched disc image will be written to a subfolder of the output folder, named after the patch file (e.g., a patch file named `My Game (v1.0).dcp` produces a folder named `My Game (v1.0) [GDI]`, `My Game (v1.0) [CUE-BIN]`, or `My Game (v1.0) [CHD]`.
 
 Details on the current step of the patching process will be updated as they progress. Any errors encountered during sanity or integrity checks will be presented and the patching process will be halted.
 
@@ -140,7 +144,7 @@ The steps for automatically creating a patch are as follows.
 1. Select the **Build Patch** tab.
 2. Next to **Original disc image**, click "Browse..." and select the unpatched .gdi, .cue, or .chd.
 3. Next to **Modified disc image**, click "Browse..." and select the patched .gdi, .cue, or .chd.
-4. In the **Patch filename** field, type the desired name for the DCP patch. Note that the base filename of the DCP will be used when the patching application generates the patched GDI (e.g., a patch file named "My Game (v1.0).dcp" will result in a patched GDI folder named "My Game (v1.0) [GDI]").
+4. In the **Patch filename** field, type the desired name for the DCP patch. Note that the base filename of the DCP will be used when the patching application generates the patched disc image (e.g., a patch file named "My Game (v1.0).dcp" will result in a patched GDI folder named "My Game (v1.0) [GDI]").
 5. Next to **Output folder**, click "Browse..." and select where the DCP should be written.
 6. (Optional) Use the **IP.BIN customization** section to bundle a custom `IP.BIN` with the patch. In many cases, patch developers won't bother with this step, but there are several advantages in enabling these options:
    * **Region-Free** - Patched disc image (output) can be booted on any ODE or emulator, regardless of region setting, and without enabling region-free options within the ODE or emulator itself.
@@ -188,7 +192,11 @@ Universal Dreamcast Patcher includes the following third-party code and librarie
 - **DiscUtilsGD** (MIT) - ISO9660 / GD-ROM filesystem reader and builder. Copyright 2008-2011 Kenneth Bell, 2014 Quamotion, 2014-2024 Paul Kratt. Sourced from [Sappharad/GDIbuilder](https://github.com/Sappharad/GDIbuilder), itself a fork of upstream [DiscUtils](https://github.com/DiscUtils/DiscUtils).
 - **xdelta3** (Apache 2.0) - VCDIFF binary diff and patch library. Copyright Joshua MacDonald. Sourced from [jmacd/xdelta](https://github.com/jmacd/xdelta).
 - **liblzma / XZ Utils** (0BSD) - LZMA compression library, used by xdelta3 for VCDIFF LZMA secondary compression. Copyright Lasse Collin; LZMA algorithm by Igor Pavlov. Sourced from [tukaani-project/xz](https://github.com/tukaani-project/xz).
-- **libchdr** (BSD 3-Clause) - native CHD disc image decompression library. Sourced from [rtissera/libchdr](https://github.com/rtissera/libchdr). Internally bundles zlib (zlib license) and FLAC (BSD).
+- **libchdr** (BSD 3-Clause) - native CHD disc image decompression library, implementing the MAME CHD format. Sourced from [rtissera/libchdr](https://github.com/rtissera/libchdr). Internally bundles zlib (zlib license) and FLAC (BSD).
+- **libchdw** (BSD 3-Clause) - native CHD disc image compression library. Sourced from [mamedev/mame](https://github.com/mamedev/mame) (MAME 0.238 `src/lib/util/chd.cpp`, `cdrom.cpp`, `chdcd.cpp`, `chdcodec.cpp`) via the [charlesthobe/chdman](https://github.com/charlesthobe/chdman) standalone build. Internally bundles zlib (zlib license), LZMA SDK (public domain), and FLAC (BSD).
+- **gdidrop** (BSD 2-Clause) - Redump GD-ROM CUE/BIN to GDI conversion reference. Copyright © 2019 Feyris-Tan. Universal Dreamcast Patcher's `GdiConverter` is adapted from gdidrop's `DoConversion` routine. Sourced from [feyris-tan/gdidrop](https://github.com/feyris-tan/gdidrop).
+- **reDumpStudio** - rolling-CRC32 reconstruction algorithm reference, used by the Redump DAT byte-exact GDI to CUE/BIN path. Copyright © 2021 LedZeppelin68. Universal Dreamcast Patcher's `RedumpReconstructor` is adapted from reDumpStudio's `Form1.Roll` routine. Sourced from [LedZeppelin68/reDumpStudio](https://github.com/LedZeppelin68/reDumpStudio).
+- **BizHawk** (MIT) - CD-ROM Mode-1 EDC / ECC algorithms used by raw sector synthesis. Copyright © 2012 BizHawk team. Sourced from [TASEmulators/BizHawk](https://github.com/TASEmulators/BizHawk) via DiscUtilsGD's bundled `ECM.cs`.
 - **Avalonia 11.2.3** (MIT) - cross-platform .NET UI framework. Includes Avalonia.Desktop, Avalonia.Themes.Fluent, and Avalonia.Fonts.Inter (which ships the Inter typeface, SIL OFL 1.1).
 - **MessageBox.Avalonia 3.2.0** (MIT) - modal dialog helpers.
 

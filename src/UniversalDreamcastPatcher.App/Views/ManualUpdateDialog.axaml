@@ -16,7 +16,7 @@
 
             <TextBlock TextWrapping="Wrap" Margin="0,0,0,10" Text="To upgrade, download the release package from the GitHub repository:"/>
 
-            <TextBlock Foreground="#1E88E5" TextDecorations="Underline" Cursor="Hand"
+            <TextBlock Foreground="#254d8a" TextDecorations="Underline" Cursor="Hand"
                        ToolTip.Tip="Open the releases page in your browser"
                        PointerPressed="ReleasesLink_PointerPressed"
                        Text="https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases"/>
@@ -29,10 +29,12 @@
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Content="Skip This Version" Click="SkipButton_Click"
                     HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                    Margin="0,0,5,0"/>
+                    Margin="0,0,5,0"
+                    ToolTip.Tip="Don't notify me about this version again"/>
             <Button Grid.Column="1" Content="OK" Click="OkButton_Click"
                     HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                    Margin="5,0,0,0"/>
+                    Margin="5,0,0,0"
+                    ToolTip.Tip="Close this dialog"/>
         </Grid>
     </Grid>
 </Window>

@@ -69,7 +69,7 @@ public static class InputNormalizer
             return result;
         }
 
-        progress?.Report("Converting CUE/BIN to GDI...");
+        progress?.Report("Preparing CUE/BIN for extraction...");
         var staging = Path.Combine(workspaceRoot, "cue_to_gdi_" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(staging);
 
@@ -113,8 +113,10 @@ public static class InputNormalizer
 
         if (isGdRom)
         {
-            progress?.Report("Decompressing CHD to GDI...");
-            var (ok, msg) = await ChdConverter.ConvertToGdi(chdPath, staging, null, ct);
+            var decompLabel = "Decompressing CHD to GDI";
+            var decompProgress = new Progress<int>(p => progress?.Report($"{decompLabel}... {p}%"));
+            progress?.Report($"{decompLabel}...");
+            var (ok, msg) = await ChdConverter.ConvertToGdi(chdPath, staging, decompProgress, ct);
             if (!ok)
             {
                 result.ErrorMessage =
@@ -126,10 +128,12 @@ public static class InputNormalizer
         }
         else
         {
-            progress?.Report("Decompressing CHD to CUE/BIN...");
+            var decompLabel = "Decompressing CHD to CUE/BIN";
+            var decompProgress = new Progress<int>(p => progress?.Report($"{decompLabel}... {p}%"));
+            progress?.Report($"{decompLabel}...");
             var cueStaging = Path.Combine(staging, "cuebin");
             Directory.CreateDirectory(cueStaging);
-            var (ok, msg, cuePath) = await ChdConverter.ConvertToCueBin(chdPath, cueStaging, null, ct);
+            var (ok, msg, cuePath) = await ChdConverter.ConvertToCueBin(chdPath, cueStaging, decompProgress, ct);
             if (!ok)
             {
                 result.ErrorMessage =
@@ -146,7 +150,7 @@ public static class InputNormalizer
                 return result;
             }
 
-            progress?.Report("Converting CUE/BIN to GDI...");
+            progress?.Report("Preparing CUE/BIN for extraction...");
             var gdiStaging = Path.Combine(staging, "gdi");
             Directory.CreateDirectory(gdiStaging);
             var (ok2, msg2) = await GdiConverter.ConvertToGdi(cuePath, gdiStaging, null, ct);

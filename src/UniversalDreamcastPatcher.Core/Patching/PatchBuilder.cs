@@ -21,8 +21,7 @@ public sealed class PatchBuildOptions
 {
     public string OriginalGdiPath { get; set; } = string.Empty;
     public string ModifiedGdiPath { get; set; } = string.Empty;
-    public string OutputFolder { get; set; } = string.Empty;
-    public string PatchFilename { get; set; } = string.Empty;
+    public string OutputDcpPath { get; set; } = string.Empty;
 
     public bool IncludeCustomIpBin { get; set; }
     public IpBinSource IpBinFrom { get; set; } = IpBinSource.ModifiedGdi;
@@ -69,16 +68,14 @@ public static class PatchBuilder
                 "Please select a valid .gdi, .cue, or .chd file and try again.";
             return result;
         }
-        if (string.IsNullOrWhiteSpace(options.OutputFolder) || !Directory.Exists(options.OutputFolder))
+        var outputParentDir = string.IsNullOrWhiteSpace(options.OutputDcpPath)
+            ? string.Empty
+            : Path.GetDirectoryName(options.OutputDcpPath) ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(outputParentDir) || !Directory.Exists(outputParentDir))
         {
             result.ErrorMessage =
-                "The selected output folder does not exist.\n\n" +
-                "Please choose a different folder and try again.";
-            return result;
-        }
-        if (string.IsNullOrWhiteSpace(options.PatchFilename))
-        {
-            result.ErrorMessage = "Please enter a name for the patch file before building.";
+                "The folder for the chosen .dcp output does not exist.\n\n" +
+                "Please pick the output location again.";
             return result;
         }
         if (options.UseCustomGameName && string.IsNullOrWhiteSpace(options.CustomGameName))
@@ -89,7 +86,7 @@ public static class PatchBuilder
             return result;
         }
 
-        var finalDcpPath = Path.Combine(options.OutputFolder, options.PatchFilename + ".dcp");
+        var finalDcpPath = options.OutputDcpPath;
 
         var workspace = Path.Combine(Path.GetTempPath(), "_UDP_" + Guid.NewGuid().ToString("N"));
         var origDir = Path.Combine(workspace, "orig");
@@ -121,7 +118,7 @@ public static class PatchBuilder
                 return result;
             }
 
-            progress?.Report("Extracting original GDI...");
+            progress?.Report("Extracting original disc image...");
             var origRead = GdiReader.ExtractAsync(origNorm.GdiPath, origDir, progress, ct).GetAwaiter().GetResult();
             if (!origRead.Success)
             {
@@ -132,7 +129,7 @@ public static class PatchBuilder
                 return result;
             }
 
-            progress?.Report("Extracting modified GDI...");
+            progress?.Report("Extracting modified disc image...");
             var modRead = GdiReader.ExtractAsync(modNorm.GdiPath, modDir, progress, ct).GetAwaiter().GetResult();
             if (!modRead.Success)
             {

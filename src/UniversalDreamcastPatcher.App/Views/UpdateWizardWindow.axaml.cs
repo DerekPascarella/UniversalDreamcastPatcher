@@ -79,7 +79,7 @@ public partial class UpdateWizardWindow : Window
         if (!UpdateManager.TryBeginUpdate())
         {
             var msgBox = MessageBoxManager.GetMessageBoxStandard(
-                "Update In Progress",
+                "Information",
                 "Another update is already in progress.\n\nPlease wait for it to finish before starting a new one.",
                 ButtonEnum.Ok, MsBoxIcon.None);
             await msgBox.ShowWindowDialogAsync(this);
@@ -134,7 +134,7 @@ public partial class UpdateWizardWindow : Window
         catch (Exception ex)
         {
             UpdateManager.CleanupStagingDirectory();
-            var msgBox = MessageBoxManager.GetMessageBoxStandard("Update Error",
+            var msgBox = MessageBoxManager.GetMessageBoxStandard("Error",
                 FriendlyError(ex), ButtonEnum.Ok, MsBoxIcon.None);
             await msgBox.ShowWindowDialogAsync(this);
             Close();

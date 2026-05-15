@@ -234,8 +234,8 @@ namespace UniversalDreamcastPatcher.Core
             }
         }
 
-        // chdman pads each track up to a 4-frame boundary; those padding
-        // frames are part of the data stream and must be stepped over.
+        // chdman pads each track up to a 4-frame boundary. The padding
+        // frames live in the data stream and must be stepped over.
         private static int GetExtraFrames(int totalFrames)
         {
             return ((totalFrames + TrackPadding - 1) / TrackPadding) * TrackPadding - totalFrames;

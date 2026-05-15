@@ -26,8 +26,6 @@ public partial class MainWindow : Window
     private CancellationTokenSource? _flashCts;
     private TextBlock? _versionLine;
     private TabControl? _mainTabs;
-    private TabItem? _applyTab;
-    private TabItem? _buildTab;
     private AppSettings _settings = new();
     private bool _forceClose;
     private bool _confirmInFlight;
@@ -38,8 +36,6 @@ public partial class MainWindow : Window
         _headerLogo = this.FindControl<Image>("HeaderLogo");
         _versionLine = this.FindControl<TextBlock>("VersionLine");
         _mainTabs = this.FindControl<TabControl>("MainTabs");
-        _applyTab = this.FindControl<TabItem>("ApplyTab");
-        _buildTab = this.FindControl<TabItem>("BuildTab");
 
         if (_versionLine != null)
             _versionLine.Text = $"v{Constants.Version} - Derek Pascarella (ateam)";
@@ -85,7 +81,7 @@ public partial class MainWindow : Window
             try
             {
                 var confirm = MessageBoxManager.GetMessageBoxStandard(
-                    "Universal Dreamcast Patcher",
+                    "Confirmation",
                     "A patch operation is currently in progress. Are you sure you want to quit?\n\n" +
                     "Closing now will abort the operation and may leave partial output files on disk.",
                     ButtonEnum.YesNo, MsBoxIcon.None);
@@ -172,16 +168,23 @@ public partial class MainWindow : Window
         if (_versionLine != null) _versionLine.IsHitTestVisible = true;
     }
 
-    // While one tab is running a job, disable the other tab so the user
-    // can't switch and start a second one. The active tab stays enabled.
+    // While one tab is running a job, disable every other tab so the user
+    // can't switch and start a second one. Generalized across all tabs by
+    // index so newly added tabs (like Converter) are covered automatically.
     private void SetInactiveTabEnabled(bool enabled)
     {
-        if (_mainTabs == null || _applyTab == null || _buildTab == null) return;
+        if (_mainTabs == null) return;
 
-        if (_mainTabs.SelectedIndex == 0)
-            _buildTab.IsEnabled = enabled;
-        else
-            _applyTab.IsEnabled = enabled;
+        int activeIndex = _mainTabs.SelectedIndex;
+        int count = 0;
+        if (_mainTabs.Items is System.Collections.ICollection coll) count = coll.Count;
+
+        for (int i = 0; i < count; i++)
+        {
+            if (i == activeIndex) continue;
+            if (_mainTabs.Items[i] is TabItem tab)
+                tab.IsEnabled = enabled;
+        }
     }
 
     private async Task CheckForUpdateAsync()

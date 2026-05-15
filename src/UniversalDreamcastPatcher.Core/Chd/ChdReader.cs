@@ -239,8 +239,9 @@ namespace UniversalDreamcastPatcher.Core
             if (IsGdRom)
             {
                 // For GD-ROM, IP.BIN is at the start of the high-density area (track 3+).
-                // chdman pads each track to a 4-frame boundary with zero-filled sectors
-                // that ARE stored in the CHD data stream, so we must account for them.
+                // chdman pads each track to a 4-frame boundary with zero-filled
+                // sectors that ARE stored in the CHD data stream and must be
+                // stepped over to land on the real track 3 start.
                 foreach (var track in Tracks)
                 {
                     if (track.IsData && track.TrackNumber >= 3)

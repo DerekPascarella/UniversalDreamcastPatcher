@@ -9,7 +9,8 @@
             <TextBlock Text="Original disc image" FontWeight="SemiBold" />
             <Grid ColumnDefinitions="*,Auto">
                 <TextBox Grid.Column="0" x:Name="OriginalGdiPath" Watermark="Select the unpatched .gdi, .cue, or .chd..." IsReadOnly="True" />
-                <Button Grid.Column="1" Content="Browse..." Margin="6,0,0,0" MinWidth="90" x:Name="BrowseOriginalGdi" />
+                <Button Grid.Column="1" Content="Browse..." Margin="6,0,0,0" MinWidth="90" x:Name="BrowseOriginalGdi"
+                        ToolTip.Tip="Choose the unpatched (original) disc image (.gdi, .cue, or .chd)" />
             </Grid>
         </StackPanel>
 
@@ -18,7 +19,8 @@
             <TextBlock Text="Modified disc image" FontWeight="SemiBold" />
             <Grid ColumnDefinitions="*,Auto">
                 <TextBox Grid.Column="0" x:Name="ModifiedGdiPath" Watermark="Select the modified .gdi, .cue, or .chd..." IsReadOnly="True" />
-                <Button Grid.Column="1" Content="Browse..." Margin="6,0,0,0" MinWidth="90" x:Name="BrowseModifiedGdi" />
+                <Button Grid.Column="1" Content="Browse..." Margin="6,0,0,0" MinWidth="90" x:Name="BrowseModifiedGdi"
+                        ToolTip.Tip="Choose the patched (modified) disc image (.gdi, .cue, or .chd)" />
             </Grid>
         </StackPanel>
 
@@ -27,7 +29,8 @@
             <TextBlock Text="Output DCP patch file" FontWeight="SemiBold" />
             <Grid ColumnDefinitions="*,Auto">
                 <TextBox Grid.Column="0" x:Name="OutputDcpPath" Watermark="Choose where to save the .dcp..." IsReadOnly="True" />
-                <Button Grid.Column="1" Content="Browse..." Margin="6,0,0,0" MinWidth="90" x:Name="BrowseBuildOutputFile" />
+                <Button Grid.Column="1" Content="Browse..." Margin="6,0,0,0" MinWidth="90" x:Name="BrowseBuildOutputFile"
+                        ToolTip.Tip="Choose where the .dcp patch file will be saved" />
             </Grid>
         </StackPanel>
 
@@ -36,29 +39,37 @@
             <TextBlock Text="IP.BIN customization" FontWeight="SemiBold" />
             <Border BorderBrush="#999" BorderThickness="1" Padding="10">
                 <StackPanel Spacing="4">
-                    <CheckBox x:Name="UseCustomIpBin" Content="Include custom IP.BIN in patch" />
+                    <CheckBox x:Name="UseCustomIpBin" Content="Include custom IP.BIN in patch"
+                              ToolTip.Tip="Bundle a custom IP.BIN inside the patch instead of leaving the source's IP.BIN untouched" />
 
                     <StackPanel Margin="20,4,0,0" Spacing="4" IsEnabled="{Binding #UseCustomIpBin.IsChecked}">
                         <StackPanel Orientation="Horizontal" Spacing="10">
                             <TextBlock Text="Source:" VerticalAlignment="Center" />
-                            <RadioButton x:Name="IpBinFromModified" Content="modified disc image" GroupName="IpBinSource" IsChecked="True" />
-                            <RadioButton x:Name="IpBinFromOriginal" Content="original disc image" GroupName="IpBinSource" />
+                            <RadioButton x:Name="IpBinFromModified" Content="modified disc image" GroupName="IpBinSource" IsChecked="True"
+                                         ToolTip.Tip="Take the bundled IP.BIN from the modified disc image" />
+                            <RadioButton x:Name="IpBinFromOriginal" Content="original disc image" GroupName="IpBinSource"
+                                         ToolTip.Tip="Take the bundled IP.BIN from the original disc image" />
                         </StackPanel>
 
-                        <CheckBox x:Name="ApplyIpBinPatches" Content="Apply additional IP.BIN patches" Margin="0,6,0,0" />
+                        <CheckBox x:Name="ApplyIpBinPatches" Content="Apply additional IP.BIN patches" Margin="0,6,0,0"
+                                  ToolTip.Tip="Apply additional modifications to the bundled IP.BIN" />
 
                         <StackPanel Margin="20,0,0,0" Spacing="2" IsEnabled="{Binding #ApplyIpBinPatches.IsChecked}">
-                            <CheckBox x:Name="IpBinRegionFree" Content="Region-free" />
-                            <CheckBox x:Name="IpBinVga" Content="Enable VGA" />
+                            <CheckBox x:Name="IpBinRegionFree" Content="Region-free"
+                                      ToolTip.Tip="Make the disc boot on any region (Japan, USA, Europe)" />
+                            <CheckBox x:Name="IpBinVga" Content="Enable VGA"
+                                      ToolTip.Tip="Mark the disc as supporting 480p VGA output" />
                         </StackPanel>
 
-                        <CheckBox x:Name="UseCustomGameName" Content="Use custom game name" Margin="0,6,0,0" />
+                        <CheckBox x:Name="UseCustomGameName" Content="Use custom game name" Margin="0,6,0,0"
+                                  ToolTip.Tip="Replace the game name stored in IP.BIN with a custom value (up to 128 ASCII characters)" />
 
                         <TextBox x:Name="CustomGameName"
                                  Margin="20,0,0,0"
                                  Watermark="MY GAME NAME (ENGLISH)"
                                  MaxLength="128"
-                                 IsEnabled="{Binding #UseCustomGameName.IsChecked}" />
+                                 IsEnabled="{Binding #UseCustomGameName.IsChecked}"
+                                 ToolTip.Tip="Custom game name written into IP.BIN. Uppercase ASCII, up to 128 characters" />
                     </StackPanel>
                 </StackPanel>
             </Border>
@@ -75,7 +86,8 @@
                     VerticalContentAlignment="Center"
                     FontSize="16"
                     FontWeight="SemiBold"
-                    IsEnabled="False" />
+                    IsEnabled="False"
+                    ToolTip.Tip="Diff the original against the modified disc image and write the .dcp" />
 
             <StackPanel x:Name="BuildBusyPanel"
                         IsVisible="False"

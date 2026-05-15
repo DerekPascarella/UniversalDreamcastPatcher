@@ -158,17 +158,11 @@ public partial class BuildPatchView : UserControl
             includeCustomIpBin = false;
         }
 
-        // Split the output path into the folder + base name pieces PatchBuilder expects.
-        var outputDcpFullPath = _outputDcpPath?.Text ?? string.Empty;
-        var outputFolder = Path.GetDirectoryName(outputDcpFullPath) ?? string.Empty;
-        var patchFilename = Path.GetFileNameWithoutExtension(outputDcpFullPath);
-
         var options = new PatchBuildOptions
         {
             OriginalGdiPath = _originalGdiPath?.Text ?? string.Empty,
             ModifiedGdiPath = _modifiedGdiPath?.Text ?? string.Empty,
-            OutputFolder = outputFolder,
-            PatchFilename = patchFilename,
+            OutputDcpPath = _outputDcpPath?.Text ?? string.Empty,
             IncludeCustomIpBin = includeCustomIpBin,
             IpBinFrom = ipBinFrom,
             IpBinRegionFree = wantRegionFree,
@@ -226,7 +220,9 @@ public partial class BuildPatchView : UserControl
             message = result.ErrorMessage ?? "Building the patch failed for an unknown reason.";
         }
 
-        var box = MessageBoxManager.GetMessageBoxStandard("Universal Dreamcast Patcher", message, ButtonEnum.Ok, Icon.None);
+        var box = MessageBoxManager.GetMessageBoxStandard(
+            result.Success ? "Information" : "Error",
+            message, ButtonEnum.Ok, Icon.None);
         if (owner != null)
             await box.ShowWindowDialogAsync(owner);
         else

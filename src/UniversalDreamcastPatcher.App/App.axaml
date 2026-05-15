@@ -13,10 +13,28 @@
         </NativeMenu>
     </NativeMenu.Menu>
 
+    <Application.Resources>
+        <!-- Brand navy. Light/Dark variants are HSL L +/- 10/20/30 from base. -->
+        <Color x:Key="SystemAccentColor">#254d8a</Color>
+        <Color x:Key="SystemAccentColorLight1">#2f63b1</Color>
+        <Color x:Key="SystemAccentColorLight2">#467cce</Color>
+        <Color x:Key="SystemAccentColorLight3">#6e99d8</Color>
+        <Color x:Key="SystemAccentColorDark1">#1a3661</Color>
+        <Color x:Key="SystemAccentColorDark2">#0f2038</Color>
+        <Color x:Key="SystemAccentColorDark3">#091220</Color>
+
+        <Color x:Key="TextControlSelectionHighlightColor">#CCCCCC</Color>
+    </Application.Resources>
+
     <Application.Styles>
         <FluentTheme />
 
-        <!-- Brand-coloured progress fill. -->
+        <!-- Default all buttons to centered text. -->
+        <Style Selector="Button">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Progress fill follows the brand navy (matches the overridden accent). -->
         <Style Selector="ProgressBar">
             <Setter Property="Foreground" Value="#254d8a"/>
         </Style>

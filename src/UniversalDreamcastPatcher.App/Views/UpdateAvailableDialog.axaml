@@ -23,7 +23,7 @@
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                 <TextBlock Text="See the "/>
                 <TextBlock x:Name="ChangelogLink"
-                           Foreground="#1E88E5"
+                           Foreground="#254d8a"
                            TextDecorations="Underline"
                            Cursor="Hand"
                            ToolTip.Tip="Open changelog in your browser"
@@ -41,13 +41,16 @@
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Content="Skip This Version" Click="SkipButton_Click"
                     HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                    Margin="0,0,5,0"/>
+                    Margin="0,0,5,0"
+                    ToolTip.Tip="Don't notify me about this version again"/>
             <Button Grid.Column="1" Content="Update Later" Click="RemindButton_Click"
                     HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                    Margin="5,0,5,0"/>
+                    Margin="5,0,5,0"
+                    ToolTip.Tip="Dismiss for now; check again next launch"/>
             <Button Grid.Column="2" Content="Update Now" Click="UpdateButton_Click"
                     HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                    Margin="5,0,0,0"/>
+                    Margin="5,0,0,0"
+                    ToolTip.Tip="Download and install this update now"/>
         </Grid>
     </Grid>
 </Window>

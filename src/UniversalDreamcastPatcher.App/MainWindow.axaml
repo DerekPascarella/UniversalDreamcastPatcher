@@ -14,7 +14,7 @@
             <Setter Property="Cursor" Value="Hand"/>
         </Style>
         <Style Selector="TextBlock.about-link:pointerover">
-            <Setter Property="Foreground" Value="#1E88E5"/>
+            <Setter Property="Foreground" Value="#254d8a"/>
             <Setter Property="TextDecorations" Value="Underline"/>
         </Style>
     </Window.Styles>
@@ -46,11 +46,21 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" />
                 </ItemsPanelTemplate>
             </TabControl.ItemsPanel>
-            <TabItem Header="Apply Patch" x:Name="ApplyTab">
+            <TabItem Header="Apply Patch" x:Name="ApplyTab"
+                     ToolTip.Tip="Apply a DCP patch to a Dreamcast disc image">
                 <views:ApplyPatchView />
             </TabItem>
-            <TabItem Header="Build Patch" x:Name="BuildTab">
+            <TabItem Header="Build Patch" x:Name="BuildTab"
+                     ToolTip.Tip="Create a DCP patch from an original and modified disc image">
                 <views:BuildPatchView />
+            </TabItem>
+            <TabItem Header="IP.BIN Editor" x:Name="IpBinEditorTab"
+                     ToolTip.Tip="Edit IP.BIN metadata fields in a disc image or raw IP.BIN file">
+                <views:IpBinEditorView />
+            </TabItem>
+            <TabItem Header="Converter" x:Name="ConverterTab"
+                     ToolTip.Tip="Convert a Dreamcast disc image between GDI, CUE/BIN, and CHD formats">
+                <views:ConverterView />
             </TabItem>
         </TabControl>
 

@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Hashing;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using UniversalDreamcastPatcher.Core.Patching;
 
 namespace UniversalDreamcastPatcher.Core
 {
@@ -45,6 +47,25 @@ namespace UniversalDreamcastPatcher.Core
                 int currentLba = 0;
                 int processedTracks = 0;
 
+                // TOSEC DAT fast-path: hash Track 1's .bin (data, no pregap on
+                // SD area so identical bytes to TOSEC's track01.bin) and look
+                // up the disc. When matched, each per-track CUE-INDEX strip is
+                // replaced by byte-exact reconstruction against TOSEC's
+                // expected hashes. Unrecognized discs fall through to the
+                // CUE-INDEX strip path below.
+                TosecDiscEntry? tosecEntry = null;
+                var t1Track = cueData.Tracks.FirstOrDefault(t => t.TrackNumber == 1);
+                if (t1Track != null)
+                {
+                    string t1BinPath = Path.Combine(cueData.Directory, t1Track.DataFilename);
+                    if (File.Exists(t1BinPath))
+                    {
+                        uint t1Crc = Crc32.HashToUInt32(File.ReadAllBytes(t1BinPath));
+                        tosecEntry = TosecDatLookup.LookupByT1Crc32(t1Crc);
+                    }
+                }
+                bool tosecUsable = tosecEntry != null;
+
                 foreach (var track in cueData.Tracks)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
@@ -61,6 +82,40 @@ namespace UniversalDreamcastPatcher.Core
                     string outputPath = Path.Combine(outputDirectory, outputFilename);
 
                     int sectorCount;
+
+                    // TOSEC byte-exact path. Reads the Redump-form .bin, looks
+                    // up TOSEC's expected per-track hashes by track number,
+                    // runs the same reconstruction engine as RedumpAssembler
+                    // (verbatim, sector-aligned pregap, rolling-CRC scan).
+                    // Falls through to the CUE-INDEX strip path if no DAT
+                    // entry or any track reconstruction fails.
+                    if (tosecUsable)
+                    {
+                        var tosecTrack = tosecEntry!.Tracks.FirstOrDefault(t => t.TrackNumber == track.TrackNumber);
+                        if (tosecTrack != null)
+                        {
+                            byte[] redumpBytes = File.ReadAllBytes(sourceBinPath);
+                            byte[]? reconstructed = RedumpReconstructor.TryReconstruct(
+                                redumpBytes, !track.IsAudio, tosecTrack.Size, tosecTrack.Crc32, tosecTrack.Md5);
+                            if (reconstructed != null)
+                            {
+                                await File.WriteAllBytesAsync(outputPath, reconstructed, cancellationToken);
+                                sectorCount = (int)(tosecTrack.Size / SectorSize);
+
+                                int tosecTrackType = track.IsAudio ? 0 : 4;
+                                gdiContent.AppendLine($"{track.TrackNumber} {currentLba} {tosecTrackType} 2352 {outputFilename} 0");
+                                currentLba += sectorCount;
+
+                                if (track.Comments.Contains("HIGH-DENSITY AREA") && currentLba < HighDensityAreaLba)
+                                {
+                                    currentLba = HighDensityAreaLba;
+                                }
+                                processedTracks++;
+                                progress?.Report((processedTracks * 100) / trackCount);
+                                continue;
+                            }
+                        }
+                    }
 
                     // Single-index track: copy the whole file.
                     // Multi-index track (INDEX 00 + INDEX 01): skip to INDEX 01 to drop the pregap.

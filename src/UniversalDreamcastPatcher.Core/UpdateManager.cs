@@ -185,11 +185,11 @@ public static class UpdateManager
                 }
                 catch (ArgumentException)
                 {
-                    // PID is dead; fall through and reclaim the lock.
+                    // PID is dead, fall through and reclaim the lock.
                 }
                 catch
                 {
-                    // Unexpected error reading process state; treat as stale.
+                    // Unexpected error reading process state, treat as stale.
                 }
             }
         }
@@ -526,8 +526,9 @@ public static class UpdateManager
         var appDir = AppSettings.GetAppDirectory();
         var pid = Process.GetCurrentProcess().Id;
 
-        // Pre-set the install marker so any UDP launched between our exit and the
-        // updater's first write still sees the install in progress.
+        // Pre-set the install marker so any UDP launched between this
+        // process exiting and the updater's first write still sees the
+        // install in progress.
         try { File.WriteAllText(GetLockFilePath(), InstallMarker); } catch { }
 
         string scriptPath;

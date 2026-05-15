@@ -26,7 +26,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="UdpNatives" Version="2.0.0" />
+    <PackageReference Include="UdpNatives" Version="2.1.0" />
+    <PackageReference Include="System.IO.Hashing" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\redump_dc.bin.gz" />
+    <EmbeddedResource Include="Resources\tosec_dc.bin.gz" />
   </ItemGroup>
 
   <!-- Per-RID xdelta3 native binaries are staged by xdelta3.targets, imported by downstream

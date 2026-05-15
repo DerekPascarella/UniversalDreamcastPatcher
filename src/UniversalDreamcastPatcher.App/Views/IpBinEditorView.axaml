@@ -1,0 +1,268 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="UniversalDreamcastPatcher.App.Views.IpBinEditorView">
+
+    <StackPanel Margin="12" Spacing="12">
+        <StackPanel.Styles>
+            <!-- Red border + light pink background on any TextBox / NumericUpDown
+                 whose .invalid class is set. Save stays disabled while any of
+                 these are visible. -->
+            <Style Selector="TextBox.invalid">
+                <Setter Property="BorderBrush" Value="#c92020" />
+                <Setter Property="BorderThickness" Value="1.5" />
+                <Setter Property="Background" Value="#fff4f4" />
+            </Style>
+            <Style Selector="NumericUpDown.invalid">
+                <Setter Property="BorderBrush" Value="#c92020" />
+                <Setter Property="BorderThickness" Value="1.5" />
+            </Style>
+        </StackPanel.Styles>
+
+
+        <!-- Source row -->
+        <StackPanel Spacing="4">
+            <TextBlock Text="Source disc image or IP.BIN" FontWeight="SemiBold" />
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBox Grid.Column="0"
+                         x:Name="SourcePath"
+                         Watermark="Select a .gdi, .cue, .chd, or IP.BIN file..."
+                         IsReadOnly="True" />
+                <Button Grid.Column="1"
+                        Content="Browse..."
+                        Margin="6,0,0,0"
+                        MinWidth="90"
+                        x:Name="BrowseSource"
+                        ToolTip.Tip="Choose a disc image or raw IP.BIN file to edit" />
+            </Grid>
+            <TextBlock x:Name="DetectionLabel"
+                       Text="No source selected."
+                       FontSize="13"
+                       Foreground="#555" />
+        </StackPanel>
+
+        <!-- Editor subtabs -->
+        <TabControl x:Name="EditorSubTabs" SelectedIndex="0" IsEnabled="False" Padding="0">
+            <TabControl.Styles>
+                <!-- Nudge the sub-tab font a touch smaller than the
+                     parent strip so the hierarchy reads visually. -->
+                <Style Selector="TabItem">
+                    <Setter Property="FontSize" Value="16" />
+                </Style>
+            </TabControl.Styles>
+            <TabControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" />
+                </ItemsPanelTemplate>
+            </TabControl.ItemsPanel>
+
+            <!-- Identification subtab -->
+            <TabItem Header="Identification">
+                <Grid Margin="0,10,0,0" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" Cursor="Arrow">
+                    <Grid.Styles>
+                        <Style Selector="TextBlock.field-label">
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                            <Setter Property="Margin" Value="0,0,12,8" />
+                            <Setter Property="MinWidth" Value="130" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                        </Style>
+                        <Style Selector="TextBox.field-input">
+                            <Setter Property="Margin" Value="0,0,0,8" />
+                        </Style>
+                    </Grid.Styles>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Classes="field-label" Text="Product number" />
+                    <TextBox  Grid.Row="0" Grid.Column="1" Classes="field-input"
+                              x:Name="ProductNumberInput"
+                              MaxLength="10"
+                              Watermark="e.g., T-12345"
+                              ToolTip.Tip="A-Z, 0-9, dashes, and spaces, up to 10 characters" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Classes="field-label" Text="Version" />
+                    <TextBox  Grid.Row="1" Grid.Column="1" Classes="field-input"
+                              x:Name="VersionInput"
+                              MaxLength="6"
+                              Watermark="V1.000"
+                              ToolTip.Tip='Format: V&lt;digit&gt;.&lt;three digits&gt; (e.g., V1.000)' />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Classes="field-label" Text="Release date" />
+                    <TextBox  Grid.Row="2" Grid.Column="1" Classes="field-input"
+                              x:Name="ReleaseDateInput"
+                              MaxLength="8"
+                              Watermark="YYYYMMDD"
+                              ToolTip.Tip="8 digits in YYYYMMDD format" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Classes="field-label" Text="Maker name" />
+                    <TextBox  Grid.Row="3" Grid.Column="1" Classes="field-input"
+                              x:Name="MakerNameInput"
+                              MaxLength="16"
+                              Watermark="Publisher / developer (16 chars max)"
+                              ToolTip.Tip="Printable ASCII, up to 16 characters" />
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Classes="field-label" Text="Game title" />
+                    <TextBox  Grid.Row="4" Grid.Column="1" Classes="field-input"
+                              x:Name="GameTitleInput"
+                              MaxLength="128"
+                              Watermark="Game title (128 chars max)"
+                              ToolTip.Tip="Printable ASCII, up to 128 characters" />
+
+                    <TextBlock Grid.Row="5" Grid.Column="0" Classes="field-label" Text="Boot filename" />
+                    <TextBox  Grid.Row="5" Grid.Column="1" Classes="field-input"
+                              x:Name="BootFilenameInput"
+                              MaxLength="16"
+                              Watermark="1ST_READ.BIN"
+                              ToolTip.Tip="Boot executable filename, conventionally 1ST_READ.BIN" />
+                </Grid>
+            </TabItem>
+
+            <!-- Disc / Region subtab -->
+            <TabItem Header="Disc / Region">
+                <StackPanel Margin="0,10,0,0" Spacing="14">
+
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Media" FontWeight="SemiBold" />
+                        <StackPanel Orientation="Horizontal" Spacing="14">
+                            <RadioButton x:Name="MediaGdRom"
+                                         Content="GD-ROM"
+                                         GroupName="MediaType"
+                                         IsChecked="True"
+                                         ToolTip.Tip="Standard retail Dreamcast GD-ROM disc" />
+                            <RadioButton x:Name="MediaCdRom"
+                                         Content="CD-ROM"
+                                         GroupName="MediaType"
+                                         ToolTip.Tip="CD-ROM (e.g., MiL-CD, Indie, Homebrew)" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Disc number" FontWeight="SemiBold" />
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <NumericUpDown x:Name="DiscNumberInput"
+                                           Minimum="1" Maximum="9"
+                                           Value="1"
+                                           Width="110"
+                                           FormatString="0"
+                                           HorizontalContentAlignment="Center"
+                                           ToolTip.Tip="Disc number (1-9)" />
+                            <TextBlock Text="of" VerticalAlignment="Center" Margin="6,0" />
+                            <NumericUpDown x:Name="DiscCountInput"
+                                           Minimum="1" Maximum="9"
+                                           Value="1"
+                                           Width="110"
+                                           FormatString="0"
+                                           HorizontalContentAlignment="Center"
+                                           ToolTip.Tip="Total disc count (1-9)" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Region" FontWeight="SemiBold" />
+                        <StackPanel Orientation="Horizontal" Spacing="14">
+                            <CheckBox x:Name="RegionJ" Content="Japan / Taiwan / Philippines (J)"
+                                      ToolTip.Tip="Sets the J region symbol and string" />
+                            <CheckBox x:Name="RegionU" Content="USA / Canada (U)"
+                                      ToolTip.Tip="Sets the U region symbol and string" />
+                            <CheckBox x:Name="RegionE" Content="Europe (E)"
+                                      ToolTip.Tip="Sets the E region symbol and string" />
+                        </StackPanel>
+                        <TextBlock x:Name="RegionWarning"
+                                   Text="At least one region should be selected to prevent boot issues."
+                                   FontSize="12"
+                                   Foreground="#a64500"
+                                   IsVisible="False"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+
+                </StackPanel>
+            </TabItem>
+
+            <!-- Peripherals subtab -->
+            <TabItem Header="Peripherals">
+                <StackPanel Margin="0,10,0,0" Spacing="14">
+
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="System features" FontWeight="SemiBold" />
+                        <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto">
+                            <CheckBox Grid.Row="0" Grid.Column="0" x:Name="PeriphWindowsCe" Content="Windows CE"
+                                      IsChecked="True"
+                                      ToolTip.Tip="Game requires Windows CE runtime" />
+                            <CheckBox Grid.Row="0" Grid.Column="1" x:Name="PeriphVgaBox"    Content="VGA box"
+                                      ToolTip.Tip="Game supports 480p VGA output" />
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Optional peripherals" FontWeight="SemiBold" />
+                        <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto">
+                            <CheckBox Grid.Row="0" Grid.Column="0" x:Name="PeriphMemoryCard" Content="Memory card" IsChecked="True" />
+                            <CheckBox Grid.Row="1" Grid.Column="0" x:Name="PeriphPuruPuru"   Content="Puru Puru / Jump Pack" IsChecked="True" />
+                            <CheckBox Grid.Row="2" Grid.Column="0" x:Name="PeriphMike"       Content="Microphone" IsChecked="True" />
+                            <CheckBox Grid.Row="0" Grid.Column="1" x:Name="PeriphLightGun"   Content="Light gun" />
+                            <CheckBox Grid.Row="1" Grid.Column="1" x:Name="PeriphKeyboard"   Content="Keyboard" />
+                            <CheckBox Grid.Row="0" Grid.Column="2" x:Name="PeriphMouse"      Content="Mouse" />
+                            <CheckBox Grid.Row="1" Grid.Column="2" x:Name="PeriphOther"      Content="Other expansions" />
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Controller minimums" FontWeight="SemiBold" />
+                        <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                            <CheckBox Grid.Row="0" Grid.Column="0" x:Name="PeriphStandardPad"  Content="Standard pad"
+                                      IsChecked="True"
+                                      ToolTip.Tip="Required for nearly every commercial game (Start + A + B + D-pad)" />
+                            <CheckBox Grid.Row="1" Grid.Column="0" x:Name="PeriphExpandedDpad" Content="Expanded D-pad" IsChecked="True" />
+                            <CheckBox Grid.Row="2" Grid.Column="0" x:Name="PeriphTriggerL"     Content="L trigger (analog)" IsChecked="True" />
+                            <CheckBox Grid.Row="3" Grid.Column="0" x:Name="PeriphTriggerR"     Content="R trigger (analog)" IsChecked="True" />
+
+                            <CheckBox Grid.Row="0" Grid.Column="1" x:Name="PeriphAnalogH"  Content="Analog stick horizontal" />
+                            <CheckBox Grid.Row="1" Grid.Column="1" x:Name="PeriphAnalogV"  Content="Analog stick vertical" />
+                            <CheckBox Grid.Row="2" Grid.Column="1" x:Name="PeriphAnalogXH" Content="Expanded analog horizontal" />
+                            <CheckBox Grid.Row="3" Grid.Column="1" x:Name="PeriphAnalogXV" Content="Expanded analog vertical" />
+
+                            <CheckBox Grid.Row="0" Grid.Column="2" x:Name="PeriphCButton" Content="C button" />
+                            <CheckBox Grid.Row="1" Grid.Column="2" x:Name="PeriphDButton" Content="D button" />
+                            <CheckBox Grid.Row="2" Grid.Column="2" x:Name="PeriphXButton" Content="X button" />
+                            <CheckBox Grid.Row="3" Grid.Column="2" x:Name="PeriphYButton" Content="Y button" />
+                            <CheckBox Grid.Row="4" Grid.Column="2" x:Name="PeriphZButton" Content="Z button" />
+                        </Grid>
+                    </StackPanel>
+
+                </StackPanel>
+            </TabItem>
+
+        </TabControl>
+
+        <!-- Action area: action buttons by default, progress UI when busy.
+             Same height and margins as Apply Patch / Build Patch / Converter. -->
+        <Grid x:Name="ActionArea" MinHeight="60" Margin="0,4,0,0">
+
+            <Button x:Name="SaveChangesButton"
+                    Content="Save Changes"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    IsEnabled="False"
+                    ToolTip.Tip="Write the edited IP.BIN back to the source file in its original format" />
+
+            <StackPanel x:Name="SaveBusyPanel"
+                        IsVisible="False"
+                        VerticalAlignment="Center"
+                        Spacing="6">
+                <ProgressBar x:Name="SaveProgressBar"
+                             IsIndeterminate="False"
+                             Minimum="0"
+                             Maximum="100"
+                             Height="16" />
+                <TextBlock x:Name="SaveProgressLabel"
+                           HorizontalAlignment="Center"
+                           Foreground="#333"
+                           Text="" />
+            </StackPanel>
+
+        </Grid>
+
+    </StackPanel>
+
+</UserControl>

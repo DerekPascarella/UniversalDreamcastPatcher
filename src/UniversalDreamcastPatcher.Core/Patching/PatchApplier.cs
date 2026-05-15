@@ -11,18 +11,30 @@ using DiscUtils.Gdrom;
 
 namespace UniversalDreamcastPatcher.Core.Patching;
 
+public enum OutputDiscImageFormat
+{
+    Gdi,
+    CueBin,
+    // GD-ROM-style CHD (libchdw is fed a .gdi). The Redump CUE/BIN-style
+    // variant was removed: it added a 150-sector pregap no console reads
+    // and flycast doesn't reliably boot it.
+    ChdGdRom,
+}
+
 public sealed class PatchApplyOptions
 {
     public string SourceDiscImagePath { get; set; } = string.Empty;
     public string DcpPatchPath { get; set; } = string.Empty;
     public string OutputFolder { get; set; } = string.Empty;
+    public OutputDiscImageFormat OutputFormat { get; set; } = OutputDiscImageFormat.Gdi;
 }
 
 public sealed class PatchApplyResult
 {
     public bool Success { get; set; }
     public string? ErrorMessage { get; set; }
-    public string ProducedGdiFolder { get; set; } = string.Empty;
+    // The folder shown to the user. Holds the .gdi or .cue plus track files.
+    public string ProducedOutputFolder { get; set; } = string.Empty;
     public int FilesPatched { get; set; }
     public int FilesAdded { get; set; }
 }
@@ -61,8 +73,18 @@ public static class PatchApplier
             return result;
         }
 
+        // CUE/BIN output is produced via RedumpAssembler. When the source is a
+        // GDI (or CHD-of-GDI), the assembler runs in GDI-source mode and
+        // synthesizes the T2 pregap, so no source CUE is needed.
+
         var patchName = Path.GetFileNameWithoutExtension(options.DcpPatchPath);
-        var finalGdiFolder = Path.Combine(options.OutputFolder, $"{patchName} [GDI]");
+        var finalUserOutputFolder = OutputFormatNaming.UserFolderFor(options.OutputFolder, patchName, options.OutputFormat);
+
+        // GDI output writes directly into the user's folder. CUE/BIN and CHD
+        // both rebuild a GDI in temp first and then repackage it via DiscImageEmitter.
+        var finalGdiFolder = options.OutputFormat == OutputDiscImageFormat.Gdi
+            ? finalUserOutputFolder
+            : Path.Combine(Path.GetTempPath(), "_UDP_GDI_" + Guid.NewGuid().ToString("N"));
 
         var workspace = Path.Combine(Path.GetTempPath(), "_UDP_" + Guid.NewGuid().ToString("N"));
         var sourceDir = Path.Combine(workspace, "source");
@@ -86,7 +108,7 @@ public static class PatchApplier
                 return result;
             }
 
-            progress?.Report("Extracting source GDI...");
+            progress?.Report("Extracting source disc image...");
             var readResult = GdiReader.ExtractAsync(normalized.GdiPath, sourceDir, progress, ct).GetAwaiter().GetResult();
             if (!readResult.Success)
             {
@@ -214,10 +236,16 @@ public static class PatchApplier
 
             ct.ThrowIfCancellationRequested();
 
-            progress?.Report("Finalizing file metadata...");
+            progress?.Report("Ensuring consistent output checksum...");
             Determinism.ApplyEpochToTree(sourceDir);
 
-            progress?.Report("Building patched GDI...");
+            // GDI rebuild. The user-visible label says "CUE/BIN" when that's
+            // the chosen output, even though we still build a GDI under the
+            // hood and let RedumpAssembler repackage it.
+            var rebuildLabel = options.OutputFormat == OutputDiscImageFormat.CueBin
+                ? "Building patched CUE/BIN"
+                : "Building patched GDI";
+            progress?.Report($"{rebuildLabel}...");
 
             if (Directory.Exists(finalGdiFolder))
                 Directory.Delete(finalGdiFolder, recursive: true);
@@ -243,19 +271,51 @@ public static class PatchApplier
 
             // TruncateData stays off. Enabling it can break playback on real hardware.
             // RawMode follows the source's data-track sector size: 2352 = BIN, 2048 = ISO.
+            // CUE/BIN output always needs 2352-byte raw data tracks (Redump
+            // assembly expects raw MODE1). GDI and CHD outputs follow the source.
+            bool needsRawForRedump = options.OutputFormat == OutputDiscImageFormat.CueBin;
             var builder = new GDromBuilder(chosenIpBin, cdda)
             {
-                RawMode = parsed.Track3SectorSize == 2352,
+                RawMode = needsRawForRedump || parsed.Track3SectorSize == 2352,
                 TruncateData = false,
                 BuildDate = Determinism.FixedEpoch,
             };
+            builder.ReportProgress = p => progress?.Report($"{rebuildLabel}... {p}%");
             builder.ImportFolder(sourceDir);
             var builtTracks = builder.BuildGDROM(finalGdiFolder, ct);
 
             builder.WriteGdiFile(gdiLines, builtTracks, Path.Combine(finalGdiFolder, "disc.gdi"));
 
+            if (options.OutputFormat != OutputDiscImageFormat.Gdi)
+            {
+                // For CUE/BIN sources (and CHD-of-CUE/BIN), the source CUE's
+                // track structure is mirrored in the output via RedumpAssembler.
+                // For GDI / CHD-of-GDI sources, ResolveSourceCueForAssembly
+                // returns null, putting the assembler in GDI-source mode.
+                var sourceCueForAssembly = ResolveSourceCueForAssembly(options.SourceDiscImagePath, workspace, progress, ct);
+
+                var emitResult = DiscImageEmitter.EmitAsync(new DiscImageEmitOptions
+                {
+                    GdiFolder = finalGdiFolder,
+                    TargetFormat = options.OutputFormat,
+                    OutputParentFolder = options.OutputFolder,
+                    BaseName = patchName,
+                    SourceCueForRedumpMirror = sourceCueForAssembly,
+                    // Apply Patch's user-visible wording: keep "patched" in the
+                    // CHD compression labels (matches the rebuild phase label).
+                }, progress, ct).GetAwaiter().GetResult();
+
+                if (!emitResult.Success)
+                {
+                    result.ErrorMessage =
+                        "The patched output could not be written.\n\n" +
+                        $"Details: {emitResult.ErrorMessage}";
+                    return result;
+                }
+            }
+
             result.Success = true;
-            result.ProducedGdiFolder = finalGdiFolder;
+            result.ProducedOutputFolder = finalUserOutputFolder;
             result.FilesPatched = patched;
             result.FilesAdded = added;
             return result;
@@ -274,7 +334,39 @@ public static class PatchApplier
         {
             try { if (Directory.Exists(workspace)) Directory.Delete(workspace, recursive: true); }
             catch { /* best effort */ }
+            if (options.OutputFormat != OutputDiscImageFormat.Gdi)
+            {
+                try { if (Directory.Exists(finalGdiFolder)) Directory.Delete(finalGdiFolder, recursive: true); }
+                catch { /* best effort */ }
+            }
         }
+    }
+
+    // Returns the path to a source CUE for the assembler to mirror, or null if
+    // the source is GDI-shaped (in which case the assembler runs in GDI-source
+    // mode and derives structure from the rebuilt GDI).
+    //
+    // .cue source              -> the .cue itself
+    // .chd containing CD-ROM   -> extract via ConvertToCueBin first
+    // .gdi source              -> null (GDI-source mode)
+    // .chd containing GD-ROM   -> null (GDI-source mode)
+    private static string? ResolveSourceCueForAssembly(string sourcePath, string workspace, IProgress<string>? progress, CancellationToken ct)
+    {
+        var detected = SourceFormatDetector.Detect(sourcePath);
+
+        if (detected == DetectedSourceFormat.CueBin)
+            return sourcePath;
+
+        if (detected == DetectedSourceFormat.ChdContainingCueBin)
+        {
+            var chdCueDir = Path.Combine(workspace, "chd_to_cue");
+            Directory.CreateDirectory(chdCueDir);
+            var (ok, _, cuePath) = ChdConverter.ConvertToCueBin(sourcePath, chdCueDir, null, ct).GetAwaiter().GetResult();
+            return ok ? cuePath : null;
+        }
+
+        // GDI / ChdContainingGdi: no source CUE, assembler uses GDI-source mode.
+        return null;
     }
 
     private static void MergeDirectory(string source, string target)

@@ -48,7 +48,7 @@ public partial class AboutWindow : Window
         {
             // Keep About open on network failure so the user can retry.
             var msgBox = MessageBoxManager.GetMessageBoxStandard(
-                "Update Check Failed",
+                "Error",
                 "Could not check for updates. Please check your internet connection.",
                 ButtonEnum.Ok, MsBoxIcon.None);
             await msgBox.ShowWindowDialogAsync(this);
@@ -80,7 +80,7 @@ public partial class AboutWindow : Window
         else
         {
             var msgBox = MessageBoxManager.GetMessageBoxStandard(
-                "No Update Available",
+                "Information",
                 "You are running the latest version.",
                 ButtonEnum.Ok, MsBoxIcon.None);
             await msgBox.ShowWindowDialogAsync(parentWindow);

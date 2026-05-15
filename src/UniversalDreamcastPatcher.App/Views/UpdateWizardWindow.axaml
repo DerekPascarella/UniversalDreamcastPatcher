@@ -15,9 +15,11 @@
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
             <Button x:Name="CancelDownloadButton" Content="Cancel" Click="CancelDownloadButton_Click"
-                    MinWidth="90" Margin="0,0,10,0" HorizontalContentAlignment="Center"/>
+                    MinWidth="90" Margin="0,0,10,0" HorizontalContentAlignment="Center"
+                    ToolTip.Tip="Abort the download and close"/>
             <Button x:Name="InstallButton" Content="Install Now" Click="InstallButton_Click"
-                    MinWidth="100" HorizontalContentAlignment="Center" IsVisible="False"/>
+                    MinWidth="100" HorizontalContentAlignment="Center" IsVisible="False"
+                    ToolTip.Tip="Install the downloaded update and restart"/>
         </StackPanel>
     </StackPanel>
 </Window>
