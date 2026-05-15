@@ -107,8 +107,7 @@ While Universal Dreamcast Patcher delivers its core features reliably, all known
 As Universal Dreamcast Patcher evolves and improves over time, the list below represents features which I'd like to implement.
 
 * Extend DCP patch format to support modifying CDDA tracks.
-* Add a new "IP.BIN Editor" tab for modifying either `IP.BIN` files directly, or those already baked into a disc image.
-* Add a new "Disc Image Tools" tab for performing disc image format conversions and CHD compression/decompression, separate from applying patches.
+* Support batch disc image conversion operations in the "Converter" tab.
 
 ## Applying Patches
 Universal Dreamcast Patcher is simple to use. After launching the application, follow the steps below.
