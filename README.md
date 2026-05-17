@@ -1,34 +1,32 @@
 # Universal Dreamcast Patcher
-<img align="right" width="320" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/screenshot.png?raw=true">Universal Dreamcast Patcher aims to provide an easy, cross-format game patching solution for the Dreamcast community. Such patches typically come in the form of English translations and other ROM hacks.
+<img align="right" width="320" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/screenshot.png?raw=true">Universal Dreamcast Patcher is a cross-platform toolkit for Dreamcast disc image operations. A single unified GUI combines four workflows: applying patches, building patches, editing `IP.BIN`, and converting between disc image formats. Patches typically come in the form of English translations and other ROM hacks.
 
-Universal Dreamcast Patcher is designed to accept any disc image as its source, whether it be formatted as a TOSEC-style GDI, a Redump-style CUE/BIN, or a compressed CHD. This application will extract any disc image meeting those standards, overwrite and/or add to its data according to a given patch (DCP file), and then rebuild the disc image with the new data.
-
-As of version 2.0.0, Universal Dreamcast Patcher is a cross-platform application that combines patch application and patch creation into a single unified GUI.
+The application accepts any TOSEC-style GDI, Redump-style CUE/BIN, or compressed CHD as its source. Every operation is fully deterministic: the same inputs always produce byte-identical output, so any two users running the same operation end up with results that match checksum-for-checksum.
 
 ## Table of Contents
 1. [Latest Version](https://github.com/DerekPascarella/UniversalDreamcastPatcher#latest-version)
 2. [Changelog](https://github.com/DerekPascarella/UniversalDreamcastPatcher#changelog)
 3. [Current Features](https://github.com/DerekPascarella/UniversalDreamcastPatcher#current-features)
-4. [Known Issues and Limitations](https://github.com/DerekPascarella/UniversalDreamcastPatcher#known-issues-and-limitations)
-5. [Roadmap](https://github.com/DerekPascarella/UniversalDreamcastPatcher#roadmap)
-6. [Applying Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#applying-patches)
-7. [Building Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#building-patches)
+4. [Roadmap](https://github.com/DerekPascarella/UniversalDreamcastPatcher#roadmap)
+5. [Applying Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#applying-patches)
+6. [Building Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#building-patches)
    - [Automatic Method](https://github.com/DerekPascarella/UniversalDreamcastPatcher#automatic-method)
    - [Manual Method](https://github.com/DerekPascarella/UniversalDreamcastPatcher#manual-method)
-8. [Editing IP.BIN](https://github.com/DerekPascarella/UniversalDreamcastPatcher#editing-ipbin)
-9. [Converting Disc Images](https://github.com/DerekPascarella/UniversalDreamcastPatcher#converting-disc-images)
+7. [Editing IP.BIN](https://github.com/DerekPascarella/UniversalDreamcastPatcher#editing-ipbin)
+8. [Converting Disc Images](https://github.com/DerekPascarella/UniversalDreamcastPatcher#converting-disc-images)
    - [Single Mode](https://github.com/DerekPascarella/UniversalDreamcastPatcher#single-mode)
    - [Batch Mode](https://github.com/DerekPascarella/UniversalDreamcastPatcher#batch-mode)
-10. [Legal and Licensing](https://github.com/DerekPascarella/UniversalDreamcastPatcher#legal-and-licensing)
+   - [Using External DAT Files](https://github.com/DerekPascarella/UniversalDreamcastPatcher#using-external-dat-files)
+9. [Legal and Licensing](https://github.com/DerekPascarella/UniversalDreamcastPatcher#legal-and-licensing)
 
 ## Latest Version
 The latest version of Universal Dreamcast Patcher is [2.1.1](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.1).
 
 ## Changelog
-- **Version 2.1.1** (2026-05-XX)
+- **Version 2.1.1** (2026-05-17)
   - New batch mode added to "Converter" tab (see [Issue 12](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/12)).
   - External DATs can now be used for disc image convert operations (see [Issue 13](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/13)).
-  - "Build Patch" tab partly redesigned (see [Issue 14](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/14)).
+  - "Build Patch" tab's IP.BIN modifications section redesigned (see [Issue 14](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/14)).
 - **Version 2.1.0** (2026-05-15)
   - Added tooltip text to all selectable UI elements (see [Issue 7](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/7)).
   - Patched output disc image now supports writing CUE/BIN and CHD (see [Issue 8](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/8)).
@@ -97,10 +95,11 @@ Below is a specific list of Universal Dreamcast Patcher's current features.
 - Support for source disc images containing CDDA.
 - Patches can include a custom `IP.BIN` that replaces the source disc's bootsector on apply.
 - xdelta-based patching to reduce patch size and mitigate copyright concerns.
-- Deterministic, byte-identical output across all platforms for the same inputs.
+- Deterministic, byte-identical output when applying the a given patch to the same source disc image.
 - Built-in auto-update on Windows and Linux (update notifications on macOS).
 - Robust `IP.BIN` editor, usable with standalone `IP.BIN` files or disc images (GDI, CUE/BIN, CHD).
 - Disc image converter between GDI, CUE/BIN, and CHD, with both single and batch modes.
+- Optional support for user-supplied Logiqx XML DATs to override the built-in TOSEC and Redump conversion references.
 - Supported disc image formats (input and output):
   - TOSEC-style GDI
   - Redump-style CUE/BIN
@@ -108,13 +107,8 @@ Below is a specific list of Universal Dreamcast Patcher's current features.
 - Supported patch formats:
   - DCP
 
-## Known Issues and Limitations
-While Universal Dreamcast Patcher delivers its core features reliably, all known issues and limitations of the application are listed below.
-
-* While source disc images (input) with CDDA are supported, the DCP patch format does not yet include a method for modifying CDDA tracks.
-
 ## Roadmap
-As Universal Dreamcast Patcher evolves and improves over time, the list below represents features which I'd like to implement.
+The list below represents features planned for future versions of Universal Dreamcast Patcher.
 
 * Extend DCP patch format to support modifying CDDA tracks.
 
@@ -136,10 +130,10 @@ Details on the current step of the patching process will be updated as they prog
 The DCP patch format was designed specifically for Universal Dreamcast Patcher. Presently, there is both an automatic and a manual method one can use to build a patch.
 
 ### Automatic Method
-<img width="220" align="right" src="https://raw.githubusercontent.com/DerekPascarella/UniversalDreamcastPatcher/main/screenshots/screenshot_builder.png">Use this method when:
-* You do not wish to distribute whole files containing copyrighted content.
-* Your aim is to keep patch files as small as possible.
-* You want all the work done for you!
+<img width="220" align="right" src="https://raw.githubusercontent.com/DerekPascarella/UniversalDreamcastPatcher/main/screenshots/screenshot_builder.png">Users should use this method when:
+* They do not wish to distribute whole files containing copyrighted content.
+* Their aim is to keep patch files as small as possible.
+* They want all the work done for them!
 
 As of version 2.0.0, Universal Dreamcast Patcher includes a dedicated patch-building flow on its **Build Patch** tab. This flow produces a DCP patch file based on changes between two disc images (original and modified).
 
@@ -154,10 +148,10 @@ The steps for automatically creating a patch are as follows.
 3. Next to **Modified disc image**, click "Browse..." and select the patched .gdi, .cue, or .chd.
 4. In the **Patch filename** field, type the desired name for the DCP patch. Note that the base filename of the DCP will be used when the patching application generates the patched disc image (e.g., a patch file named "My Game (v1.0).dcp" will result in a patched GDI folder named "My Game (v1.0) [GDI]").
 5. Next to **Output folder**, click "Browse..." and select where the DCP should be written.
-6. Optionally, use the **IP.BIN customization** section to bundle a custom `IP.BIN` with the patch. In many cases, patch developers won't bother with this step, but there are several advantages in enabling these options:
-   * **Region-Free** - Patched disc image (output) can be booted on any ODE or emulator, regardless of region setting, and without enabling region-free options within the ODE or emulator itself.
-   * **VGA** - If supported, patched disc image (output) can be booted in VGA mode on any ODE or emulator, regardless of VGA auto-patching settings within the ODE or emulator itself.
-   * **Custom Game Name** - Patched disc image (output) will be displayed using a custom name within tools like the various SD card managers for GDEMU, thus giving another degree of creative control to patch developers opting for a localized game title.
+6. Optionally, check **Customize IP.BIN** to bundle a custom `IP.BIN` with the patch. In many cases, patch developers won't bother with this step, but there are several advantages in enabling these options:
+   * **Region-free** - Patched disc image (output) can be booted on any ODE or emulator, regardless of region setting, and without enabling region-free options within the ODE or emulator itself.
+   * **Enable VGA** - If supported, patched disc image (output) can be booted in VGA mode on any ODE or emulator, regardless of VGA auto-patching settings within the ODE or emulator itself.
+   * **Use custom game name** - Patched disc image (output) will be displayed using a custom name within tools like the various SD card managers for GDEMU, thus giving another degree of creative control to patch developers opting for a localized game title.
 7. Click **Build Patch**.
 
 ### Manual Method
@@ -169,7 +163,6 @@ The steps for manually creating a patch are as follows.
 
 1. Create a ZIP archive containing (in its root) all of the files/folders from the game's data that have been modified or are new. Be sure to retain original folder structure and hierarchy.
    * If the patch should use a modified `IP.BIN` file, simply create a folder named "bootsector" in the root of the ZIP archive and place `IP.BIN` inside of it. Note that this folder and file will not be included in the patched disc image's (output) filesystem.
-   * If the patch's new `IP.BIN` has been region-modified, ensure the text region (not just the single-byte flag in the header) has been modified, as well. This ensures compatibility with certain emulators that fail to boot when there's a discrepancy. If unsure of how to make those necessary changes, leverage my [Dreamcast IP.BIN Patcher](https://github.com/DerekPascarella/Dreamcast-IP.BIN-Patcher) utility.
 2. Change the extension of the file from ZIP to DCP.
    * Note that the base filename of the DCP will be used when this application generates the patched GDI (e.g., a patch file named "My Game (v1.0).dcp" will result in a patched GDI folder named "My Game (v1.0) [GDI]").
 
@@ -207,7 +200,7 @@ If the source is a disc image, the modified `IP.BIN` is written directly back in
 ## Converting Disc Images
 <img align="right" width="320" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/screenshot_converter.png?raw=true"> Universal Dreamcast Patcher includes a built-in disc image converter for cross-format conversions between GDI, CUE/BIN, and CHD without going through the patching pipeline. Both single and batch conversion are supported.
 
-The converter ships with embedded TOSEC and Redump DATs, producing byte-perfect output for any catalogued disc when converting between GDI and CUE/BIN. Discs not present in either DAT (e.g., development builds, patches) still convert correctly, but without the DAT-backed byte-exact guarantee.
+The converter ships with embedded TOSEC and Redump DATs, producing byte-perfect output for any catalogued disc when converting between GDI and CUE/BIN. Discs not present in either DAT (e.g., uncatalogued development builds, patches) still convert correctly, but without the DAT-backed byte-exact guarantee.
 
 All conversions write to a subfolder of the chosen output folder, named after the source disc image (e.g., converting `My Game.gdi` to CUE/BIN produces a folder named `My Game [CUE-BIN]`). If that subfolder already exists, the converter appends `[2]`, `[3]`, and so on to avoid overwriting prior conversions.
 
@@ -235,6 +228,19 @@ Use this mode to convert many disc images in one run. The steps are as follows.
 Each queued disc image is converted in turn and written to its own subfolder of the output folder. The queued list updates in real time, showing the current status (queued, running, done, copied, failed, cancelled, or skipped) for each disc image.
 
 When the batch completes, a summary dialog is shown with totals for converted, copied, failed, and cancelled disc images. If any disc images failed to convert, a separate window then opens listing the full path of each failed disc image alongside the specific error encountered.
+
+### Using External DAT Files
+By default, the converter uses its built-in TOSEC and Redump DATs to produce byte-perfect output when converting between GDI and CUE/BIN. If users prefer using their own DAT files (e.g., a newer Redump revision, a TOSEC variant, or a custom catalogue), the **DAT Source** controls above the **Single** and **Batch** sub-tabs let them do so.
+
+1. Above the **Single** and **Batch** sub-tabs, switch **DAT Source** from **Internal** to **External**. The **Manage** button becomes enabled.
+2. Click **Manage** to open the **Manage External DATs** window.
+3. Click **Add DAT...** to browse for one or more Logiqx XML `.dat` files. Each selected file is parsed and validated. Files that aren't valid Logiqx DATs are rejected.
+4. Use **Move Up** and **Move Down** to set the order in which the DATs are consulted (top to bottom).
+5. Click **Save** to commit the list, or **Cancel** to discard changes.
+
+The chosen DAT Source and DAT file list are remembered between sessions.
+
+When **External** is selected, conversions consult the listed DATs in order. If a disc isn't found in any of them, the built-in TOSEC and Redump DATs are used as a fallback. If any listed DAT file is no longer present on disk, it appears in the **Manage External DATs** window with a red "Missing" status, and a confirmation dialog is shown at the start of any conversion so users can proceed anyway or cancel and edit the list.
 
 ## Legal and Licensing
 
