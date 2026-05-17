@@ -130,7 +130,7 @@ Details on the current step of the patching process will be updated as they prog
 The DCP patch format was designed specifically for Universal Dreamcast Patcher. Presently, there is both an automatic and a manual method one can use to build a patch.
 
 ### Automatic Method
-<img width="220" align="right" src="https://raw.githubusercontent.com/DerekPascarella/UniversalDreamcastPatcher/main/screenshots/screenshot_builder.png">Users should use this method when:
+<img width="320" align="right" src="https://raw.githubusercontent.com/DerekPascarella/UniversalDreamcastPatcher/main/screenshots/screenshot_builder.png">Users should use this method when:
 * They do not wish to distribute whole files containing copyrighted content.
 * Their aim is to keep patch files as small as possible.
 * They want all the work done for them!
