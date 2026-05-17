@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using UniversalDreamcastPatcher.Core.Conversion;
 
 // Written by Derek Pascarella (ateam)
 
@@ -29,7 +30,9 @@ public static class SourceFormatDetector
             case ".gdi":
                 return DetectedSourceFormat.Gdi;
             case ".cue":
-                return DetectedSourceFormat.CueBin;
+                return GdiConverter.IsGdRomCue(sourcePath)
+                    ? DetectedSourceFormat.CueBin
+                    : DetectedSourceFormat.Unknown;
             case ".chd":
                 return DetectChdContents(sourcePath);
             default:

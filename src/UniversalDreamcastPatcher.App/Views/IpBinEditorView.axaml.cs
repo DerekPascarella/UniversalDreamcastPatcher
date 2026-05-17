@@ -669,6 +669,10 @@ public partial class IpBinEditorView : UserControl
             _saveProgressBar.IsIndeterminate = busy;
             _saveProgressBar.Value = 0;
         }
+
+        var mainWindow = TopLevel.GetTopLevel(this) as MainWindow;
+        if (busy) mainWindow?.StartBusyAnimation();
+        else mainWindow?.StopBusyAnimation();
     }
 
     private async Task ShowDialog(string title, string message)

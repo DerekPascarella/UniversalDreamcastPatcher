@@ -71,7 +71,7 @@ public static class DiscImageConverter
         }
 
         var baseName = Path.GetFileNameWithoutExtension(options.SourceDiscImagePath);
-        var finalUserOutputFolder = OutputFormatNaming.UserFolderFor(
+        var finalUserOutputFolder = OutputFormatNaming.NextAvailableUserFolderFor(
             options.OutputFolder, baseName, options.TargetFormat);
 
         var workspace = Path.Combine(Path.GetTempPath(), "_UDP_CONVERT_" + Guid.NewGuid().ToString("N"));
@@ -104,7 +104,7 @@ public static class DiscImageConverter
         }
         catch (Exception ex)
         {
-            result.ErrorMessage = $"An unexpected error occurred.\n\nDetails: {ex.Message}";
+            result.ErrorMessage = $"An unexpected error occurred.\n{ex.Message}";
             return result;
         }
         finally
@@ -153,7 +153,7 @@ public static class DiscImageConverter
             progress?.Report("Converting CUE/BIN to GDI...");
             var (ok, msg) = GdiConverter.ConvertToGdi(sourcePath, gdiPivot, null, ct).GetAwaiter().GetResult();
             if (!ok)
-                return $"The CUE/BIN disc image could not be converted to GDI.\n\nDetails: {msg}";
+                return $"The CUE/BIN disc image could not be converted to GDI.\n{msg}";
             return EmitFromGdi(gdiPivot, target, finalOutputFolder, baseName, progress, ct);
         }
 
@@ -162,23 +162,22 @@ public static class DiscImageConverter
         if (source == DetectedSourceFormat.ChdContainingGdi)
         {
             var decompLabel = "Decompressing CHD to GDI";
-            var decompProgress = new Progress<int>(p => progress?.Report($"{decompLabel}... {p}%"));
             if (target == OutputDiscImageFormat.Gdi)
             {
                 progress?.Report($"{decompLabel}...");
                 Directory.CreateDirectory(finalOutputFolder);
-                var (ok, msg) = ChdConverter.ConvertToGdi(sourcePath, finalOutputFolder, decompProgress, ct).GetAwaiter().GetResult();
+                var (ok, msg) = ChdConverter.ConvertToGdi(sourcePath, finalOutputFolder, null, ct).GetAwaiter().GetResult();
                 if (!ok)
-                    return $"The CHD disc image could not be decompressed.\n\nDetails: {msg}";
+                    return $"The CHD disc image could not be decompressed.\n{msg}";
                 return null;
             }
             // CUE/BIN target: decompress to GDI in workspace, then emit.
             var gdiPivot = Path.Combine(workspace, "gdi_pivot");
             Directory.CreateDirectory(gdiPivot);
             progress?.Report($"{decompLabel}...");
-            var (ok2, msg2) = ChdConverter.ConvertToGdi(sourcePath, gdiPivot, decompProgress, ct).GetAwaiter().GetResult();
+            var (ok2, msg2) = ChdConverter.ConvertToGdi(sourcePath, gdiPivot, null, ct).GetAwaiter().GetResult();
             if (!ok2)
-                return $"The CHD disc image could not be decompressed.\n\nDetails: {msg2}";
+                return $"The CHD disc image could not be decompressed.\n{msg2}";
             return EmitFromGdi(gdiPivot, target, finalOutputFolder, baseName, progress, ct);
         }
 
@@ -190,14 +189,13 @@ public static class DiscImageConverter
             var cuePivot = Path.Combine(workspace, "cue_pivot");
             Directory.CreateDirectory(cuePivot);
             var decompLabel = "Decompressing CHD to CUE/BIN";
-            var decompProgress = new Progress<int>(p => progress?.Report($"{decompLabel}... {p}%"));
             progress?.Report($"{decompLabel}...");
-            var (ok, msg, cuePath) = ChdConverter.ConvertToCueBin(sourcePath, cuePivot, decompProgress, ct).GetAwaiter().GetResult();
+            var (ok, msg, cuePath) = ChdConverter.ConvertToCueBin(sourcePath, cuePivot, null, ct).GetAwaiter().GetResult();
             if (!ok)
-                return $"The CHD disc image could not be decompressed.\n\nDetails: {msg}";
+                return $"The CHD disc image could not be decompressed.\n{msg}";
 
             if (!GdiConverter.IsGdRomCue(cuePath))
-                return "The selected CHD file is a CD-ROM dump, not a GD-ROM dump.\n\nOnly Dreamcast GD-ROM discs are supported.";
+                return "The selected CHD file is a CD-ROM dump, not a GD-ROM dump.\nOnly Dreamcast GD-ROM discs are supported.";
 
             // CUE passed IsGdRomCue: the CHD is GD-ROM but missing the CHGD
             // tag. Fall back to the GDI-pivot path so the conversion proceeds.
@@ -211,7 +209,7 @@ public static class DiscImageConverter
             progress?.Report("Converting CUE/BIN to GDI...");
             var (gOk, gMsg) = GdiConverter.ConvertToGdi(cuePath, gdiPivot, null, ct).GetAwaiter().GetResult();
             if (!gOk)
-                return $"The CUE/BIN disc image could not be converted to GDI.\n\nDetails: {gMsg}";
+                return $"The CUE/BIN disc image could not be converted to GDI.\n{gMsg}";
             return EmitFromGdi(gdiPivot, target, finalOutputFolder, baseName, progress, ct);
         }
 
@@ -236,6 +234,7 @@ public static class DiscImageConverter
             TargetFormat = target,
             OutputParentFolder = Path.GetDirectoryName(finalOutputFolder) ?? string.Empty,
             BaseName = baseName,
+            ResolvedFinalUserFolder = finalOutputFolder,
             SourceCueForRedumpMirror = null,
             CompressGdiToChdLabel = "Compressing GDI to CHD",
         };
@@ -247,10 +246,10 @@ public static class DiscImageConverter
     private static string? ConvertCueBinToGdiFolder(string cuePath, string finalOutputFolder, CancellationToken ct)
     {
         if (!GdiConverter.IsGdRomCue(cuePath))
-            return "The selected .cue file is not a GD-ROM dump.\n\nOnly Dreamcast GD-ROM discs are supported. CD-ROM dumps cannot be used.";
+            return "The selected .cue file is not a GD-ROM dump.\nOnly Dreamcast GD-ROM discs are supported. CD-ROM dumps cannot be used.";
         Directory.CreateDirectory(finalOutputFolder);
         var (ok, msg) = GdiConverter.ConvertToGdi(cuePath, finalOutputFolder, null, ct).GetAwaiter().GetResult();
-        return ok ? null : $"The CUE/BIN disc image could not be converted to GDI.\n\nDetails: {msg}";
+        return ok ? null : $"The CUE/BIN disc image could not be converted to GDI.\n{msg}";
     }
 
     private static bool IsSameFormat(DetectedSourceFormat source, OutputDiscImageFormat target) =>

@@ -15,12 +15,20 @@ As of version 2.0.0, Universal Dreamcast Patcher is a cross-platform application
 7. [Building Patches](https://github.com/DerekPascarella/UniversalDreamcastPatcher#building-patches)
    - [Automatic Method](https://github.com/DerekPascarella/UniversalDreamcastPatcher#automatic-method)
    - [Manual Method](https://github.com/DerekPascarella/UniversalDreamcastPatcher#manual-method)
-8. [Legal and Licensing](https://github.com/DerekPascarella/UniversalDreamcastPatcher#legal-and-licensing)
+8. [Editing IP.BIN](https://github.com/DerekPascarella/UniversalDreamcastPatcher#editing-ipbin)
+9. [Converting Disc Images](https://github.com/DerekPascarella/UniversalDreamcastPatcher#converting-disc-images)
+   - [Single Mode](https://github.com/DerekPascarella/UniversalDreamcastPatcher#single-mode)
+   - [Batch Mode](https://github.com/DerekPascarella/UniversalDreamcastPatcher#batch-mode)
+10. [Legal and Licensing](https://github.com/DerekPascarella/UniversalDreamcastPatcher#legal-and-licensing)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [2.1.0](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.0).
+The latest version of Universal Dreamcast Patcher is [2.1.1](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.1).
 
 ## Changelog
+- **Version 2.1.1** (2026-05-XX)
+  - New batch mode added to "Converter" tab (see [Issue 12](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/12)).
+  - External DATs can now be used for disc image convert operations (see [Issue 13](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/13)).
+  - "Build Patch" tab partly redesigned (see [Issue 14](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/14)).
 - **Version 2.1.0** (2026-05-15)
   - Added tooltip text to all selectable UI elements (see [Issue 7](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/7)).
   - Patched output disc image now supports writing CUE/BIN and CHD (see [Issue 8](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/8)).
@@ -84,18 +92,20 @@ The latest version of Universal Dreamcast Patcher is [2.1.0](https://github.com/
 Below is a specific list of Universal Dreamcast Patcher's current features.
 
 - Cross-platform support (Windows, Linux, macOS).
-- Unified GUI for both applying and creating patches.
+- Unified GUI for applying patches, building patches, editing `IP.BIN`, and converting disc images.
 - Source disc image integrity verification.
-- Support for source disc images (input) with CDDA.
-- Disc image patching with custom `IP.BIN`.
-- Support for xdeltas in order to reduce patch size and mitigate copyright concerns.
-- Built-in auto-update (Windows and Linux).
+- Support for source disc images containing CDDA.
+- Patches can include a custom `IP.BIN` that replaces the source disc's bootsector on apply.
+- xdelta-based patching to reduce patch size and mitigate copyright concerns.
 - Deterministic, byte-identical output across all platforms for the same inputs.
-- Supported formats for source disc image (input) and patched disc image (output):
+- Built-in auto-update on Windows and Linux (update notifications on macOS).
+- Robust `IP.BIN` editor, usable with standalone `IP.BIN` files or disc images (GDI, CUE/BIN, CHD).
+- Disc image converter between GDI, CUE/BIN, and CHD, with both single and batch modes.
+- Supported disc image formats (input and output):
   - TOSEC-style GDI
   - Redump-style CUE/BIN
   - CHD
-- Supported formats for patch files:
+- Supported patch formats:
   - DCP
 
 ## Known Issues and Limitations
@@ -107,7 +117,6 @@ While Universal Dreamcast Patcher delivers its core features reliably, all known
 As Universal Dreamcast Patcher evolves and improves over time, the list below represents features which I'd like to implement.
 
 * Extend DCP patch format to support modifying CDDA tracks.
-* Support batch disc image conversion operations in the "Converter" tab.
 
 ## Applying Patches
 Universal Dreamcast Patcher is simple to use. After launching the application, follow the steps below.
@@ -119,7 +128,7 @@ Universal Dreamcast Patcher is simple to use. After launching the application, f
 5. Next to **Patched disc image format**, select the format for the patched disc image (i.e., GDI, CUE/BIN, or CHD).
 6. Click **Apply Patch**.
 
-The patched disc image will be written to a subfolder of the output folder, named after the patch file (e.g., a patch file named `My Game (v1.0).dcp` produces a folder named `My Game (v1.0) [GDI]`, `My Game (v1.0) [CUE-BIN]`, or `My Game (v1.0) [CHD]`.
+The patched disc image will be written to a subfolder of the output folder, named after the patch file (e.g., a patch file named `My Game (v1.0).dcp` produces a folder named `My Game (v1.0) [GDI]`, `My Game (v1.0) [CUE-BIN]`, or `My Game (v1.0) [CHD]`). If that subfolder already exists, the application appends `[2]`, `[3]`, and so on to avoid overwriting prior results.
 
 Details on the current step of the patching process will be updated as they progress. Any errors encountered during sanity or integrity checks will be presented and the patching process will be halted.
 
@@ -145,7 +154,7 @@ The steps for automatically creating a patch are as follows.
 3. Next to **Modified disc image**, click "Browse..." and select the patched .gdi, .cue, or .chd.
 4. In the **Patch filename** field, type the desired name for the DCP patch. Note that the base filename of the DCP will be used when the patching application generates the patched disc image (e.g., a patch file named "My Game (v1.0).dcp" will result in a patched GDI folder named "My Game (v1.0) [GDI]").
 5. Next to **Output folder**, click "Browse..." and select where the DCP should be written.
-6. (Optional) Use the **IP.BIN customization** section to bundle a custom `IP.BIN` with the patch. In many cases, patch developers won't bother with this step, but there are several advantages in enabling these options:
+6. Optionally, use the **IP.BIN customization** section to bundle a custom `IP.BIN` with the patch. In many cases, patch developers won't bother with this step, but there are several advantages in enabling these options:
    * **Region-Free** - Patched disc image (output) can be booted on any ODE or emulator, regardless of region setting, and without enabling region-free options within the ODE or emulator itself.
    * **VGA** - If supported, patched disc image (output) can be booted in VGA mode on any ODE or emulator, regardless of VGA auto-patching settings within the ODE or emulator itself.
    * **Custom Game Name** - Patched disc image (output) will be displayed using a custom name within tools like the various SD card managers for GDEMU, thus giving another degree of creative control to patch developers opting for a localized game title.
@@ -176,6 +185,56 @@ All modified or new files reside in the root of the patch. Likewise, all folders
 <p align="center">
 <img src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/example_2.png?raw=true">
 </p>
+
+## Editing IP.BIN
+<img align="right" width="320" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/screenshot_ipbin_editor.png?raw=true"> Universal Dreamcast Patcher includes a full `IP.BIN` editor for inspecting and modifying the Dreamcast bootsector. The editor accepts either a disc image (GDI, CUE/BIN, or CHD) or a standalone `IP.BIN` file. When a disc image is loaded, the editor reads `IP.BIN` from the disc and, on save, writes the modified bootsector back into the original disc image in place, preserving the disc's format.
+
+Editable fields are organized across three sub-tabs.
+
+* **Identification** - Product number, version, release date, maker name, game title, and boot filename.
+* **Disc / Region** - Media type (GD-ROM or CD-ROM), disc number and total disc count, and region flags (Japan, USA, Europe).
+* **Peripherals** - System features (Windows CE, VGA box), optional peripherals (memory card, Puru Puru, microphone, light gun, keyboard, mouse, etc.), and controller minimums (standard pad, analog axes, button minimums).
+
+The steps for editing `IP.BIN` are as follows.
+
+1. Select the **IP.BIN Editor** tab.
+2. Next to **Source disc image or IP.BIN**, click "Browse..." and select a `.gdi`, `.cue`, `.chd`, or `IP.BIN` file.
+3. Edit fields across the **Identification**, **Disc / Region**, and **Peripherals** sub-tabs.
+4. Click **Save Changes**.
+
+If the source is a disc image, the modified `IP.BIN` is written directly back into the original disc image in place, preserving the disc's format. If the source is a standalone `IP.BIN` file, it is overwritten directly.
+
+## Converting Disc Images
+<img align="right" width="320" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/screenshot_converter.png?raw=true"> Universal Dreamcast Patcher includes a built-in disc image converter for cross-format conversions between GDI, CUE/BIN, and CHD without going through the patching pipeline. Both single and batch conversion are supported.
+
+The converter ships with embedded TOSEC and Redump DATs, producing byte-perfect output for any catalogued disc when converting between GDI and CUE/BIN. Discs not present in either DAT (e.g., development builds, patches) still convert correctly, but without the DAT-backed byte-exact guarantee.
+
+All conversions write to a subfolder of the chosen output folder, named after the source disc image (e.g., converting `My Game.gdi` to CUE/BIN produces a folder named `My Game [CUE-BIN]`). If that subfolder already exists, the converter appends `[2]`, `[3]`, and so on to avoid overwriting prior conversions.
+
+### Single Mode
+Use this mode to convert a single disc image. The steps are as follows.
+
+1. Select the **Converter** tab.
+2. The **Single** sub-tab is selected by default.
+3. Next to **Source disc image**, click "Browse..." and select the `.gdi`, `.cue`, or `.chd` to be converted.
+4. Next to **Converted disc image output folder**, click "Browse..." and select where the converted disc image should be written.
+5. Next to **Converted disc image format**, select the target format (i.e., GDI, CUE/BIN, or CHD).
+6. Click **Convert**.
+
+### Batch Mode
+Use this mode to convert many disc images in one run. The steps are as follows.
+
+1. Select the **Converter** tab.
+2. Select the **Batch** sub-tab.
+3. Click **Add files...** to add one or more disc images, or **Add folder...** to recursively add every disc image found within a folder.
+4. Optionally select one or more rows and click **Remove**, or click **Clear** to empty the queue entirely.
+5. Next to **Converted disc image format**, select the target format for all queued disc images (i.e., GDI, CUE/BIN, or CHD).
+6. Next to **Converted disc image output folder**, click "Browse..." and select where the converted disc images should be written.
+7. Click **Convert All**.
+
+Each queued disc image is converted in turn and written to its own subfolder of the output folder. The queued list updates in real time, showing the current status (queued, running, done, copied, failed, cancelled, or skipped) for each disc image.
+
+When the batch completes, a summary dialog is shown with totals for converted, copied, failed, and cancelled disc images. If any disc images failed to convert, a separate window then opens listing the full path of each failed disc image alongside the specific error encountered.
 
 ## Legal and Licensing
 

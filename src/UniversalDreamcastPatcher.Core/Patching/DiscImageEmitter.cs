@@ -26,6 +26,10 @@ public sealed class DiscImageEmitOptions
     // "<BaseName> (Track NN).bin").
     public string BaseName { get; set; } = string.Empty;
 
+    // When set, used as the final output folder instead of recomputing it from
+    // OutputParentFolder + BaseName + format suffix.
+    public string? ResolvedFinalUserFolder { get; set; }
+
     // When set, RedumpAssembler mirrors this CUE's track structure. When
     // null, it runs in GDI-source mode and synthesizes the T2 pregap.
     public string? SourceCueForRedumpMirror { get; set; }
@@ -61,8 +65,8 @@ public static class DiscImageEmitter
             return result;
         }
 
-        var finalUserOutputFolder = OutputFormatNaming.UserFolderFor(
-            options.OutputParentFolder, options.BaseName, options.TargetFormat);
+        var finalUserOutputFolder = options.ResolvedFinalUserFolder
+            ?? OutputFormatNaming.UserFolderFor(options.OutputParentFolder, options.BaseName, options.TargetFormat);
 
         try
         {
@@ -86,9 +90,7 @@ public static class DiscImageEmitter
 
                 if (!assembleResult.Success)
                 {
-                    result.ErrorMessage =
-                        "The CUE/BIN output could not be assembled.\n\n" +
-                        $"Details: {assembleResult.ErrorMessage}";
+                    result.ErrorMessage = $"The CUE/BIN output could not be assembled.\n{assembleResult.ErrorMessage}";
                     return result;
                 }
             }
@@ -110,16 +112,12 @@ public static class DiscImageEmitter
                 }
 
                 var outChdPath = Path.Combine(finalUserOutputFolder, OutputFormatNaming.ChdFileName(options.BaseName));
-                var compressProgress = new Progress<int>(p =>
-                    progress?.Report($"{compressLabel}... {p}%"));
 
-                var (chdOk, chdMsg) = ChdWriter.ConvertToChd(gdiFile, outChdPath, compressProgress, ct)
+                var (chdOk, chdMsg) = ChdWriter.ConvertToChd(gdiFile, outChdPath, null, ct)
                     .GetAwaiter().GetResult();
                 if (!chdOk)
                 {
-                    result.ErrorMessage =
-                        "The CHD output could not be written.\n\n" +
-                        $"Details: {chdMsg}";
+                    result.ErrorMessage = $"The CHD output could not be written.\n{chdMsg}";
                     return result;
                 }
             }
@@ -135,7 +133,7 @@ public static class DiscImageEmitter
         }
         catch (Exception ex)
         {
-            result.ErrorMessage = $"An unexpected error occurred while writing the output.\n\nDetails: {ex.Message}";
+            result.ErrorMessage = $"An unexpected error occurred while writing the output.\n{ex.Message}";
             return result;
         }
     }

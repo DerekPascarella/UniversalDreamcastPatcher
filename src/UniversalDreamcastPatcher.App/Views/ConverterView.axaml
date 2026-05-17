@@ -1,86 +1,73 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="using:UniversalDreamcastPatcher.App.Views.Converter"
              x:Class="UniversalDreamcastPatcher.App.Views.ConverterView">
 
-    <StackPanel Margin="12" Spacing="12">
+    <StackPanel Margin="12,10,12,12" Spacing="10">
 
-        <!-- Source disc image row -->
-        <StackPanel Spacing="4">
-            <TextBlock Text="Source disc image" FontWeight="SemiBold" />
-            <Grid ColumnDefinitions="*,Auto">
-                <TextBox Grid.Column="0" x:Name="SourceImagePath" Watermark="Select a .gdi, .cue, or .chd file..." IsReadOnly="True" />
-                <Button Grid.Column="1" Content="Browse..." Margin="6,0,0,0" MinWidth="90" x:Name="BrowseSourceImage"
-                        ToolTip.Tip="Choose the disc image to convert (.gdi, .cue, or .chd)" />
-            </Grid>
-        </StackPanel>
-
-        <!-- Output folder row -->
-        <StackPanel Spacing="4">
-            <TextBlock Text="Converted disc image output folder" FontWeight="SemiBold" />
-            <Grid ColumnDefinitions="*,Auto">
-                <TextBox Grid.Column="0" x:Name="OutputFolderPath" Watermark="Where to write the converted disc image folder..." IsReadOnly="True" />
-                <Button Grid.Column="1" Content="Browse..." Margin="6,0,0,0" MinWidth="90" x:Name="BrowseOutputFolder"
-                        ToolTip.Tip="Choose where the converted disc image will be written" />
-            </Grid>
-        </StackPanel>
-
-        <!-- Output format row -->
-        <StackPanel Spacing="4">
-            <TextBlock Text="Converted disc image format" FontWeight="SemiBold" />
-            <Grid ColumnDefinitions="*,Auto">
-                <ComboBox Grid.Column="0"
-                          x:Name="OutputFormatDropdown"
-                          HorizontalAlignment="Stretch"
-                          IsEnabled="False"
-                          PlaceholderText="Select a source disc image first"
-                          ToolTip.Tip="Format the converted disc image will be saved as" />
-                <Button Grid.Column="1"
-                        x:Name="FormatInfoButton"
-                        Width="30"
-                        Height="{Binding #OutputFormatDropdown.Bounds.Height}"
-                        VerticalAlignment="Stretch"
-                        VerticalContentAlignment="Center"
-                        Margin="6,0,0,0"
-                        Padding="0"
-                        IsEnabled="False"
-                        ToolTip.Tip="About these formats">
-                    <Viewbox Width="18" Height="18">
-                        <Canvas Width="24" Height="24">
-                            <Path Data="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"
-                                  Fill="Black" />
-                        </Canvas>
-                    </Viewbox>
-                </Button>
-            </Grid>
-        </StackPanel>
-
-        <!-- Action area: tall button by default, progress UI when busy. -->
-        <Grid x:Name="ConvertActionArea" MinHeight="60" Margin="0,4,0,0">
-
-            <Button x:Name="ConvertButton"
-                    Content="Convert"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    FontSize="16"
-                    FontWeight="SemiBold"
+        <!-- DAT Source row (centered as a unit) -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBlock Text="DAT Source"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"
+                       Margin="0,0,12,0" />
+            <RadioButton x:Name="DatSourceInternalRadio"
+                         Content="Internal"
+                         GroupName="DatSource"
+                         IsChecked="True"
+                         VerticalAlignment="Center"
+                         ToolTip.Tip="Use the built-in TOSEC and Redump DATs" />
+            <RadioButton x:Name="DatSourceExternalRadio"
+                         Content="External"
+                         GroupName="DatSource"
+                         Margin="12,0,12,0"
+                         VerticalAlignment="Center"
+                         ToolTip.Tip="Use the external DAT files configured in Manage" />
+            <Button x:Name="ManageExternalDatsButton"
+                    Content="Manage"
+                    MinWidth="80"
                     IsEnabled="False"
-                    ToolTip.Tip="Convert the source disc image to the selected format and write it to the output folder" />
+                    Margin="0,0,6,0"
+                    ToolTip.Tip="Add or remove external DAT files" />
+            <Button x:Name="DatSourceInfoButton"
+                    Width="30"
+                    Height="{Binding #ManageExternalDatsButton.Bounds.Height}"
+                    VerticalAlignment="Stretch"
+                    VerticalContentAlignment="Center"
+                    Padding="0"
+                    ToolTip.Tip="About DAT sources">
+                <Viewbox Width="18" Height="18">
+                    <Canvas Width="24" Height="24">
+                        <Path Data="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"
+                              Fill="Black" />
+                    </Canvas>
+                </Viewbox>
+            </Button>
+        </StackPanel>
 
-            <StackPanel x:Name="ConvertBusyPanel"
-                        IsVisible="False"
-                        VerticalAlignment="Center"
-                        Spacing="6">
-                <ProgressBar IsIndeterminate="True"
-                             Height="16" />
-                <TextBlock x:Name="ConvertProgressLabel"
-                           HorizontalAlignment="Center"
-                           Foreground="#333"
-                           Text="" />
-            </StackPanel>
+        <TabControl x:Name="ConverterSubTabs" SelectedIndex="0" Padding="0">
+            <TabControl.Styles>
+                <Style Selector="TabItem">
+                    <Setter Property="FontSize" Value="16" />
+                </Style>
+            </TabControl.Styles>
+            <TabControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" />
+                </ItemsPanelTemplate>
+            </TabControl.ItemsPanel>
 
-        </Grid>
+            <TabItem Header="Single"
+                     ToolTip.Tip="Convert one disc image">
+                <conv:SingleConverterPanel />
+            </TabItem>
+
+            <TabItem Header="Batch"
+                     ToolTip.Tip="Convert many disc images in one run">
+                <conv:BatchConverterPanel />
+            </TabItem>
+
+        </TabControl>
 
     </StackPanel>
 

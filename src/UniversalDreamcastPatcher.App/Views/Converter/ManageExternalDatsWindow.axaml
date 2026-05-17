@@ -1,0 +1,152 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:conv="using:UniversalDreamcastPatcher.App.Views.Converter"
+        x:Class="UniversalDreamcastPatcher.App.Views.Converter.ManageExternalDatsWindow"
+        Title="Manage External DATs"
+        Width="640" Height="420"
+        MinWidth="520" MinHeight="320"
+        CanResize="True"
+        WindowStartupLocation="CenterOwner"
+        Icon="avares://UniversalDreamcastPatcher/Assets/sega_dreamcast.ico">
+
+    <DockPanel LastChildFill="True" Margin="15,12">
+
+        <TextBlock DockPanel.Dock="Top"
+                   Text="The DAT files listed below are consulted in order during disc image conversion and patch building. If a disc isn't found in any of them, the built-in TOSEC and Redump DATs are used."
+                   Margin="0,0,0,10"
+                   TextWrapping="Wrap" />
+
+        <StackPanel DockPanel.Dock="Bottom"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Margin="0,10,0,0"
+                    Spacing="10">
+            <Button x:Name="CancelButton"
+                    Content="Cancel"
+                    MinWidth="90"
+                    FontWeight="SemiBold"
+                    ToolTip.Tip="Discard changes and close" />
+            <Button x:Name="SaveButton"
+                    Content="Save"
+                    MinWidth="90"
+                    FontWeight="SemiBold"
+                    ToolTip.Tip="Save changes and close" />
+        </StackPanel>
+
+        <Grid DockPanel.Dock="Bottom" ColumnDefinitions="Auto,Auto,Auto,*,Auto,Auto" Margin="0,8,0,0">
+            <Button Grid.Column="0"
+                    x:Name="AddDatButton"
+                    Content="Add DAT..."
+                    MinWidth="100"
+                    ToolTip.Tip="Add one or more external Logiqx DAT files" />
+            <Button Grid.Column="1"
+                    x:Name="MoveUpButton"
+                    Content="Move Up"
+                    MinWidth="90"
+                    Margin="6,0,0,0"
+                    IsEnabled="False"
+                    ToolTip.Tip="Move the selected row up in the lookup order" />
+            <Button Grid.Column="2"
+                    x:Name="MoveDownButton"
+                    Content="Move Down"
+                    MinWidth="100"
+                    Margin="6,0,0,0"
+                    IsEnabled="False"
+                    ToolTip.Tip="Move the selected row down in the lookup order" />
+            <Button Grid.Column="4"
+                    x:Name="RemoveButton"
+                    Content="Remove"
+                    MinWidth="80"
+                    IsEnabled="False"
+                    ToolTip.Tip="Remove the selected rows" />
+            <Button Grid.Column="5"
+                    x:Name="ClearButton"
+                    Content="Clear"
+                    MinWidth="80"
+                    Margin="6,0,0,0"
+                    IsEnabled="False"
+                    ToolTip.Tip="Remove every row" />
+        </Grid>
+
+        <Border BorderBrush="#888" BorderThickness="1" CornerRadius="2">
+            <DockPanel LastChildFill="True">
+
+                <!-- Header row -->
+                <Border DockPanel.Dock="Top"
+                        Background="#eee"
+                        BorderBrush="#888"
+                        BorderThickness="0,0,0,1"
+                        Padding="6,4">
+                    <Grid ColumnDefinitions="36,*,80,100">
+                        <TextBlock Grid.Column="0" Text="#"        FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="1" Text="Name"     FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="2" Text="Type"     FontWeight="SemiBold" />
+                        <TextBlock Grid.Column="3" Text="Entries"  FontWeight="SemiBold" />
+                    </Grid>
+                </Border>
+
+                <ListBox x:Name="DatList"
+                         Background="White"
+                         BorderThickness="0"
+                         SelectionMode="Multiple"
+                         ToolTip.Tip="External DAT files used during conversion and patch building">
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="Padding" Value="6,3" />
+                        </Style>
+
+                        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                            <Setter Property="Background" Value="#254d8a" />
+                        </Style>
+                        <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
+                            <Setter Property="Background" Value="#254d8a" />
+                        </Style>
+                        <Style Selector="ListBoxItem:selected:pressed /template/ ContentPresenter">
+                            <Setter Property="Background" Value="#254d8a" />
+                        </Style>
+
+                        <Style Selector="ListBoxItem TextBlock.muted">
+                            <Setter Property="Foreground" Value="#555" />
+                        </Style>
+
+                        <Style Selector="ListBoxItem TextBlock.missing">
+                            <Setter Property="Foreground" Value="#c92020" />
+                        </Style>
+
+                        <Style Selector="ListBoxItem:selected TextBlock.row">
+                            <Setter Property="Foreground" Value="White" />
+                        </Style>
+                    </ListBox.Styles>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="conv:ExternalDatRow">
+                            <Grid ColumnDefinitions="36,*,80,100">
+
+                                <TextBlock Grid.Column="0"
+                                           Classes="row"
+                                           Text="{Binding Index}" />
+
+                                <TextBlock Grid.Column="1"
+                                           Classes="row"
+                                           Text="{Binding FileName}"
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTip.Tip="{Binding FilePath}" />
+
+                                <TextBlock Grid.Column="2"
+                                           Classes="row muted"
+                                           Text="{Binding TypeLabel}" />
+
+                                <TextBlock Grid.Column="3"
+                                           Classes="row muted"
+                                           Classes.missing="{Binding IsMissing}"
+                                           Text="{Binding EntriesLabel}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+            </DockPanel>
+        </Border>
+
+    </DockPanel>
+
+</Window>

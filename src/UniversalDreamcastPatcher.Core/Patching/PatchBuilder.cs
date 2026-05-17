@@ -123,9 +123,9 @@ public static class PatchBuilder
             if (!origRead.Success)
             {
                 result.ErrorMessage =
-                    "The original disc image could not be read.\n\n" +
-                    "Make sure the .gdi and all of its track files are present in the same folder and are not damaged.\n\n" +
-                    $"Details: {origRead.ErrorMessage}";
+                    "The original disc image could not be read.\n" +
+                    "Make sure the .gdi and all of its track files are present in the same folder and are not damaged.\n" +
+                    origRead.ErrorMessage;
                 return result;
             }
 
@@ -134,9 +134,9 @@ public static class PatchBuilder
             if (!modRead.Success)
             {
                 result.ErrorMessage =
-                    "The modified disc image could not be read.\n\n" +
-                    "Make sure the .gdi and all of its track files are present in the same folder and are not damaged.\n\n" +
-                    $"Details: {modRead.ErrorMessage}";
+                    "The modified disc image could not be read.\n" +
+                    "Make sure the .gdi and all of its track files are present in the same folder and are not damaged.\n" +
+                    modRead.ErrorMessage;
                 return result;
             }
 
@@ -174,8 +174,8 @@ public static class PatchBuilder
                     {
                         result.ErrorMessage =
                             "A patch could not be built for this file:\n" +
-                            $"{rel}\n\n" +
-                            $"Details: {ex.Message}";
+                            $"{rel}\n" +
+                            ex.Message;
                         return result;
                     }
                     diffed++;
@@ -210,8 +210,8 @@ public static class PatchBuilder
                     if (!reRead.Success)
                     {
                         result.ErrorMessage =
-                            "The original disc image could not be re-read to extract its IP.BIN.\n\n" +
-                            $"Details: {reRead.ErrorMessage}";
+                            "The original disc image could not be re-read to extract its IP.BIN.\n" +
+                            reRead.ErrorMessage;
                         return result;
                     }
                     srcIpBin = Path.Combine(tmpOrigBs, "bootsector", "IP.BIN");
@@ -262,7 +262,7 @@ public static class PatchBuilder
         }
         catch (Exception ex)
         {
-            result.ErrorMessage = $"An unexpected error occurred.\n\nDetails: {ex.Message}";
+            result.ErrorMessage = $"An unexpected error occurred.\n{ex.Message}";
             return result;
         }
         finally

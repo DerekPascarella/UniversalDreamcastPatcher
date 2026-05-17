@@ -78,7 +78,7 @@ public static class PatchApplier
         // synthesizes the T2 pregap, so no source CUE is needed.
 
         var patchName = Path.GetFileNameWithoutExtension(options.DcpPatchPath);
-        var finalUserOutputFolder = OutputFormatNaming.UserFolderFor(options.OutputFolder, patchName, options.OutputFormat);
+        var finalUserOutputFolder = OutputFormatNaming.NextAvailableUserFolderFor(options.OutputFolder, patchName, options.OutputFormat);
 
         // GDI output writes directly into the user's folder. CUE/BIN and CHD
         // both rebuild a GDI in temp first and then repackage it via DiscImageEmitter.
@@ -113,9 +113,9 @@ public static class PatchApplier
             if (!readResult.Success)
             {
                 result.ErrorMessage =
-                    "The source disc image could not be read.\n\n" +
-                    "Make sure the .gdi and all of its track files (track01.bin, track02.raw, etc.) are present in the same folder and are not damaged.\n\n" +
-                    $"Details: {readResult.ErrorMessage}";
+                    "The source disc image could not be read.\n" +
+                    "Make sure the .gdi and all of its track files (track01.bin, track02.raw, etc.) are present in the same folder and are not damaged.\n" +
+                    readResult.ErrorMessage;
                 return result;
             }
 
@@ -139,9 +139,9 @@ public static class PatchApplier
             catch (Exception ex)
             {
                 result.ErrorMessage =
-                    "The patch file could not be opened.\n\n" +
-                    "It may be corrupted or incomplete. Please try downloading it again.\n\n" +
-                    $"Details: {ex.Message}";
+                    "The patch file could not be opened.\n" +
+                    "It may be corrupted or incomplete. Please try downloading it again.\n" +
+                    ex.Message;
                 return result;
             }
 
@@ -300,6 +300,7 @@ public static class PatchApplier
                     TargetFormat = options.OutputFormat,
                     OutputParentFolder = options.OutputFolder,
                     BaseName = patchName,
+                    ResolvedFinalUserFolder = finalUserOutputFolder,
                     SourceCueForRedumpMirror = sourceCueForAssembly,
                     // Apply Patch's user-visible wording: keep "patched" in the
                     // CHD compression labels (matches the rebuild phase label).
@@ -307,9 +308,7 @@ public static class PatchApplier
 
                 if (!emitResult.Success)
                 {
-                    result.ErrorMessage =
-                        "The patched output could not be written.\n\n" +
-                        $"Details: {emitResult.ErrorMessage}";
+                    result.ErrorMessage = $"The patched output could not be written.\n{emitResult.ErrorMessage}";
                     return result;
                 }
             }
@@ -327,7 +326,7 @@ public static class PatchApplier
         }
         catch (Exception ex)
         {
-            result.ErrorMessage = $"An unexpected error occurred.\n\nDetails: {ex.Message}";
+            result.ErrorMessage = $"An unexpected error occurred.\n{ex.Message}";
             return result;
         }
         finally

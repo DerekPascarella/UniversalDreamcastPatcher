@@ -12,6 +12,7 @@ using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using UniversalDreamcastPatcher.App.Views;
 using UniversalDreamcastPatcher.Core;
+using UniversalDreamcastPatcher.Core.Patching;
 using MsBoxIcon = MsBox.Avalonia.Enums.Icon;
 
 // Written by Derek Pascarella (ateam)
@@ -44,6 +45,7 @@ public partial class MainWindow : Window
 
         UpdateManager.CleanupStaleStagingData();
         _settings = AppSettings.Load();
+        ExternalDatRegistry.LoadFromSettings(_settings);
         ApplySavedWindowPosition();
 
         Closing += MainWindow_Closing;

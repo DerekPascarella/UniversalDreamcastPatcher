@@ -1,0 +1,56 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="UniversalDreamcastPatcher.App.Views.Converter.ConversionErrorsWindow"
+        Title="Information"
+        Width="640" Height="420"
+        MinWidth="480" MinHeight="280"
+        CanResize="True"
+        WindowStartupLocation="CenterOwner"
+        Icon="avares://UniversalDreamcastPatcher/Assets/sega_dreamcast.ico">
+
+    <DockPanel LastChildFill="True" Margin="15,12">
+
+        <TextBlock DockPanel.Dock="Top"
+                   Text="The following disc images could not be successfully converted."
+                   Margin="0,0,0,8"
+                   TextWrapping="Wrap" />
+
+        <Button DockPanel.Dock="Bottom"
+                x:Name="OkButton"
+                Content="OK"
+                MinWidth="90"
+                HorizontalAlignment="Center"
+                Margin="0,10,0,0"
+                ToolTip.Tip="Close this window" />
+
+        <Border BorderBrush="#cccccc"
+                BorderThickness="1"
+                Background="#f7f7f7">
+            <TextBox x:Name="LogBox"
+                     IsReadOnly="True"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     VerticalContentAlignment="Top"
+                     FontFamily="Cascadia Mono,Menlo,DejaVu Sans Mono,Consolas,monospace"
+                     FontSize="13"
+                     Foreground="#222222"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Padding="8"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <TextBox.Resources>
+                    <SolidColorBrush x:Key="TextControlBorderBrush">Transparent</SolidColorBrush>
+                    <SolidColorBrush x:Key="TextControlBorderBrushPointerOver">Transparent</SolidColorBrush>
+                    <SolidColorBrush x:Key="TextControlBorderBrushFocused">Transparent</SolidColorBrush>
+                    <SolidColorBrush x:Key="TextControlBorderBrushDisabled">Transparent</SolidColorBrush>
+                    <SolidColorBrush x:Key="TextControlBackground">Transparent</SolidColorBrush>
+                    <SolidColorBrush x:Key="TextControlBackgroundPointerOver">Transparent</SolidColorBrush>
+                    <SolidColorBrush x:Key="TextControlBackgroundFocused">Transparent</SolidColorBrush>
+                </TextBox.Resources>
+            </TextBox>
+        </Border>
+
+    </DockPanel>
+
+</Window>

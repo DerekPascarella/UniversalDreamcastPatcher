@@ -1,0 +1,221 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="using:UniversalDreamcastPatcher.App.Views.Converter"
+             x:Class="UniversalDreamcastPatcher.App.Views.Converter.BatchConverterPanel">
+
+    <StackPanel Margin="0,10,0,0" Spacing="12">
+
+        <StackPanel Spacing="4">
+            <TextBlock Text="Source disc images" FontWeight="SemiBold" />
+
+            <Border BorderBrush="#888" BorderThickness="1" CornerRadius="2">
+                <DockPanel LastChildFill="True">
+
+                    <!-- Header row -->
+                    <Border DockPanel.Dock="Top"
+                            Background="#eee"
+                            BorderBrush="#888"
+                            BorderThickness="0,0,0,1"
+                            Padding="6,4">
+                        <Grid ColumnDefinitions="36,*,80,80,100">
+                            <TextBlock Grid.Column="0" Text="#"         FontWeight="SemiBold" />
+                            <TextBlock Grid.Column="1" Text="Name"      FontWeight="SemiBold" />
+                            <TextBlock Grid.Column="2" Text="Detected"  FontWeight="SemiBold" />
+                            <TextBlock Grid.Column="3" Text="Target"    FontWeight="SemiBold" />
+                            <TextBlock Grid.Column="4" Text="Status"    FontWeight="SemiBold" />
+                        </Grid>
+                    </Border>
+
+                    <ListBox x:Name="QueueList"
+                             Height="160"
+                             Background="White"
+                             BorderThickness="0"
+                             SelectionMode="Multiple"
+                             ToolTip.Tip="Source disc images queued for conversion">
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="Padding" Value="6,3" />
+                            </Style>
+
+                            <!-- Same navy fill in every selected variant. -->
+                            <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                                <Setter Property="Background" Value="#254d8a" />
+                            </Style>
+                            <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
+                                <Setter Property="Background" Value="#254d8a" />
+                            </Style>
+                            <Style Selector="ListBoxItem:selected:pressed /template/ ContentPresenter">
+                                <Setter Property="Background" Value="#254d8a" />
+                            </Style>
+
+                            <!-- Muted look on Detected/Target when not selected. -->
+                            <Style Selector="ListBoxItem TextBlock.muted">
+                                <Setter Property="Foreground" Value="#555" />
+                            </Style>
+
+                            <!-- Red text for failed Status cells. Matches the
+                                 Manage External DATs window's red Missing color. -->
+                            <Style Selector="ListBoxItem TextBlock.failed">
+                                <Setter Property="Foreground" Value="#c92020" />
+                            </Style>
+
+                            <!-- White text on every row cell when selected.
+                                 Scoped to .row so the tooltip popup's TextBlock
+                                 (a logical descendant of the LBI) isn't affected. -->
+                            <Style Selector="ListBoxItem:selected TextBlock.row">
+                                <Setter Property="Foreground" Value="White" />
+                            </Style>
+                        </ListBox.Styles>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="conv:BatchQueueItem">
+                                <Grid ColumnDefinitions="36,*,80,80,100">
+
+                                    <TextBlock Grid.Column="0"
+                                               Classes="row"
+                                               Text="{Binding Index}" />
+
+                                    <TextBlock Grid.Column="1"
+                                               Classes="row"
+                                               Text="{Binding DisplayName}"
+                                               TextTrimming="CharacterEllipsis"
+                                               ToolTip.Tip="{Binding SourcePath}" />
+
+                                    <TextBlock Grid.Column="2"
+                                               Classes="row muted"
+                                               Text="{Binding DetectedFormatLabel}" />
+
+                                    <TextBlock Grid.Column="3"
+                                               Classes="row muted"
+                                               Text="{Binding TargetActionLabel}" />
+
+                                    <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="4">
+                                        <TextBlock Classes="row"
+                                                   Classes.failed="{Binding IsFailed}"
+                                                   Text="{Binding StatusIcon}" />
+                                        <TextBlock Classes="row"
+                                                   Classes.failed="{Binding IsFailed}"
+                                                   Text="{Binding StatusLabel}"
+                                                   ToolTip.Tip="{Binding StatusDetail}" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                </DockPanel>
+            </Border>
+
+            <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto" Margin="0,2,0,0">
+                <Button Grid.Column="0"
+                        x:Name="AddFilesButton"
+                        Content="Add files..."
+                        MinWidth="100"
+                        ToolTip.Tip="Add one or more disc images (.gdi, .cue, .chd)" />
+                <Button Grid.Column="1"
+                        x:Name="AddFolderButton"
+                        Content="Add folder..."
+                        MinWidth="100"
+                        Margin="6,0,0,0"
+                        ToolTip.Tip="Recursively add every disc image found in a folder" />
+                <Button Grid.Column="3"
+                        x:Name="RemoveButton"
+                        Content="Remove"
+                        MinWidth="80"
+                        IsEnabled="False"
+                        ToolTip.Tip="Remove the selected rows from the queue" />
+                <Button Grid.Column="4"
+                        x:Name="ClearButton"
+                        Content="Clear"
+                        MinWidth="80"
+                        Margin="6,0,0,0"
+                        IsEnabled="False"
+                        ToolTip.Tip="Remove every row from the queue" />
+            </Grid>
+        </StackPanel>
+
+        <!-- Target format row -->
+        <StackPanel Spacing="4">
+            <TextBlock Text="Converted disc image format" FontWeight="SemiBold" />
+            <Grid ColumnDefinitions="*,Auto">
+                <ComboBox Grid.Column="0"
+                          x:Name="TargetFormatDropdown"
+                          HorizontalAlignment="Stretch"
+                          IsEnabled="False"
+                          PlaceholderText="Add at least one disc image first"
+                          ToolTip.Tip="Format every converted disc image will be saved as" />
+                <Button Grid.Column="1"
+                        x:Name="FormatInfoButton"
+                        Width="30"
+                        Height="{Binding #TargetFormatDropdown.Bounds.Height}"
+                        VerticalAlignment="Stretch"
+                        VerticalContentAlignment="Center"
+                        Margin="6,0,0,0"
+                        Padding="0"
+                        IsEnabled="False"
+                        ToolTip.Tip="About these formats">
+                    <Viewbox Width="18" Height="18">
+                        <Canvas Width="24" Height="24">
+                            <Path Data="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"
+                                  Fill="Black" />
+                        </Canvas>
+                    </Viewbox>
+                </Button>
+            </Grid>
+        </StackPanel>
+
+        <!-- Output folder row -->
+        <StackPanel Spacing="4">
+            <TextBlock Text="Converted disc image output folder" FontWeight="SemiBold" />
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBox Grid.Column="0" x:Name="OutputFolderPath"
+                         Watermark="Where to write each converted disc image folder..."
+                         IsReadOnly="True" />
+                <Button Grid.Column="1" Content="Browse..." Margin="6,0,0,0" MinWidth="90"
+                        x:Name="BrowseOutputFolder"
+                        ToolTip.Tip="Choose where the converted disc image folders will be written" />
+            </Grid>
+        </StackPanel>
+
+        <!-- Action area -->
+        <Grid x:Name="ActionArea" MinHeight="60" Margin="0,4,0,0">
+
+            <Button x:Name="ConvertAllButton"
+                    Content="Convert All"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    IsEnabled="False"
+                    ToolTip.Tip="Convert every queued disc image to the selected format and write them to the output folder" />
+
+            <StackPanel x:Name="BatchBusyPanel"
+                        IsVisible="False"
+                        VerticalAlignment="Center"
+                        Spacing="6">
+
+                <ProgressBar x:Name="BatchProgressBar"
+                             IsIndeterminate="True"
+                             Height="16" />
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Spacing="12">
+                    <TextBlock x:Name="BatchProgressLabel"
+                               VerticalAlignment="Center"
+                               Foreground="#333"
+                               Text="" />
+                    <Button x:Name="CancelBatchButton"
+                            Content="Cancel"
+                            MinWidth="80"
+                            ToolTip.Tip="Stop the batch after the current disc image finishes" />
+                </StackPanel>
+
+            </StackPanel>
+
+        </Grid>
+
+    </StackPanel>
+
+</UserControl>

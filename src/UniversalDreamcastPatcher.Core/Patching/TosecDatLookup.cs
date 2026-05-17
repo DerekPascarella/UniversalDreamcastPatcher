@@ -29,6 +29,9 @@ public static class TosecDatLookup
 
     public static TosecDiscEntry? LookupByT1Crc32(uint t1Crc32)
     {
+        var external = ExternalDatRegistry.LookupByT1Crc32(t1Crc32);
+        if (external != null) return external.ToTosec();
+
         EnsureLoaded();
         return _byT1Crc!.TryGetValue(t1Crc32, out var entry) ? entry : null;
     }

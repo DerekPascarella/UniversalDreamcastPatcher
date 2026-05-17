@@ -62,4 +62,14 @@ public static class FormatOptionCatalog
         }
         return items;
     }
+
+    // Batch target dropdown: heterogeneous sources, so the rows are the three
+    // canonical formats with no source-dependent suffix.
+    public static List<FormatOption> ForConverterBatch()
+        => new()
+        {
+            new("GDI", OutputDiscImageFormat.Gdi),
+            new("CUE/BIN", OutputDiscImageFormat.CueBin),
+            new("CHD", OutputDiscImageFormat.ChdGdRom),
+        };
 }

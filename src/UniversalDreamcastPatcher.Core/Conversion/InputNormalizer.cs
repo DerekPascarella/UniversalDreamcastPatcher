@@ -76,9 +76,7 @@ public static class InputNormalizer
         var (ok, msg) = await GdiConverter.ConvertToGdi(cuePath, staging, null, ct);
         if (!ok)
         {
-            result.ErrorMessage =
-                "The CUE/BIN disc image could not be converted to GDI.\n\n" +
-                $"Details: {msg}";
+            result.ErrorMessage = $"The CUE/BIN disc image could not be converted to GDI.\n{msg}";
             return result;
         }
 
@@ -102,9 +100,9 @@ public static class InputNormalizer
         catch (Exception ex)
         {
             result.ErrorMessage =
-                "The CHD file could not be read.\n\n" +
-                "It may be corrupted or use an unsupported format.\n\n" +
-                $"Details: {ex.Message}";
+                "The CHD file could not be read.\n" +
+                "It may be corrupted or use an unsupported format.\n" +
+                ex.Message;
             return result;
         }
 
@@ -114,14 +112,11 @@ public static class InputNormalizer
         if (isGdRom)
         {
             var decompLabel = "Decompressing CHD to GDI";
-            var decompProgress = new Progress<int>(p => progress?.Report($"{decompLabel}... {p}%"));
             progress?.Report($"{decompLabel}...");
-            var (ok, msg) = await ChdConverter.ConvertToGdi(chdPath, staging, decompProgress, ct);
+            var (ok, msg) = await ChdConverter.ConvertToGdi(chdPath, staging, null, ct);
             if (!ok)
             {
-                result.ErrorMessage =
-                    "The CHD disc image could not be decompressed.\n\n" +
-                    $"Details: {msg}";
+                result.ErrorMessage = $"The CHD disc image could not be decompressed.\n{msg}";
                 return result;
             }
             result.GdiPath = Path.Combine(staging, "disc.gdi");
@@ -129,23 +124,20 @@ public static class InputNormalizer
         else
         {
             var decompLabel = "Decompressing CHD to CUE/BIN";
-            var decompProgress = new Progress<int>(p => progress?.Report($"{decompLabel}... {p}%"));
             progress?.Report($"{decompLabel}...");
             var cueStaging = Path.Combine(staging, "cuebin");
             Directory.CreateDirectory(cueStaging);
-            var (ok, msg, cuePath) = await ChdConverter.ConvertToCueBin(chdPath, cueStaging, decompProgress, ct);
+            var (ok, msg, cuePath) = await ChdConverter.ConvertToCueBin(chdPath, cueStaging, null, ct);
             if (!ok)
             {
-                result.ErrorMessage =
-                    "The CHD disc image could not be decompressed.\n\n" +
-                    $"Details: {msg}";
+                result.ErrorMessage = $"The CHD disc image could not be decompressed.\n{msg}";
                 return result;
             }
 
             if (!GdiConverter.IsGdRomCue(cuePath))
             {
                 result.ErrorMessage =
-                    "The selected CHD file is a CD-ROM dump, not a GD-ROM dump.\n\n" +
+                    "The selected CHD file is a CD-ROM dump, not a GD-ROM dump.\n" +
                     "Only Dreamcast GD-ROM discs are supported.";
                 return result;
             }
@@ -156,9 +148,7 @@ public static class InputNormalizer
             var (ok2, msg2) = await GdiConverter.ConvertToGdi(cuePath, gdiStaging, null, ct);
             if (!ok2)
             {
-                result.ErrorMessage =
-                    "The CUE/BIN disc image could not be converted to GDI.\n\n" +
-                    $"Details: {msg2}";
+                result.ErrorMessage = $"The CUE/BIN disc image could not be converted to GDI.\n{msg2}";
                 return result;
             }
             result.GdiPath = Path.Combine(gdiStaging, "disc.gdi");

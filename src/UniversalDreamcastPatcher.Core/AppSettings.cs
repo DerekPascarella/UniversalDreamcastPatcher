@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.Json;
@@ -15,6 +16,13 @@ public class AppSettings
     public double WindowLeft { get; set; } = double.NaN;
     public double WindowTop { get; set; } = double.NaN;
     public string SkippedUpdateVersion { get; set; } = "";
+
+    // "Internal" (use the built-in TOSEC + Redump DATs) or "External" (consult
+    // the paths in ExternalDatPaths first, fall back to internal on miss).
+    public string DatSource { get; set; } = "Internal";
+
+    // Absolute paths to external Logiqx XML .dat files, in lookup order.
+    public List<string> ExternalDatPaths { get; set; } = new();
 
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 

@@ -30,7 +30,6 @@ public partial class BuildPatchView : UserControl
     private CheckBox? _useCustomIpBin;
     private RadioButton? _ipBinFromModified;
     private RadioButton? _ipBinFromOriginal;
-    private CheckBox? _applyIpBinPatches;
     private CheckBox? _ipBinRegionFree;
     private CheckBox? _ipBinVga;
     private CheckBox? _useCustomGameName;
@@ -55,7 +54,6 @@ public partial class BuildPatchView : UserControl
         _useCustomIpBin = this.FindControl<CheckBox>("UseCustomIpBin");
         _ipBinFromModified = this.FindControl<RadioButton>("IpBinFromModified");
         _ipBinFromOriginal = this.FindControl<RadioButton>("IpBinFromOriginal");
-        _applyIpBinPatches = this.FindControl<CheckBox>("ApplyIpBinPatches");
         _ipBinRegionFree = this.FindControl<CheckBox>("IpBinRegionFree");
         _ipBinVga = this.FindControl<CheckBox>("IpBinVga");
         _useCustomGameName = this.FindControl<CheckBox>("UseCustomGameName");
@@ -146,9 +144,8 @@ public partial class BuildPatchView : UserControl
         // Custom IP.BIN from the original disc, with no patches, is a no-op.
         bool includeCustomIpBin = _useCustomIpBin?.IsChecked == true;
         var ipBinFrom = _ipBinFromOriginal?.IsChecked == true ? IpBinSource.OriginalGdi : IpBinSource.ModifiedGdi;
-        bool applyPatches = _applyIpBinPatches?.IsChecked == true;
-        bool wantRegionFree = applyPatches && _ipBinRegionFree?.IsChecked == true;
-        bool wantVga = applyPatches && _ipBinVga?.IsChecked == true;
+        bool wantRegionFree = _ipBinRegionFree?.IsChecked == true;
+        bool wantVga = _ipBinVga?.IsChecked == true;
         bool wantCustomName = _useCustomGameName?.IsChecked == true;
 
         if (includeCustomIpBin
@@ -242,7 +239,6 @@ public partial class BuildPatchView : UserControl
         if (_useCustomIpBin != null) _useCustomIpBin.IsChecked = false;
         if (_ipBinFromModified != null) _ipBinFromModified.IsChecked = true;
         if (_ipBinFromOriginal != null) _ipBinFromOriginal.IsChecked = false;
-        if (_applyIpBinPatches != null) _applyIpBinPatches.IsChecked = false;
         if (_ipBinRegionFree != null) _ipBinRegionFree.IsChecked = false;
         if (_ipBinVga != null) _ipBinVga.IsChecked = false;
         if (_useCustomGameName != null) _useCustomGameName.IsChecked = false;
