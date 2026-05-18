@@ -394,9 +394,8 @@ public static class IpBinPatcher
 
     private static int ClampDigit(int n) => n < 1 ? 1 : n > 9 ? 9 : n;
 
-    // 16-bit checksum over Product Number + Version (16 bytes at 0x40).
-    // Algorithm matches KallistiOS makeip (src/field.c). The 4-digit hex
-    // result goes at 0x20-0x23.
+    // 16-bit CRC over Product Number + Version at 0x40 (16 bytes). Result is
+    // written as 4 ASCII hex digits at 0x20-0x23.
     private static ushort ComputeDeviceInfoCrc(byte[] block)
     {
         var n = 0xFFFF;

@@ -15,9 +15,7 @@ public enum OutputDiscImageFormat
 {
     Gdi,
     CueBin,
-    // GD-ROM-style CHD (libchdw is fed a .gdi). The Redump CUE/BIN-style
-    // variant was removed: it added a 150-sector pregap no console reads
-    // and flycast doesn't reliably boot it.
+    // GD-ROM-style CHD (libchdw is fed a .gdi).
     ChdGdRom,
 }
 
@@ -240,8 +238,8 @@ public static class PatchApplier
             Determinism.ApplyEpochToTree(sourceDir);
 
             // GDI rebuild. The user-visible label says "CUE/BIN" when that's
-            // the chosen output, even though we still build a GDI under the
-            // hood and let RedumpAssembler repackage it.
+            // the chosen output. RedumpAssembler repackages the rebuilt GDI
+            // into a CUE/BIN afterward.
             var rebuildLabel = options.OutputFormat == OutputDiscImageFormat.CueBin
                 ? "Building patched CUE/BIN"
                 : "Building patched GDI";

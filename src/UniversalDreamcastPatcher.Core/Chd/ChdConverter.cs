@@ -99,7 +99,6 @@ namespace UniversalDreamcastPatcher.Core
             }
         }
 
-        // The resulting CUE/BIN pair can be fed to Redump2CdiConverter for CDI output.
         public static async Task<(bool Success, string Message, string CuePath)> ConvertToCueBin(
             string chdPath,
             string outputDirectory,

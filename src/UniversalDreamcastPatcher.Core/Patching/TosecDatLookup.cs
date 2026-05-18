@@ -17,10 +17,8 @@ public sealed class TosecDiscEntry
     public IReadOnlyList<TosecTrackEntry> Tracks { get; init; } = Array.Empty<TosecTrackEntry>();
 }
 
-// Loads the embedded compact TOSEC DC blob (aggregated across all 31 DC DATs:
-// JP/US/PAL games, demos, applications, dev builds, homebrew, multimedia,
-// samplers, etc.) into memory on first use, then serves O(1) lookups by
-// Track 1 CRC32. The blob is produced by _tools/TosecDatCompactor.
+// Loads the embedded TOSEC DC DAT into memory on first use, keyed by Track 1
+// CRC32 for O(1) lookups.
 public static class TosecDatLookup
 {
     private const string ResourceName = "UniversalDreamcastPatcher.Core.Resources.tosec_dc.bin.gz";

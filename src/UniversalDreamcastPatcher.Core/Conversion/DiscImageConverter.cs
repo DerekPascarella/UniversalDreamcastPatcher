@@ -22,9 +22,7 @@ public sealed class DiscImageConvertResult
     public string ProducedOutputFolder { get; set; } = string.Empty;
 }
 
-// Cross-converts between GDI, CUE/BIN, and CHD without going through
-// GDromBuilder. PatchApplier rebuilds because it changes bytes. This class
-// preserves the disc data and only re-wraps the container.
+// Cross-converts between GDI, CUE/BIN, and CHD by re-wrapping the disc data.
 //
 // Routes:
 //   GDI from CUE/BIN: GdiConverter
@@ -32,8 +30,7 @@ public sealed class DiscImageConvertResult
 //   CUE/BIN from X:   pivot to GDI, then DiscImageEmitter (RedumpAssembler)
 //   CHD from X:       pivot to GDI, then DiscImageEmitter (ChdWriter on .gdi)
 //
-// Same-format pairs are not exposed in the UI but are handled defensively as
-// a folder copy.
+// Same-format pairs fall through to a folder copy.
 public static class DiscImageConverter
 {
     public static Task<DiscImageConvertResult> ConvertAsync(
@@ -181,9 +178,8 @@ public static class DiscImageConverter
             return EmitFromGdi(gdiPivot, target, finalOutputFolder, baseName, progress, ct);
         }
 
-        // CHD without the CHGD tag. In practice this only fires for actual
-        // CD-ROM CHDs, which UDP rejects. We extract the inner .cue, run
-        // IsGdRomCue on it, and emit the standard "not a GD-ROM dump" error.
+        // CHD without the CHGD tag. Extract the inner .cue, run IsGdRomCue,
+        // and reject as a CD-ROM dump if it fails the check.
         if (source == DetectedSourceFormat.ChdContainingCueBin)
         {
             var cuePivot = Path.Combine(workspace, "cue_pivot");

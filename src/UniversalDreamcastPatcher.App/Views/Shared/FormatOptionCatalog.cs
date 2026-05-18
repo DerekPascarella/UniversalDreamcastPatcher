@@ -7,13 +7,6 @@ namespace UniversalDreamcastPatcher.App.Views.Shared;
 
 // Builds the rows shown in an output-format dropdown for a given detected
 // source format. Three targets: GDI, CUE/BIN, CHD.
-//
-// Apply Patch keeps a "same as source disc image" row when target equals
-// source. Converter drops it.
-//
-// CHD-source rows use neutral wording on both tabs because chdman normalizes
-// the source form (GDI or Redump CUE/BIN) during compression, so the wrapper
-// doesn't preserve which one it came from.
 public static class FormatOptionCatalog
 {
     public static List<FormatOption> ForApplyPatchSource(DetectedSourceFormat source)

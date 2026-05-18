@@ -18,9 +18,8 @@ public sealed class RedumpDiscEntry
     public IReadOnlyList<RedumpTrackEntry> Tracks { get; init; } = Array.Empty<RedumpTrackEntry>();
 }
 
-// Loads the embedded compact Redump DC DAT (one row per game, keyed by Track 1
-// CRC32) into memory on first use, then serves O(1) lookups. The blob is
-// produced by _tools/RedumpDatCompactor from the official Redump XML DAT.
+// Loads the embedded Redump DC DAT into memory on first use, keyed by Track 1
+// CRC32 for O(1) lookups.
 public static class RedumpDatLookup
 {
     private const string ResourceName = "UniversalDreamcastPatcher.Core.Resources.redump_dc.bin.gz";

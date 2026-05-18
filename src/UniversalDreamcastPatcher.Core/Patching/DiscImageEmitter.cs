@@ -44,9 +44,8 @@ public sealed class DiscImageEmitResult
     public string ProducedOutputFolder { get; set; } = string.Empty;
 }
 
-// Produces a CUE/BIN or CHD from an existing GDI folder. Extracted from
-// PatchApplier.Apply's emit ladder so that PatchApplier (Apply Patch) and
-// DiscImageConverter share one code path.
+// Produces a CUE/BIN or CHD from an existing GDI folder. Shared by
+// PatchApplier and DiscImageConverter.
 public static class DiscImageEmitter
 {
     public static Task<DiscImageEmitResult> EmitAsync(
