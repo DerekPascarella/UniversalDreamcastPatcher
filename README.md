@@ -34,7 +34,7 @@ The latest version of Universal Dreamcast Patcher is [2.1.1](https://github.com/
   - New "Converter" tab added (see [Issue 10](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/10)).
   - Dialog box titles modified for Information/Confirmation/Error consistency (see [Issue 11](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/11)).
 - **Version 2.0.2** (2026-05-08)
-  - In macOS, fixed System Bar's "About <Application Name>" string (see [Issue 5](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/5)).
+  - In macOS, fixed System Bar's "About \<Application Name\>" string (see [Issue 5](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/5)).
   - Fixed potentially destructive behavior in Windows/Linux auto-update (see [Issue 6](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/6)).
 - **Version 2.0.1** (2026-05-05)
   - Fixed potential auto-updater breakage in the future due to build pipeline version mismatch (see [Issue 4](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/4)).
