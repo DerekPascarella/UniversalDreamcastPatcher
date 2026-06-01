@@ -1,5 +1,5 @@
 # Universal Dreamcast Patcher
-<img align="right" width="320" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/screenshot.png?raw=true">Universal Dreamcast Patcher is a cross-platform toolkit for Dreamcast disc image operations. A single unified GUI combines four workflows: applying patches, building patches, editing `IP.BIN`, and converting between disc image formats. Patches typically come in the form of English translations and other ROM hacks.
+<img align="right" width="220" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/screenshot.png?raw=true">Universal Dreamcast Patcher is a cross-platform toolkit for Dreamcast disc image operations. A single unified GUI combines four workflows: applying patches, building patches, editing `IP.BIN`, and converting between disc image formats. Patches typically come in the form of English translations and other ROM hacks.
 
 The application accepts any TOSEC-style GDI, Redump-style CUE/BIN, or compressed CHD as its source. Every operation is fully deterministic: the same inputs always produce byte-identical output, so any two users running the same operation end up with results that match checksum-for-checksum.
 
