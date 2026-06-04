@@ -146,13 +146,12 @@ The steps for automatically creating a patch are as follows.
 1. Select the **Build Patch** tab.
 2. Next to **Original disc image**, click "Browse..." and select the unpatched .gdi, .cue, or .chd.
 3. Next to **Modified disc image**, click "Browse..." and select the patched .gdi, .cue, or .chd.
-4. In the **Patch filename** field, type the desired name for the DCP patch. Note that the base filename of the DCP will be used when the patching application generates the patched disc image (e.g., a patch file named "My Game (v1.0).dcp" will result in a patched GDI folder named "My Game (v1.0) [GDI]").
-5. Next to **Output folder**, click "Browse..." and select where the DCP should be written.
-6. Optionally, check **Customize IP.BIN** to bundle a custom `IP.BIN` with the patch. In many cases, patch developers won't bother with this step, but there are several advantages in enabling these options:
+4. Next to **Output folder**, click "Browse..." and select where and with what filename the DCP should be written.
+5. Optionally, check **Customize IP.BIN** to bundle a custom `IP.BIN` with the patch. In many cases, patch developers won't bother with this step, but there are several advantages in enabling these options:
    * **Region-free** - Patched disc image (output) can be booted on any ODE or emulator, regardless of region setting, and without enabling region-free options within the ODE or emulator itself.
    * **Enable VGA** - If supported, patched disc image (output) can be booted in VGA mode on any ODE or emulator, regardless of VGA auto-patching settings within the ODE or emulator itself.
    * **Use custom game name** - Patched disc image (output) will be displayed using a custom name within tools like the various SD card managers for GDEMU, thus giving another degree of creative control to patch developers opting for a localized game title.
-7. Click **Build Patch**.
+6. Click **Build Patch**.
 
 ### Manual Method
 Use this method when:
