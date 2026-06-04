@@ -97,7 +97,7 @@ Below is a specific list of Universal Dreamcast Patcher's current features.
 - xdelta-based patching to reduce patch size and mitigate copyright concerns.
 - Deterministic, byte-identical output when applying the a given patch to the same source disc image.
 - Built-in auto-update on Windows and Linux (update notifications on macOS).
-- Robust `IP.BIN` editor, usable with standalone `IP.BIN` files or disc images (GDI, CUE/BIN, CHD).
+- Robust `IP.BIN` editor, usable with standalone `IP.BIN` files or disc images (GDI, CUE/BIN, CHD, CDI).
 - Disc image converter between GDI, CUE/BIN, and CHD, with both single and batch modes.
 - Optional support for user-supplied Logiqx XML DATs to override the built-in TOSEC and Redump conversion references.
 - Supported disc image formats (input and output):
