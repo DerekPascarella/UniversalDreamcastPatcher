@@ -23,7 +23,7 @@ The application accepts any TOSEC-style GDI, Redump-style CUE/BIN, or compressed
 The latest version of Universal Dreamcast Patcher is [2.1.2](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.2).
 
 ## Changelog
-- **Version 2.1.2** (2026-06-XX)
+- **Version 2.1.2** (2026-06-09)
   - Radio buttons and checkboxes now properly disabled after user clicks "Build Patch" (see [Issue 15](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/15)).
   - Dialog boxes now have a maximum width, forcing clean text wrapping everywhere (see [Issue 16](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/16)).
   - Tooltip text added to several clickable elements in IP.BIN Editor (see [Issue 17](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/17)).
