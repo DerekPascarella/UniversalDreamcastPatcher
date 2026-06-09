@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using UniversalDreamcastPatcher.App.Views.Converter;
 using UniversalDreamcastPatcher.Core.Patching;
@@ -30,8 +29,7 @@ public static class MissingDatPrompt
             "\n\nThese DATs will be skipped during conversion. Continue anyway?";
 
         var owner = TopLevel.GetTopLevel(hostControl) as Window;
-        var box = MessageBoxManager.GetMessageBoxStandard("Confirmation", body, ButtonEnum.YesNo, Icon.None);
-        var result = owner != null ? await box.ShowWindowDialogAsync(owner) : await box.ShowAsync();
+        var result = await DialogBox.ShowAsync(hostControl, "Confirmation", body, ButtonEnum.YesNo);
 
         if (result == ButtonResult.Yes) return true;
 

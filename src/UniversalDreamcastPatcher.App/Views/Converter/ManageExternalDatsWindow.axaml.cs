@@ -8,8 +8,8 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
-using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
+using UniversalDreamcastPatcher.App.Views.Shared;
 using UniversalDreamcastPatcher.Core;
 using UniversalDreamcastPatcher.Core.Patching;
 using MsBoxIcon = MsBox.Avalonia.Enums.Icon;
@@ -201,7 +201,6 @@ public partial class ManageExternalDatsWindow : Window
 
     private async Task ShowError(string message)
     {
-        var box = MessageBoxManager.GetMessageBoxStandard("Error", message, ButtonEnum.Ok, MsBoxIcon.None);
-        await box.ShowWindowDialogAsync(this);
+        await DialogBox.ShowAsync(this, "Error", message, ButtonEnum.Ok, MsBoxIcon.None);
     }
 }

@@ -6,8 +6,6 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
-using MsBox.Avalonia;
-using MsBox.Avalonia.Enums;
 using UniversalDreamcastPatcher.App.Views.Shared;
 using UniversalDreamcastPatcher.Core.Patching;
 
@@ -207,8 +205,6 @@ public partial class ApplyPatchView : UserControl
         _cts.Dispose();
         _cts = null;
 
-        var owner = TopLevel.GetTopLevel(this) as Window;
-
         string title = result.Success ? "Information" : "Error";
         string message = result.Success
             ? $"Patch applied successfully.\n\n" +
@@ -217,11 +213,7 @@ public partial class ApplyPatchView : UserControl
               $"Output folder:\n{result.ProducedOutputFolder}"
             : result.ErrorMessage ?? "Patching failed for an unknown reason.";
 
-        var box = MessageBoxManager.GetMessageBoxStandard(title, message, ButtonEnum.Ok, Icon.None);
-        if (owner != null)
-            await box.ShowWindowDialogAsync(owner);
-        else
-            await box.ShowAsync();
+        await DialogBox.ShowAsync(this, title, message);
 
         ResetInputs();
     }

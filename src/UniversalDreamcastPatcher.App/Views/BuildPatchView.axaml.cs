@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
-using MsBox.Avalonia;
-using MsBox.Avalonia.Enums;
+using UniversalDreamcastPatcher.App.Views.Shared;
 using UniversalDreamcastPatcher.Core.Patching;
 
 // Written by Derek Pascarella (ateam)
@@ -33,6 +32,7 @@ public partial class BuildPatchView : UserControl
     private CheckBox? _ipBinRegionFree;
     private CheckBox? _ipBinVga;
     private CheckBox? _useCustomGameName;
+    private StackPanel? _ipBinOptionsPanel;
     private StackPanel? _busyPanel;
     private TextBlock? _progressLabel;
 
@@ -57,6 +57,7 @@ public partial class BuildPatchView : UserControl
         _ipBinRegionFree = this.FindControl<CheckBox>("IpBinRegionFree");
         _ipBinVga = this.FindControl<CheckBox>("IpBinVga");
         _useCustomGameName = this.FindControl<CheckBox>("UseCustomGameName");
+        _ipBinOptionsPanel = this.FindControl<StackPanel>("IpBinOptionsPanel");
         _busyPanel = this.FindControl<StackPanel>("BuildBusyPanel");
         _progressLabel = this.FindControl<TextBlock>("BuildProgressLabel");
 
@@ -200,8 +201,6 @@ public partial class BuildPatchView : UserControl
         _cts.Dispose();
         _cts = null;
 
-        var owner = TopLevel.GetTopLevel(this) as Window;
-
         string message;
         if (result.Success)
         {
@@ -217,13 +216,7 @@ public partial class BuildPatchView : UserControl
             message = result.ErrorMessage ?? "Building the patch failed for an unknown reason.";
         }
 
-        var box = MessageBoxManager.GetMessageBoxStandard(
-            result.Success ? "Information" : "Error",
-            message, ButtonEnum.Ok, Icon.None);
-        if (owner != null)
-            await box.ShowWindowDialogAsync(owner);
-        else
-            await box.ShowAsync();
+        await DialogBox.ShowAsync(this, result.Success ? "Information" : "Error", message);
 
         ResetInputs();
     }
@@ -250,6 +243,11 @@ public partial class BuildPatchView : UserControl
         if (_browseOriginal != null) _browseOriginal.IsEnabled = enabled;
         if (_browseModified != null) _browseModified.IsEnabled = enabled;
         if (_browseOutput != null) _browseOutput.IsEnabled = enabled;
+
+        // Disabling the section greys all its controls at once. Their IsEnabled
+        // bindings to UseCustomIpBin/UseCustomGameName are left untouched and
+        // apply again when the section is re-enabled.
+        if (_ipBinOptionsPanel != null) _ipBinOptionsPanel.IsEnabled = enabled;
     }
 
     private void FilterAsciiUpper(TextBox box, int maxLength)

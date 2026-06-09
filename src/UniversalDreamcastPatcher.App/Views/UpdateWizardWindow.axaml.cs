@@ -6,8 +6,8 @@ using System.Threading;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
+using UniversalDreamcastPatcher.App.Views.Shared;
 using UniversalDreamcastPatcher.Core;
 using MsBoxIcon = MsBox.Avalonia.Enums.Icon;
 
@@ -78,11 +78,11 @@ public partial class UpdateWizardWindow : Window
     {
         if (!UpdateManager.TryBeginUpdate())
         {
-            var msgBox = MessageBoxManager.GetMessageBoxStandard(
+            await DialogBox.ShowAsync(
+                this,
                 "Information",
                 "Another update is already in progress.\n\nPlease wait for it to finish before starting a new one.",
                 ButtonEnum.Ok, MsBoxIcon.None);
-            await msgBox.ShowWindowDialogAsync(this);
             Close();
             return;
         }
@@ -134,9 +134,7 @@ public partial class UpdateWizardWindow : Window
         catch (Exception ex)
         {
             UpdateManager.CleanupStagingDirectory();
-            var msgBox = MessageBoxManager.GetMessageBoxStandard("Error",
-                FriendlyError(ex), ButtonEnum.Ok, MsBoxIcon.None);
-            await msgBox.ShowWindowDialogAsync(this);
+            await DialogBox.ShowAsync(this, "Error", FriendlyError(ex), ButtonEnum.Ok, MsBoxIcon.None);
             Close();
         }
     }

@@ -8,9 +8,9 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
-using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using UniversalDreamcastPatcher.App.Views;
+using UniversalDreamcastPatcher.App.Views.Shared;
 using UniversalDreamcastPatcher.Core;
 using UniversalDreamcastPatcher.Core.Patching;
 using MsBoxIcon = MsBox.Avalonia.Enums.Icon;
@@ -82,13 +82,12 @@ public partial class MainWindow : Window
 
             try
             {
-                var confirm = MessageBoxManager.GetMessageBoxStandard(
+                var result = await DialogBox.ShowAsync(
+                    this,
                     "Confirmation",
                     "A patch operation is currently in progress. Are you sure you want to quit?\n\n" +
                     "Closing now will abort the operation and may leave partial output files on disk.",
                     ButtonEnum.YesNo, MsBoxIcon.None);
-
-                var result = await confirm.ShowWindowDialogAsync(this);
 
                 if (result == ButtonResult.Yes)
                 {

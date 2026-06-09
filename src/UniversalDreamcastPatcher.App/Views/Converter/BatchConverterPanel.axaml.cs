@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
-using MsBox.Avalonia;
-using MsBox.Avalonia.Enums;
 using UniversalDreamcastPatcher.App.Views.Shared;
 using UniversalDreamcastPatcher.Core.Conversion;
 using UniversalDreamcastPatcher.Core.Patching;
@@ -293,14 +291,11 @@ public partial class BatchConverterPanel : UserControl
 
         if (!Directory.Exists(outDir))
         {
-            var owner = TopLevel.GetTopLevel(this) as Window;
-            var box = MessageBoxManager.GetMessageBoxStandard(
+            await DialogBox.ShowAsync(
+                this,
                 "Information",
                 "The selected output folder does not exist.\n\n" +
-                "Please choose a different folder and try again.",
-                ButtonEnum.Ok, Icon.None);
-            if (owner != null) await box.ShowWindowDialogAsync(owner);
-            else await box.ShowAsync();
+                "Please choose a different folder and try again.");
             return;
         }
 
@@ -484,11 +479,6 @@ public partial class BatchConverterPanel : UserControl
         lines.Add("Output folder:");
         lines.Add(outDir);
 
-        var owner = TopLevel.GetTopLevel(this) as Window;
-        var box = MessageBoxManager.GetMessageBoxStandard("Information", string.Join("\n", lines), ButtonEnum.Ok, Icon.None);
-        if (owner != null)
-            await box.ShowWindowDialogAsync(owner);
-        else
-            await box.ShowAsync();
+        await DialogBox.ShowAsync(this, "Information", string.Join("\n", lines));
     }
 }

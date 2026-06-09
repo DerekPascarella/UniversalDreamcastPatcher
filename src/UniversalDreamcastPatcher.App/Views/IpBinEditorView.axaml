@@ -193,13 +193,20 @@
                     <StackPanel Spacing="6">
                         <TextBlock Text="Optional peripherals" FontWeight="SemiBold" />
                         <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto">
-                            <CheckBox Grid.Row="0" Grid.Column="0" x:Name="PeriphMemoryCard" Content="Memory card" IsChecked="True" />
-                            <CheckBox Grid.Row="1" Grid.Column="0" x:Name="PeriphPuruPuru"   Content="Puru Puru / Jump Pack" IsChecked="True" />
-                            <CheckBox Grid.Row="2" Grid.Column="0" x:Name="PeriphMike"       Content="Microphone" IsChecked="True" />
-                            <CheckBox Grid.Row="0" Grid.Column="1" x:Name="PeriphLightGun"   Content="Light gun" />
-                            <CheckBox Grid.Row="1" Grid.Column="1" x:Name="PeriphKeyboard"   Content="Keyboard" />
-                            <CheckBox Grid.Row="0" Grid.Column="2" x:Name="PeriphMouse"      Content="Mouse" />
-                            <CheckBox Grid.Row="1" Grid.Column="2" x:Name="PeriphOther"      Content="Other expansions" />
+                            <CheckBox Grid.Row="0" Grid.Column="0" x:Name="PeriphMemoryCard" Content="Memory card" IsChecked="True"
+                                      ToolTip.Tip="Game supports the Visual Memory Unit (VMU / memory card)" />
+                            <CheckBox Grid.Row="1" Grid.Column="0" x:Name="PeriphPuruPuru"   Content="Puru Puru / Jump Pack" IsChecked="True"
+                                      ToolTip.Tip="Game supports the Puru Puru Pack (Jump Pack / Vibration Pack)" />
+                            <CheckBox Grid.Row="2" Grid.Column="0" x:Name="PeriphMike"       Content="Microphone" IsChecked="True"
+                                      ToolTip.Tip="Game supports the microphone" />
+                            <CheckBox Grid.Row="0" Grid.Column="1" x:Name="PeriphLightGun"   Content="Light gun"
+                                      ToolTip.Tip="Game supports the light gun" />
+                            <CheckBox Grid.Row="1" Grid.Column="1" x:Name="PeriphKeyboard"   Content="Keyboard"
+                                      ToolTip.Tip="Game supports the keyboard" />
+                            <CheckBox Grid.Row="0" Grid.Column="2" x:Name="PeriphMouse"      Content="Mouse"
+                                      ToolTip.Tip="Game supports the mouse" />
+                            <CheckBox Grid.Row="1" Grid.Column="2" x:Name="PeriphOther"      Content="Other expansions"
+                                      ToolTip.Tip="Game supports other controller expansion units" />
                         </Grid>
                     </StackPanel>
 
@@ -209,20 +216,32 @@
                             <CheckBox Grid.Row="0" Grid.Column="0" x:Name="PeriphStandardPad"  Content="Standard pad"
                                       IsChecked="True"
                                       ToolTip.Tip="Required for nearly every commercial game (Start + A + B + D-pad)" />
-                            <CheckBox Grid.Row="1" Grid.Column="0" x:Name="PeriphExpandedDpad" Content="Expanded D-pad" IsChecked="True" />
-                            <CheckBox Grid.Row="2" Grid.Column="0" x:Name="PeriphTriggerL"     Content="L trigger (analog)" IsChecked="True" />
-                            <CheckBox Grid.Row="3" Grid.Column="0" x:Name="PeriphTriggerR"     Content="R trigger (analog)" IsChecked="True" />
+                            <CheckBox Grid.Row="1" Grid.Column="0" x:Name="PeriphExpandedDpad" Content="Expanded D-pad" IsChecked="True"
+                                      ToolTip.Tip="Requires a controller with a second D-pad (expanded direction buttons)" />
+                            <CheckBox Grid.Row="2" Grid.Column="0" x:Name="PeriphTriggerL"     Content="L trigger (analog)" IsChecked="True"
+                                      ToolTip.Tip="Requires a controller with an analog L trigger" />
+                            <CheckBox Grid.Row="3" Grid.Column="0" x:Name="PeriphTriggerR"     Content="R trigger (analog)" IsChecked="True"
+                                      ToolTip.Tip="Requires a controller with an analog R trigger" />
 
-                            <CheckBox Grid.Row="0" Grid.Column="1" x:Name="PeriphAnalogH"  Content="Analog stick horizontal" />
-                            <CheckBox Grid.Row="1" Grid.Column="1" x:Name="PeriphAnalogV"  Content="Analog stick vertical" />
-                            <CheckBox Grid.Row="2" Grid.Column="1" x:Name="PeriphAnalogXH" Content="Expanded analog horizontal" />
-                            <CheckBox Grid.Row="3" Grid.Column="1" x:Name="PeriphAnalogXV" Content="Expanded analog vertical" />
+                            <CheckBox Grid.Row="0" Grid.Column="1" x:Name="PeriphAnalogH"  Content="Analog stick horizontal"
+                                      ToolTip.Tip="Requires a controller with an analog stick horizontal (X) axis" />
+                            <CheckBox Grid.Row="1" Grid.Column="1" x:Name="PeriphAnalogV"  Content="Analog stick vertical"
+                                      ToolTip.Tip="Requires a controller with an analog stick vertical (Y) axis" />
+                            <CheckBox Grid.Row="2" Grid.Column="1" x:Name="PeriphAnalogXH" Content="Expanded analog horizontal"
+                                      ToolTip.Tip="Requires a controller with a second analog stick horizontal (X) axis" />
+                            <CheckBox Grid.Row="3" Grid.Column="1" x:Name="PeriphAnalogXV" Content="Expanded analog vertical"
+                                      ToolTip.Tip="Requires a controller with a second analog stick vertical (Y) axis" />
 
-                            <CheckBox Grid.Row="0" Grid.Column="2" x:Name="PeriphCButton" Content="C button" />
-                            <CheckBox Grid.Row="1" Grid.Column="2" x:Name="PeriphDButton" Content="D button" />
-                            <CheckBox Grid.Row="2" Grid.Column="2" x:Name="PeriphXButton" Content="X button" />
-                            <CheckBox Grid.Row="3" Grid.Column="2" x:Name="PeriphYButton" Content="Y button" />
-                            <CheckBox Grid.Row="4" Grid.Column="2" x:Name="PeriphZButton" Content="Z button" />
+                            <CheckBox Grid.Row="0" Grid.Column="2" x:Name="PeriphCButton" Content="C button"
+                                      ToolTip.Tip="Requires a controller with a C button" />
+                            <CheckBox Grid.Row="1" Grid.Column="2" x:Name="PeriphDButton" Content="D button"
+                                      ToolTip.Tip="Requires a controller with a D button" />
+                            <CheckBox Grid.Row="2" Grid.Column="2" x:Name="PeriphXButton" Content="X button"
+                                      ToolTip.Tip="Requires a controller with an X button" />
+                            <CheckBox Grid.Row="3" Grid.Column="2" x:Name="PeriphYButton" Content="Y button"
+                                      ToolTip.Tip="Requires a controller with a Y button" />
+                            <CheckBox Grid.Row="4" Grid.Column="2" x:Name="PeriphZButton" Content="Z button"
+                                      ToolTip.Tip="Requires a controller with a Z button" />
                         </Grid>
                     </StackPanel>
 

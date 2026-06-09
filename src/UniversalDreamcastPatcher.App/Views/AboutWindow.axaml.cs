@@ -1,8 +1,8 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
+using UniversalDreamcastPatcher.App.Views.Shared;
 using UniversalDreamcastPatcher.Core;
 using MsBoxIcon = MsBox.Avalonia.Enums.Icon;
 
@@ -47,11 +47,11 @@ public partial class AboutWindow : Window
         catch
         {
             // Keep About open on network failure so the user can retry.
-            var msgBox = MessageBoxManager.GetMessageBoxStandard(
+            await DialogBox.ShowAsync(
+                this,
                 "Error",
                 "Could not check for updates. Please check your internet connection.",
                 ButtonEnum.Ok, MsBoxIcon.None);
-            await msgBox.ShowWindowDialogAsync(this);
             btn.IsEnabled = true;
             btn.Content = "Check for Updates";
             return;
@@ -79,11 +79,11 @@ public partial class AboutWindow : Window
         }
         else
         {
-            var msgBox = MessageBoxManager.GetMessageBoxStandard(
+            await DialogBox.ShowAsync(
+                parentWindow,
                 "Information",
                 "You are running the latest version.",
                 ButtonEnum.Ok, MsBoxIcon.None);
-            await msgBox.ShowWindowDialogAsync(parentWindow);
         }
     }
 

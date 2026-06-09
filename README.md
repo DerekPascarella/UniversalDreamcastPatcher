@@ -20,9 +20,14 @@ The application accepts any TOSEC-style GDI, Redump-style CUE/BIN, or compressed
 9. [Legal and Licensing](https://github.com/DerekPascarella/UniversalDreamcastPatcher#legal-and-licensing)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [2.1.1](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.1).
+The latest version of Universal Dreamcast Patcher is [2.1.2](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.2).
 
 ## Changelog
+- **Version 2.1.2** (2026-06-XX)
+  - Radio buttons and checkboxes now properly disabled after user clicks "Build Patch" (see [Issue 15](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/15)).
+  - Dialog boxes now have a maximum width, forcing clean text wrapping everywhere (see [Issue 16](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/16)).
+  - Tooltip text added to several clickable elements in IP.BIN Editor (see [Issue 17](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/17)).
+  - Customize IP.BIN section's alignment adjusted for consistency (see [Issue 18](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/18)).
 - **Version 2.1.1** (2026-05-17)
   - New batch mode added to "Converter" tab (see [Issue 12](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/12)).
   - External DATs can now be used for disc image convert operations (see [Issue 13](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/13)).

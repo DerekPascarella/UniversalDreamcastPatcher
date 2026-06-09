@@ -9,8 +9,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
-using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
+using UniversalDreamcastPatcher.App.Views.Shared;
 using UniversalDreamcastPatcher.Core;
 
 // Written by Derek Pascarella (ateam)
@@ -617,17 +617,14 @@ public partial class IpBinEditorView : UserControl
         if (warnings.Count > 0)
         {
             var lines = string.Join("\n", warnings.Select(w => $"- {FieldDisplayName(w.Field)}: {w.Reason}"));
-            var owner = TopLevel.GetTopLevel(this) as Window;
-            var box = MessageBoxManager.GetMessageBoxStandard(
+            ButtonResult result = await DialogBox.ShowAsync(
+                this,
                 "Confirmation",
                 "The following fields don't match the Dreamcast spec.\n\n" +
                 "They'll still save and the disc will likely boot, but the bytes won't be exactly what a retail-format disc would have.\n\n" +
                 lines +
                 "\n\nSave anyway?",
-                ButtonEnum.OkCancel, Icon.None);
-            ButtonResult result = owner != null
-                ? await box.ShowWindowDialogAsync(owner)
-                : await box.ShowAsync();
+                ButtonEnum.OkCancel);
             if (result != ButtonResult.Ok) return;
         }
 
@@ -676,10 +673,5 @@ public partial class IpBinEditorView : UserControl
     }
 
     private async Task ShowDialog(string title, string message)
-    {
-        var owner = TopLevel.GetTopLevel(this) as Window;
-        var box = MessageBoxManager.GetMessageBoxStandard(title, message, ButtonEnum.Ok, Icon.None);
-        if (owner != null) await box.ShowWindowDialogAsync(owner);
-        else await box.ShowAsync();
-    }
+        => await DialogBox.ShowAsync(this, title, message);
 }

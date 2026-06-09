@@ -35,13 +35,13 @@
         </StackPanel>
 
         <!-- IP.BIN options -->
-        <StackPanel Spacing="6">
+        <StackPanel x:Name="IpBinOptionsPanel" Spacing="6">
             <CheckBox x:Name="UseCustomIpBin"
                       Content="Customize IP.BIN"
                       FontWeight="SemiBold"
                       ToolTip.Tip="Bundle a custom IP.BIN inside the patch instead of leaving the source's IP.BIN untouched" />
 
-            <StackPanel Margin="20,0,0,0" Spacing="10" IsEnabled="{Binding #UseCustomIpBin.IsChecked}">
+            <StackPanel Margin="28,0,0,0" Spacing="10" IsEnabled="{Binding #UseCustomIpBin.IsChecked}">
                 <StackPanel.Styles>
                     <Style Selector="TextBlock:disabled">
                         <Setter Property="Foreground" Value="#888" />

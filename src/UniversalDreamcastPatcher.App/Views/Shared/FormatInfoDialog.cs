@@ -1,7 +1,5 @@
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using MsBox.Avalonia;
-using MsBox.Avalonia.Enums;
 
 // Written by Derek Pascarella (ateam)
 
@@ -17,12 +15,5 @@ public static class FormatInfoDialog
         "CHD is a compressed format compatible with most emulators, but not ODEs.";
 
     public static async Task ShowAsync(Control hostControl)
-    {
-        var owner = TopLevel.GetTopLevel(hostControl) as Window;
-        var box = MessageBoxManager.GetMessageBoxStandard("Information", BodyText, ButtonEnum.Ok, Icon.None);
-        if (owner != null)
-            await box.ShowWindowDialogAsync(owner);
-        else
-            await box.ShowAsync();
-    }
+        => await DialogBox.ShowAsync(hostControl, "Information", BodyText);
 }
