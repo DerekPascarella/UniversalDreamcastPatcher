@@ -26,7 +26,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="UdpNatives" Version="2.1.0" />
+    <!-- Version derived from ../../version.txt (see NumericVersion above) so it
+         always matches the locally-packed UdpNatives produced by the build scripts. -->
+    <PackageReference Include="UdpNatives" Version="$(NumericVersion)" />
     <PackageReference Include="System.IO.Hashing" Version="8.0.0" />
   </ItemGroup>
 

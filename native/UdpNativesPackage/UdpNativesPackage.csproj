@@ -6,8 +6,15 @@
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <NoWarn>$(NoWarn);NU5128</NoWarn>
 
+    <!-- Version tracks ../../version.txt (same parse as the App and Core projects)
+         so the packed UdpNatives version always matches the reference in
+         UniversalDreamcastPatcher.Core.csproj. The build scripts pack this before
+         publishing the app, so the two never drift. -->
+    <VersionFileContent>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)\..\..\version.txt').Trim())</VersionFileContent>
+    <NumericVersion>$([System.Text.RegularExpressions.Regex]::Match('$(VersionFileContent)', '\d+\.\d+(\.\d+)?').Value)</NumericVersion>
+
     <PackageId>UdpNatives</PackageId>
-    <Version>2.1.0</Version>
+    <Version>$(NumericVersion)</Version>
     <Authors>Derek Pascarella (ateam)</Authors>
     <Description>Native xdelta3, liblzma, and libchdr libraries for Universal Dreamcast Patcher, packed per RID under runtimes/&lt;rid&gt;/native/.</Description>
   </PropertyGroup>
