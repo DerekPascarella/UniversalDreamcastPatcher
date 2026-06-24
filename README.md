@@ -24,7 +24,7 @@ The latest version of Universal Dreamcast Patcher is [2.1.3](https://github.com/
 
 ## Changelog
 - **Version 2.1.3** (2026-06-22)
-  - Fixed window jumping upon tab switching in Windows when taskbar is docked to left or right of the screen by updating Avalonia UI framework to 11.2.8 (see [Issue 19](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/19)).
+  - Fixed window jumping upon tab switching in Windows when taskbar is docked to left or top of the screen by updating Avalonia UI framework to 11.2.8 (see [Issue 19](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/19)).
 - **Version 2.1.2** (2026-06-09)
   - Radio buttons and checkboxes now properly disabled after user clicks "Build Patch" (see [Issue 15](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/15)).
   - Dialog boxes now have a maximum width, forcing clean text wrapping everywhere (see [Issue 16](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/16)).
