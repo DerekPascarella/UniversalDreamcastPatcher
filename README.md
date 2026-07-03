@@ -20,9 +20,11 @@ The application accepts any TOSEC-style GDI, Redump-style CUE/BIN, or compressed
 9. [Legal and Licensing](https://github.com/DerekPascarella/UniversalDreamcastPatcher#legal-and-licensing)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [2.1.3](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.3).
+The latest version of Universal Dreamcast Patcher is [2.1.4](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.4).
 
 ## Changelog
+- **Version 2.1.4** (2026-07-03)
+  - Fixed broken CUE/BIN output for some games with CD audio tracks, along with support for GDI files whose track filenames contain spaces (see [Issue 20](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/20)).
 - **Version 2.1.3** (2026-06-22)
   - Fixed window jumping upon tab switching in Windows when taskbar is docked to left or top of the screen by updating Avalonia UI framework to 11.2.8 (see [Issue 19](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/19)).
 - **Version 2.1.2** (2026-06-09)

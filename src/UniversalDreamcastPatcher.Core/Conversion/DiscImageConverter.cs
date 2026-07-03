@@ -66,6 +66,11 @@ public static class DiscImageConverter
                 "Only .gdi, .cue, and .chd files are supported.";
             return result;
         }
+        if (detected == DetectedSourceFormat.Gdi && SourceFormatDetector.IsLegacyRedumpGdi(options.SourceDiscImagePath))
+        {
+            result.ErrorMessage = SourceFormatDetector.LegacyRedumpGdiError;
+            return result;
+        }
 
         var baseName = Path.GetFileNameWithoutExtension(options.SourceDiscImagePath);
         var finalUserOutputFolder = OutputFormatNaming.NextAvailableUserFolderFor(

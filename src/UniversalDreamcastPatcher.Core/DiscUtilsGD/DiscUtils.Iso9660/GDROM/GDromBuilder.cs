@@ -616,7 +616,16 @@ namespace DiscUtils.Gdrom
                 {
                     sb.Append("2048 ");
                 }
-                sb.Append(track.FileName).Append(" 0").Append("\r\n");
+                // Filenames with spaces are quoted, matching what chdman does.
+                if (track.FileName.Contains(' '))
+                {
+                    sb.Append('"').Append(track.FileName).Append('"');
+                }
+                else
+                {
+                    sb.Append(track.FileName);
+                }
+                sb.Append(" 0").Append("\r\n");
                 tn++;
             }
             return sb.ToString();
@@ -648,7 +657,12 @@ namespace DiscUtils.Gdrom
             }
             for (; i < gdiLines.Length; i++)
             {
-                if (gdiLines[i].StartsWith("3"))
+                // Keep the source's low density lines (tracks 1 and 2). Everything from
+                // track 3 on is replaced by the rebuilt tracks. Parse the track number
+                // instead of matching the line prefix, since some GDI files pad the
+                // number column with leading whitespace.
+                string[] parts = gdiLines[i].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length > 0 && int.TryParse(parts[0], out int lineTrackNumber) && lineTrackNumber >= 3)
                 {
                     break;
                 }

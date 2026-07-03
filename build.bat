@@ -22,17 +22,11 @@ echo Universal Dreamcast Patcher v%VERSION% - Full release build
 echo ================================================
 echo.
 
-echo Formatting code...
-dotnet format UniversalDreamcastPatcher.sln
-if %ERRORLEVEL% neq 0 goto :error
-echo.
-
-echo Cleaning previous release output...
-if exist "_releases" rd /s /q "_releases" 2>nul
-if not exist "_releases" mkdir "_releases"
-
-echo.
 echo Packing UdpNatives local NuGet (per-RID native binaries)...
+rem This must run BEFORE anything that restores the solution (including the
+rem `dotnet format` step below): the UdpNatives package version tracks
+rem version.txt, so right after a version bump the only .nupkg in _localpkg
+rem is the previous version and any restore fails until the new one is packed.
 rem Wipe the previous local pack AND the extracted copy from NuGet's global
 rem cache. NuGet's resolver trusts the cached extraction whenever a matching
 rem version is already present, so without this step a fresh .nupkg with the
@@ -42,6 +36,16 @@ if exist "_localpkg\UdpNatives.*.nupkg" del /q "_localpkg\UdpNatives.*.nupkg"
 if exist "%USERPROFILE%\.nuget\packages\udpnatives" rd /s /q "%USERPROFILE%\.nuget\packages\udpnatives"
 dotnet pack native\UdpNativesPackage\UdpNativesPackage.csproj -o _localpkg --nologo
 if %ERRORLEVEL% neq 0 goto :error
+echo.
+
+echo Formatting code...
+dotnet format UniversalDreamcastPatcher.sln
+if %ERRORLEVEL% neq 0 goto :error
+echo.
+
+echo Cleaning previous release output...
+if exist "_releases" rd /s /q "_releases" 2>nul
+if not exist "_releases" mkdir "_releases"
 
 rem ----- win-x64 -----
 call :build_windows win-x64

@@ -129,12 +129,14 @@ public static class RedumpAssembler
         for (int i = 2; i < trackTypes.Count; i++)
             if (trackTypes[i] == "MODE1/2352") hdDataIndices.Add(i);
 
-        // Redump DAT fast-path: if the rebuilt GDI's Track 1 CRC32 matches a
-        // known Redump entry AND every track can be reconstructed byte-exact
-        // against the DAT, write those bytes directly. Unpatched discs land
-        // here; patched discs fail reconstruction on the modified track and
-        // fall through to the hardcoded-150 path below. Same fall-through if
-        // the disc isn't in the DAT at all (homebrew, prototypes, etc).
+        // Redump DAT lookup: match the rebuilt GDI's Track 1 CRC32 against the
+        // embedded Redump database. When a disc matches, reconstruction is
+        // all-or-nothing: either every track reconstructs byte-exact (and the
+        // output is a true Redump dump with a CUE derived from the disc's real
+        // track positions), or the whole disc falls back to the legacy packing
+        // below. Redump and legacy packings put the 150/225-sector gaps inside
+        // different track files, so mixing forms within one disc shifts every
+        // later track away from its TOC position and the image will not boot.
         RedumpDiscEntry? datEntry = null;
         var rebuiltT1Path = Path.Combine(options.RebuiltGdiFolder, rebuiltTracks[0].FileName);
         if (File.Exists(rebuiltT1Path))
@@ -158,42 +160,18 @@ public static class RedumpAssembler
                 : Path.GetFileName(options.SourceCuePath);
 
         bool datUsable = datEntry != null && datEntry.Tracks.Count == sourceTrackFiles.Count;
+        if (datUsable && TryAssembleFullRedump(options, rebuiltTracks, trackTypes, outputTrackFiles, outputCueName, datEntry!, hdDataIndices, ct))
+        {
+            result.Success = true;
+            result.ProducedCuePath = Path.Combine(options.OutputFolder, outputCueName!);
+            return result;
+        }
 
         for (int i = 0; i < sourceTrackFiles.Count; i++)
         {
             ct.ThrowIfCancellationRequested();
             int trackNum = i + 1;
             string destPath = Path.Combine(options.OutputFolder, outputTrackFiles[i]);
-
-            // Per-track Redump DAT fast-path: try byte-exact reconstruction
-            // against the DAT entry for this track. Succeeds for unmodified
-            // tracks; falls through to the legacy hardcoded-150 path for
-            // tracks whose bytes don't match the DAT (e.g. patched data
-            // tracks). Patched-disc outputs thus retain byte-exact form for
-            // unmodified tracks and legacy structure for modified tracks.
-            if (datUsable)
-            {
-                var rebuilt = rebuiltTracks[i];
-                string srcPath = Path.Combine(options.RebuiltGdiFolder, rebuilt.FileName);
-                if (File.Exists(srcPath))
-                {
-                    byte[] gdiBytes = File.ReadAllBytes(srcPath);
-                    var dat = datEntry!.Tracks[i];
-                    bool isData = trackTypes[i] == "MODE1/2352";
-                    byte[]? reconstructed = RedumpReconstructor.TryReconstruct(gdiBytes, isData, dat.Size, dat.Crc32, dat.Md5);
-                    if (reconstructed != null)
-                    {
-                        File.WriteAllBytes(destPath, reconstructed);
-                        continue;
-                    }
-                    byte[]? hybrid = RedumpReconstructor.BuildHybridLayout(gdiBytes, isData, dat.Size);
-                    if (hybrid != null)
-                    {
-                        File.WriteAllBytes(destPath, hybrid);
-                        continue;
-                    }
-                }
-            }
 
             if (i < 2)
             {
@@ -306,6 +284,133 @@ public static class RedumpAssembler
         return result;
     }
 
+    private const int HighDensityAreaLba = 45000;
+
+    // All-or-nothing Redump reconstruction. Returns true only when every track
+    // reconstructed byte-exact against the DAT entry and the computed CUE was
+    // written. On any failure it removes whatever it wrote and returns false so
+    // the caller falls back to the legacy packing for the whole disc. A partial
+    // set must never ship because Redump-form and legacy-form files put the gap
+    // sectors in different track files.
+    private static bool TryAssembleFullRedump(
+        RedumpAssembleOptions options,
+        List<RebuiltTrack> rebuiltTracks,
+        List<string> trackTypes,
+        string[] outputTrackFiles,
+        string? outputCueName,
+        RedumpDiscEntry datEntry,
+        List<int> hdDataIndices,
+        CancellationToken ct)
+    {
+        // The computed CUE places each track at its real TOC position, so make
+        // sure those positions are derivable before reconstructing anything.
+        string? cueText = BuildComputedRedumpCue(rebuiltTracks, trackTypes, outputTrackFiles, datEntry);
+        if (cueText == null) return false;
+
+        // HD data tracks first: those carry the patched filesystem, so patched
+        // discs bail out here immediately instead of after reconstructing all
+        // of the audio tracks.
+        var order = hdDataIndices
+            .Concat(Enumerable.Range(0, rebuiltTracks.Count).Where(i => !hdDataIndices.Contains(i)));
+
+        var written = new List<string>();
+        try
+        {
+            foreach (int i in order)
+            {
+                ct.ThrowIfCancellationRequested();
+
+                var srcPath = Path.Combine(options.RebuiltGdiFolder, rebuiltTracks[i].FileName);
+                if (!File.Exists(srcPath))
+                {
+                    DeleteFiles(written);
+                    return false;
+                }
+
+                var dat = datEntry.Tracks[i];
+                bool isData = trackTypes[i] == "MODE1/2352";
+                byte[]? reconstructed = RedumpReconstructor.TryReconstruct(
+                    File.ReadAllBytes(srcPath), isData, dat.Size, dat.Crc32, dat.Md5);
+                if (reconstructed == null)
+                {
+                    DeleteFiles(written);
+                    return false;
+                }
+
+                var destPath = Path.Combine(options.OutputFolder, outputTrackFiles[i]);
+                File.WriteAllBytes(destPath, reconstructed);
+                written.Add(destPath);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            DeleteFiles(written);
+            throw;
+        }
+
+        File.WriteAllText(Path.Combine(options.OutputFolder, outputCueName!), cueText);
+        return true;
+    }
+
+    // CUE for a full byte-exact Redump set. Redump embeds each gap inside the
+    // following track's file, so INDEX 01 of every track is derived from the
+    // disc's TOC: track LBA (from disc.gdi) minus the track file's cumulative
+    // start sector. For a typical GD-ROM this works out to 00:02:00 on audio
+    // tracks and 00:03:00 on a final data track. Returns null when any track's
+    // numbers are inconsistent, in which case the caller must use the legacy
+    // packing instead.
+    private static string? BuildComputedRedumpCue(
+        List<RebuiltTrack> rebuiltTracks,
+        List<string> trackTypes,
+        string[] outputTrackFiles,
+        RedumpDiscEntry datEntry)
+    {
+        var sb = new StringBuilder();
+        long cumulativeStart = 0;
+        for (int i = 0; i < rebuiltTracks.Count; i++)
+        {
+            if (i == 0) sb.AppendLine("REM SINGLE-DENSITY AREA");
+            if (i == 2)
+            {
+                sb.AppendLine("REM HIGH-DENSITY AREA");
+                cumulativeStart = HighDensityAreaLba;
+            }
+
+            long size = datEntry.Tracks[i].Size;
+            if (size <= 0 || size % 2352 != 0) return null;
+            long sectors = size / 2352;
+
+            long pregap = rebuiltTracks[i].Lba - cumulativeStart;
+            if (pregap < 0 || pregap >= sectors) return null;
+
+            sb.AppendLine($"FILE \"{outputTrackFiles[i]}\" BINARY");
+            sb.AppendLine($"  TRACK {i + 1:D2} {trackTypes[i]}");
+            if (pregap > 0)
+            {
+                sb.AppendLine("    INDEX 00 00:00:00");
+                sb.AppendLine($"    INDEX 01 {ToMsf(pregap)}");
+            }
+            else
+            {
+                sb.AppendLine("    INDEX 01 00:00:00");
+            }
+
+            cumulativeStart += sectors;
+        }
+        return sb.ToString();
+    }
+
+    private static string ToMsf(long sectors) =>
+        $"{sectors / (75 * 60):D2}:{sectors / 75 % 60:D2}:{sectors % 75:D2}";
+
+    private static void DeleteFiles(List<string> files)
+    {
+        foreach (var f in files)
+        {
+            try { File.Delete(f); } catch { /* best effort */ }
+        }
+    }
+
     private static (List<string> Files, List<string> Types) ParseCueTracks(string[] cueLines)
     {
         var files = new List<string>();
@@ -330,20 +435,17 @@ public static class RedumpAssembler
     }
 
     // disc.gdi: line 1 = track count, then <track#> <lba> <type> <sector size> <filename> <offset>.
+    // GdiTrackLine handles quoted filenames, so GDIs straight out of chdman
+    // (which quote track names containing spaces) parse correctly here too.
     private static List<RebuiltTrack> ParseDiscGdi(string path)
     {
         var result = new List<RebuiltTrack>();
         var lines = File.ReadAllLines(path);
         foreach (var line in lines.Skip(1))
         {
-            var parts = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length >= 5
-                && int.TryParse(parts[0], out int num)
-                && int.TryParse(parts[1], out int lba)
-                && int.TryParse(parts[2], out int type)
-                && int.TryParse(parts[3], out int sectorSize))
+            if (GdiTrackLine.TryParse(line, out var track))
             {
-                result.Add(new RebuiltTrack(num, lba, type, sectorSize, parts[4]));
+                result.Add(new RebuiltTrack(track.TrackNumber, track.Lba, track.Type, track.SectorSize, track.FileName));
             }
         }
         return result;

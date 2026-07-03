@@ -251,19 +251,41 @@ public static class PatchApplier
 
             var sourceImageFolder = Path.GetDirectoryName(normalized.GdiPath) ?? string.Empty;
             var gdiLines = File.ReadAllLines(normalized.GdiPath);
-            var parsed = ParseGdi(gdiLines, sourceImageFolder);
+            var parsed = ParseGdi(gdiLines);
 
+            // Every track file the .gdi references has to be present. GdiReader only
+            // opens the data tracks, so a missing audio track would otherwise slip
+            // through and silently produce a disc with no CDDA.
+            var missingTracks = parsed.LowDensityTracks.Concat(parsed.CddaTracks)
+                .Where(t => !File.Exists(Path.Combine(sourceImageFolder, t.FileName)))
+                .Select(t => t.FileName)
+                .ToList();
+            if (missingTracks.Count > 0)
+            {
+                result.ErrorMessage =
+                    "The source disc image is missing track files that its .gdi references:\n\n" +
+                    string.Join("\n", missingTracks) +
+                    "\n\nMake sure all track files are present in the same folder as the .gdi and try again.";
+                return result;
+            }
+
+            // Tracks copied from the source are renamed to UDP's trackNN naming so the
+            // rebuilt .gdi never needs quoting and the CUE/CHD steps always see the
+            // same names no matter what the source called its tracks.
+            var lowDensityGdiLines = new List<string>();
             foreach (var lowTrack in parsed.LowDensityTracks)
             {
-                File.Copy(lowTrack, Path.Combine(finalGdiFolder, Path.GetFileName(lowTrack)), overwrite: true);
+                var destName = NormalizedTrackFileName(lowTrack);
+                File.Copy(Path.Combine(sourceImageFolder, lowTrack.FileName), Path.Combine(finalGdiFolder, destName), overwrite: true);
+                lowDensityGdiLines.Add($"{lowTrack.TrackNumber} {lowTrack.Lba} {lowTrack.Type} {lowTrack.SectorSize} {destName} 0");
             }
 
             // Copy CDDA (HD audio) verbatim, and collect their paths for the builder.
             var cdda = new List<string>();
             foreach (var cddaTrack in parsed.CddaTracks)
             {
-                var destCdda = Path.Combine(finalGdiFolder, Path.GetFileName(cddaTrack));
-                File.Copy(cddaTrack, destCdda, overwrite: true);
+                var destCdda = Path.Combine(finalGdiFolder, NormalizedTrackFileName(cddaTrack));
+                File.Copy(Path.Combine(sourceImageFolder, cddaTrack.FileName), destCdda, overwrite: true);
                 cdda.Add(destCdda);
             }
 
@@ -282,7 +304,7 @@ public static class PatchApplier
             builder.ImportFolder(sourceDir);
             var builtTracks = builder.BuildGDROM(finalGdiFolder, ct);
 
-            builder.WriteGdiFile(gdiLines, builtTracks, Path.Combine(finalGdiFolder, "disc.gdi"));
+            builder.WriteGdiFile(lowDensityGdiLines.ToArray(), builtTracks, Path.Combine(finalGdiFolder, "disc.gdi"));
 
             if (options.OutputFormat != OutputDiscImageFormat.Gdi)
             {
@@ -382,14 +404,14 @@ public static class PatchApplier
 
     private sealed class ParsedGdi
     {
-        public List<string> LowDensityTracks { get; } = new();
-        public List<string> CddaTracks { get; } = new();
+        public List<GdiTrackLine> LowDensityTracks { get; } = new();
+        public List<GdiTrackLine> CddaTracks { get; } = new();
         // Sector size of the source's HD data track 3 (2048 = ISO, 2352 = raw BIN).
         // Used to match the rebuild output's data-track format to the source's.
         public uint Track3SectorSize { get; set; } = 2352;
     }
 
-    private static ParsedGdi ParseGdi(string[] lines, string gdiDirectory)
+    private static ParsedGdi ParseGdi(string[] lines)
     {
         var result = new ParsedGdi();
         if (lines.Length < 2) return result;
@@ -397,36 +419,35 @@ public static class PatchApplier
         int trackCount = int.TryParse(lines[0].Trim(), out var tc) ? tc : 0;
         for (int i = 1; i <= trackCount && i < lines.Length; i++)
         {
-            var parts = lines[i].Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length < 6) continue;
+            if (!GdiTrackLine.TryParse(lines[i], out var track)) continue;
 
-            int trackNumber = int.Parse(parts[0]);
-            int trackType = int.Parse(parts[2]);
-            uint sectorSize = uint.TryParse(parts[3], out var ss) ? ss : 2352;
-            string filename = parts[4];
-            string fullPath = Path.Combine(gdiDirectory, filename);
-
-            if (trackNumber <= 2)
+            if (track.TrackNumber <= 2)
             {
-                if (File.Exists(fullPath)) result.LowDensityTracks.Add(fullPath);
+                result.LowDensityTracks.Add(track);
             }
-            else if (trackNumber == 3)
+            else if (track.TrackNumber == 3)
             {
                 // Capture the source's data-track sector size so the rebuild matches it (2048 ISO vs 2352 raw).
-                result.Track3SectorSize = sectorSize;
+                result.Track3SectorSize = (uint)track.SectorSize;
             }
-            else
+            else if (track.Type == 0)
             {
-                bool isAudio = trackType == 0;
-                if (isAudio && File.Exists(fullPath))
-                {
-                    result.CddaTracks.Add(fullPath);
-                }
-                // Extra HD data tracks (track 5+) aren't tracked here. Their content is
-                // already in sourceDir, and GDromBuilder rebuilds the layout from it.
+                result.CddaTracks.Add(track);
             }
+            // Extra HD data tracks (track 5+) aren't tracked here. Their content is
+            // already in sourceDir, and GDromBuilder rebuilds the layout from it.
         }
 
         return result;
+    }
+
+    // trackNN name for a track copied out of the source image. Keeps the source
+    // extension when it has one (.bin/.raw/.iso), otherwise picks by track type.
+    private static string NormalizedTrackFileName(GdiTrackLine track)
+    {
+        var extension = Path.GetExtension(track.FileName);
+        if (string.IsNullOrEmpty(extension))
+            extension = track.Type == 0 ? ".raw" : ".bin";
+        return $"track{track.TrackNumber:D2}{extension.ToLowerInvariant()}";
     }
 }

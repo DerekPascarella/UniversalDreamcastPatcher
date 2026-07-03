@@ -174,6 +174,9 @@ namespace UniversalDreamcastPatcher.Core
     {
         protected internal override Task ScanAsync(string path, IProgress<string>? progress, CancellationToken cancellationToken)
         {
+            if (SourceFormatDetector.IsLegacyRedumpGdi(path))
+                throw new InvalidDataException(SourceFormatDetector.LegacyRedumpGdiError);
+
             SourcePath = path;
             Format = IpBinFileFormat.Gdi;
             var baseDir = Path.GetDirectoryName(path) ?? string.Empty;

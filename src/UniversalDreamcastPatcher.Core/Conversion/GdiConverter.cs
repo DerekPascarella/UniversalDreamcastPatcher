@@ -44,7 +44,13 @@ namespace UniversalDreamcastPatcher.Core
                 var gdiContent = new StringBuilder();
                 gdiContent.AppendLine(trackCount.ToString());
 
-                int currentLba = 0;
+                // Each track's TOC LBA is derived from the CUE itself: the
+                // cumulative start sector of its source file plus the INDEX 01
+                // offset. Redump embeds each inter-track gap at the head of the
+                // following file, so this reproduces the disc's real track
+                // positions regardless of which reconstruction path below
+                // produces the track's content.
+                long cumulativeFileStart = 0;
                 int processedTracks = 0;
 
                 // TOSEC DAT fast-path: hash Track 1's .bin (data, no pregap on
@@ -81,7 +87,12 @@ namespace UniversalDreamcastPatcher.Core
                     string outputFilename = $"track{track.TrackNumber:D2}.{extension}";
                     string outputPath = Path.Combine(outputDirectory, outputFilename);
 
-                    int sectorCount;
+                    long sourceFileSectors = new FileInfo(sourceBinPath).Length / SectorSize;
+                    var index01 = track.Indices.FirstOrDefault(i => i.Number == 1);
+                    long trackLba = cumulativeFileStart + (index01?.TotalFrames ?? 0);
+                    int trackType = track.IsAudio ? 0 : 4;
+
+                    bool written = false;
 
                     // TOSEC byte-exact path. Reads the Redump-form .bin, looks
                     // up TOSEC's expected per-track hashes by track number,
@@ -100,54 +111,36 @@ namespace UniversalDreamcastPatcher.Core
                             if (reconstructed != null)
                             {
                                 await File.WriteAllBytesAsync(outputPath, reconstructed, cancellationToken);
-                                sectorCount = (int)(tosecTrack.Size / SectorSize);
-
-                                int tosecTrackType = track.IsAudio ? 0 : 4;
-                                gdiContent.AppendLine($"{track.TrackNumber} {currentLba} {tosecTrackType} 2352 {outputFilename} 0");
-                                currentLba += sectorCount;
-
-                                if (track.Comments.Contains("HIGH-DENSITY AREA") && currentLba < HighDensityAreaLba)
-                                {
-                                    currentLba = HighDensityAreaLba;
-                                }
-                                processedTracks++;
-                                progress?.Report((processedTracks * 100) / trackCount);
-                                continue;
+                                written = true;
                             }
                         }
                     }
 
-                    // Single-index track: copy the whole file.
-                    // Multi-index track (INDEX 00 + INDEX 01): skip to INDEX 01 to drop the pregap.
-                    bool hasOnlyOneIndex = track.Indices.Count == 1;
-
-                    if (hasOnlyOneIndex)
+                    if (!written)
                     {
-                        await CopyFileAsync(sourceBinPath, outputPath, cancellationToken);
-                        var fileInfo = new FileInfo(sourceBinPath);
-                        sectorCount = (int)(fileInfo.Length / SectorSize);
-                    }
-                    else
-                    {
-                        // Skip past the pregap to INDEX 01.
-                        var index01 = track.Indices.FirstOrDefault(i => i.Number == 1);
-                        int framesToSkip = index01?.TotalFrames ?? 0;
-
-                        sectorCount = await CopyFileWithOffsetAsync(sourceBinPath, outputPath, framesToSkip, cancellationToken);
-                        currentLba += framesToSkip;
+                        // Single-index track: copy the whole file.
+                        // Multi-index track (INDEX 00 + INDEX 01): skip to INDEX 01 to drop the pregap.
+                        if (track.Indices.Count == 1)
+                        {
+                            await CopyFileAsync(sourceBinPath, outputPath, cancellationToken);
+                        }
+                        else
+                        {
+                            await CopyFileWithOffsetAsync(sourceBinPath, outputPath, index01?.TotalFrames ?? 0, cancellationToken);
+                        }
                     }
 
                     // GDI line: track# LBA type sectorSize filename offset (type: 0 = audio, 4 = data).
-                    int trackType = track.IsAudio ? 0 : 4;
-                    gdiContent.AppendLine($"{track.TrackNumber} {currentLba} {trackType} 2352 {outputFilename} 0");
+                    gdiContent.AppendLine($"{track.TrackNumber} {trackLba} {trackType} 2352 {outputFilename} 0");
 
-                    // Advance LBA after writing the line so it points to the start of this track.
-                    currentLba += sectorCount;
+                    cumulativeFileStart += sourceFileSectors;
 
-                    // HD area starts at LBA 45000. Pad the LBA up if it hasn't reached that yet.
-                    if (track.Comments.Contains("HIGH-DENSITY AREA") && currentLba < HighDensityAreaLba)
+                    // HD area starts at LBA 45000. The HIGH-DENSITY AREA marker
+                    // sits on the track before it, so bump the cumulative
+                    // position up before the first HD track.
+                    if (track.Comments.Contains("HIGH-DENSITY AREA") && cumulativeFileStart < HighDensityAreaLba)
                     {
-                        currentLba = HighDensityAreaLba;
+                        cumulativeFileStart = HighDensityAreaLba;
                     }
 
                     processedTracks++;

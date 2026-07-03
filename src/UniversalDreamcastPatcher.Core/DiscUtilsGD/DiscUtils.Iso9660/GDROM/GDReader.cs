@@ -83,9 +83,9 @@ namespace DiscUtils.Gdrom
                     if (numTracks > 3)
                     {
                         var finalTrack = ParseTrackInfo(gdiLines[numTracks], sourceDirectory);
-                        if (!File.Exists(track3.Value.filename))
+                        if (finalTrack != null && !File.Exists(finalTrack.Value.filename))
                         {
-                            throw new FileNotFoundException("The GDI references a track file that does not exist!", track3.Value.filename);
+                            throw new FileNotFoundException("The GDI references a track file that does not exist!", finalTrack.Value.filename);
                         }
                         if (finalTrack != null)
                         {

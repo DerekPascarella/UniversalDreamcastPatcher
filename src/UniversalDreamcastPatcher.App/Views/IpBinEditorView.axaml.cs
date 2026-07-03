@@ -209,6 +209,7 @@ public partial class IpBinEditorView : UserControl
             {
                 SetDetectionLabel("Failed to open source.");
                 await ShowDialog("Error", $"Could not open the source file.\n\n{ex.Message}");
+                ClearSourcePath();
                 return;
             }
 
@@ -220,6 +221,7 @@ public partial class IpBinEditorView : UserControl
                     "It may not be a Dreamcast disc image.");
                 _source.Dispose();
                 _source = null;
+                ClearSourcePath();
                 return;
             }
 
@@ -235,6 +237,7 @@ public partial class IpBinEditorView : UserControl
                     $"The first IP.BIN copy in the source could not be read.\n\n{ex.Message}");
                 _source.Dispose();
                 _source = null;
+                ClearSourcePath();
                 return;
             }
 
@@ -304,6 +307,11 @@ public partial class IpBinEditorView : UserControl
     private void SetDetectionLabel(string text)
     {
         if (_detectionLabel != null) _detectionLabel.Text = text;
+    }
+
+    private void ClearSourcePath()
+    {
+        if (_sourcePath != null) _sourcePath.Text = string.Empty;
     }
 
     private void SetEditorEnabled(bool enabled)

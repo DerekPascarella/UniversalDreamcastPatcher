@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using UniversalDreamcastPatcher.Core.Patching;
 
 // Written by Derek Pascarella (ateam)
 
@@ -38,6 +39,11 @@ public static class InputNormalizer
         switch (ext)
         {
             case ".gdi":
+                if (SourceFormatDetector.IsLegacyRedumpGdi(inputPath))
+                {
+                    result.ErrorMessage = SourceFormatDetector.LegacyRedumpGdiError;
+                    return result;
+                }
                 result.Success = true;
                 result.GdiPath = inputPath;
                 return result;
