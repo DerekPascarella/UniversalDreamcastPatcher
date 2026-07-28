@@ -50,6 +50,10 @@ public sealed class RedumpAssembleResult
 //                      Fills the audio-data gap before track 5/13/etc.
 public static class RedumpAssembler
 {
+    public const string NonContiguousGdiError =
+        "This GDI's track layout cannot be represented as CUE/BIN.\n\n" +
+        "Converting this disc image to CHD is still supported.";
+
     public static Task<RedumpAssembleResult> AssembleAsync(
         RedumpAssembleOptions options,
         IProgress<string>? progress = null,
@@ -167,6 +171,21 @@ public static class RedumpAssembler
             return result;
         }
 
+        if (gdiSourceMode && hdDataIndices.Count > 0)
+        {
+            // The legacy packing below places tracks by concatenating files,
+            // so every data track has to sit exactly where the GDI says it
+            // does. A shrunk track 3 or a relocated data track lands somewhere
+            // else in the output while the filesystem still points at the old
+            // location, so bail out here.
+            string? guardError = CheckHdLayoutIsContiguous(options.RebuiltGdiFolder, rebuiltTracks, trackTypes, hdDataIndices);
+            if (guardError != null)
+            {
+                result.ErrorMessage = guardError;
+                return result;
+            }
+        }
+
         for (int i = 0; i < sourceTrackFiles.Count; i++)
         {
             ct.ThrowIfCancellationRequested();
@@ -206,7 +225,7 @@ public static class RedumpAssembler
                             result.ErrorMessage = $"Short read on source track 1 at sector {s}.";
                             return result;
                         }
-                        var raw = IsoUtilities.ConvertSectorToRawMode1(userData, s);
+                        var raw = IsoUtilities.ConvertSectorToRawMode1(userData, rebuiltTracks[0].Lba + s);
                         output.Write(raw, 0, 2352);
                     }
                 }
@@ -249,29 +268,61 @@ public static class RedumpAssembler
                 }
 
                 bool isFirstHdData = i == hdDataIndices[0];
-                if (isFirstHdData)
+                bool isoForm = rebuilt.SectorSize == 2048;
+                int sourceSectorSize = isoForm ? 2048 : 2352;
+                long trackLength = new FileInfo(rebuiltBinPath).Length;
+                if (trackLength % sourceSectorSize != 0)
                 {
-                    int t3Sectors = (int)(new FileInfo(rebuiltBinPath).Length / 2352);
-                    using var output = File.Create(destPath);
-                    using (var rb = File.OpenRead(rebuiltBinPath)) rb.CopyTo(output);
-                    var emptyUserData = new byte[2048];
-                    for (int s = 0; s < 150; s++)
-                    {
-                        int lba = rebuilt.Lba + t3Sectors + s;
-                        output.Write(IsoUtilities.ConvertSectorToRawMode1(emptyUserData, lba));
-                    }
+                    result.ErrorMessage =
+                        $"Rebuilt data track {trackNum} is not a whole number of {sourceSectorSize}-byte sectors: {rebuiltBinPath} ({trackLength} bytes).";
+                    return result;
                 }
-                else
+                int trackSectors = (int)(trackLength / sourceSectorSize);
+
+                using var output = File.Create(destPath);
+                var emptyUserData = new byte[2048];
+
+                if (!isFirstHdData)
                 {
-                    using var output = File.Create(destPath);
-                    var emptyUserData = new byte[2048];
                     for (int s = 0; s < 150; s++)
                     {
                         int lba = rebuilt.Lba - 150 + s;
                         output.Write(IsoUtilities.ConvertSectorToRawMode1(emptyUserData, lba));
                     }
-                    using var rb = File.OpenRead(rebuiltBinPath);
-                    rb.CopyTo(output);
+                }
+
+                using (var rb = File.OpenRead(rebuiltBinPath))
+                {
+                    if (isoForm)
+                    {
+                        // The CUE declares MODE1/2352, so 2048-byte source
+                        // sectors get rebuilt as raw sectors with their real
+                        // absolute addresses.
+                        var userData = new byte[2048];
+                        for (int s = 0; s < trackSectors; s++)
+                        {
+                            int read = rb.Read(userData, 0, 2048);
+                            if (read != 2048)
+                            {
+                                result.ErrorMessage = $"Short read on rebuilt data track {trackNum} at sector {s}.";
+                                return result;
+                            }
+                            output.Write(IsoUtilities.ConvertSectorToRawMode1(userData, rebuilt.Lba + s));
+                        }
+                    }
+                    else
+                    {
+                        rb.CopyTo(output);
+                    }
+                }
+
+                if (isFirstHdData)
+                {
+                    for (int s = 0; s < 150; s++)
+                    {
+                        int lba = rebuilt.Lba + trackSectors + s;
+                        output.Write(IsoUtilities.ConvertSectorToRawMode1(emptyUserData, lba));
+                    }
                 }
             }
         }
@@ -327,10 +378,22 @@ public static class RedumpAssembler
                     return false;
                 }
 
+                // Some GDIs store a track's pregap sectors at the end of the
+                // previous track's file. Hand the reconstructor that tail so
+                // it can pull the missing lead-in from there. Only applies to
+                // HD tracks that have another HD track in front of them.
+                byte[]? precedingTail = null;
+                if (i >= 3)
+                {
+                    var prevPath = Path.Combine(options.RebuiltGdiFolder, rebuiltTracks[i - 1].FileName);
+                    if (File.Exists(prevPath))
+                        precedingTail = ReadFileTail(prevPath, 300L * 2352);
+                }
+
                 var dat = datEntry.Tracks[i];
                 bool isData = trackTypes[i] == "MODE1/2352";
                 byte[]? reconstructed = RedumpReconstructor.TryReconstruct(
-                    File.ReadAllBytes(srcPath), isData, dat.Size, dat.Crc32, dat.Md5);
+                    File.ReadAllBytes(srcPath), isData, dat.Size, dat.Crc32, dat.Md5, precedingTail);
                 if (reconstructed == null)
                 {
                     DeleteFiles(written);
@@ -403,6 +466,16 @@ public static class RedumpAssembler
     private static string ToMsf(long sectors) =>
         $"{sectors / (75 * 60):D2}:{sectors / 75 % 60:D2}:{sectors % 75:D2}";
 
+    private static byte[] ReadFileTail(string path, long maxBytes)
+    {
+        using var fs = File.OpenRead(path);
+        long count = Math.Min(maxBytes, fs.Length);
+        fs.Seek(-count, SeekOrigin.End);
+        var buf = new byte[count];
+        fs.ReadExactly(buf, 0, (int)count);
+        return buf;
+    }
+
     private static void DeleteFiles(List<string> files)
     {
         foreach (var f in files)
@@ -432,6 +505,39 @@ public static class RedumpAssembler
             }
         }
         return (files, types);
+    }
+
+    private static string? CheckHdLayoutIsContiguous(
+        string gdiFolder, List<RebuiltTrack> rebuiltTracks, List<string> trackTypes, List<int> hdDataIndices)
+    {
+        int firstHd = hdDataIndices[0];
+        if (rebuiltTracks[firstHd].Lba != HighDensityAreaLba)
+            return NonContiguousGdiError;
+
+        long emittedLba = HighDensityAreaLba;
+        for (int i = firstHd; i < rebuiltTracks.Count; i++)
+        {
+            var track = rebuiltTracks[i];
+            var trackPath = Path.Combine(gdiFolder, track.FileName);
+            if (!File.Exists(trackPath)) return null;
+
+            int sectorSize = track.SectorSize > 0 ? track.SectorSize : 2352;
+            long fileSectors = new FileInfo(trackPath).Length / sectorSize;
+
+            if (trackTypes[i] == "MODE1/2352")
+            {
+                bool isFirstHdData = i == firstHd;
+                long expectedLba = isFirstHdData ? HighDensityAreaLba : emittedLba + 150;
+                if (track.Lba != expectedLba)
+                    return NonContiguousGdiError;
+                emittedLba = expectedLba + fileSectors + (isFirstHdData ? 150 : 0);
+            }
+            else
+            {
+                emittedLba += fileSectors;
+            }
+        }
+        return null;
     }
 
     // disc.gdi: line 1 = track count, then <track#> <lba> <type> <sector size> <filename> <offset>.

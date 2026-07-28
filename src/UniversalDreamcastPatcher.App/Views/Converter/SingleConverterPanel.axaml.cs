@@ -177,7 +177,10 @@ public partial class SingleConverterPanel : UserControl
         _cts.Dispose();
         _cts = null;
 
-        string title = result.Success ? "Information" : "Error";
+        // A non-contiguous GDI can't be represented in CUE/BIN. The guard
+        // refusal gets the "Information" title.
+        bool isLayoutGuardRefusal = result.ErrorMessage == RedumpAssembler.NonContiguousGdiError;
+        string title = result.Success || isLayoutGuardRefusal ? "Information" : "Error";
         string message = result.Success
             ? $"Conversion completed successfully.\n\n" +
               $"Output folder:\n{result.ProducedOutputFolder}"

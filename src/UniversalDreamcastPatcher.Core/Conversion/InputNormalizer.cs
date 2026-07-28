@@ -44,6 +44,11 @@ public static class InputNormalizer
                     result.ErrorMessage = SourceFormatDetector.LegacyRedumpGdiError;
                     return result;
                 }
+                if (SourceFormatDetector.IsConversionGdi(inputPath))
+                {
+                    result.ErrorMessage = SourceFormatDetector.ConversionGdiError;
+                    return result;
+                }
                 result.Success = true;
                 result.GdiPath = inputPath;
                 return result;
@@ -126,6 +131,11 @@ public static class InputNormalizer
                 return result;
             }
             result.GdiPath = Path.Combine(staging, "disc.gdi");
+            if (SourceFormatDetector.IsConversionGdi(result.GdiPath))
+            {
+                result.ErrorMessage = SourceFormatDetector.ConversionGdiError;
+                return result;
+            }
         }
         else
         {

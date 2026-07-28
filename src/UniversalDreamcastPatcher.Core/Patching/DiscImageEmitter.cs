@@ -89,7 +89,11 @@ public static class DiscImageEmitter
 
                 if (!assembleResult.Success)
                 {
-                    result.ErrorMessage = $"The CUE/BIN output could not be assembled.\n{assembleResult.ErrorMessage}";
+                    // The layout guard writes its own full message, so skip
+                    // the generic prefix for it.
+                    result.ErrorMessage = assembleResult.ErrorMessage == RedumpAssembler.NonContiguousGdiError
+                        ? assembleResult.ErrorMessage
+                        : $"The CUE/BIN output could not be assembled.\n{assembleResult.ErrorMessage}";
                     return result;
                 }
             }

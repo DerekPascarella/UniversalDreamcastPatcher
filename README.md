@@ -20,9 +20,14 @@ The application accepts any TOSEC-style GDI, Redump-style CUE/BIN, or compressed
 9. [Legal and Licensing](https://github.com/DerekPascarella/UniversalDreamcastPatcher#legal-and-licensing)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [2.1.4](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.4).
+The latest version of Universal Dreamcast Patcher is [2.1.5](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.4).
 
 ## Changelog
+- **Version 2.1.5** (2026-07-28)
+  - Added support for CHDs with 2048 bytes-per-sector data tracks (see [Issue 21](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/21)).
+  - CUE/BIN output now properly re-encodes ISO-format (2048 bytes-per-sector) data tracks (see [Issue 22](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/22)).
+  - Atomiswave and NAOMI conversion GDIs are now auto-detected and rejected for unsupported operations (see [Issue 23](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/23)).
+  - GDIs with relocated data tracks are now rejected for CUE/BIN conversion instead of producing broken output (see [Issue 24](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/24)).
 - **Version 2.1.4** (2026-07-03)
   - Fixed broken CUE/BIN output for some games with CD audio tracks, along with support for GDI files whose track filenames contain spaces and automatic detection and rejection of the early, short-lived Redump GDI format (see [Issue 20](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/20)).
 - **Version 2.1.3** (2026-06-22)

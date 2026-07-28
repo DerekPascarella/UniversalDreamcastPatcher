@@ -12,7 +12,10 @@ using DiscUtils.Iso9660;
 //   1. Verbatim: if GDI bytes already hash-match the DAT entry, return them.
 //   2. Sector-aligned silence pregap (0/75/150/225 sectors of zeros prepended,
 //      tail truncated to target size). Hits the standard CD audio pregap case.
-//   3. Rolling CRC32 scan over [zero-pad] + [synthesized Mode-1 leading sectors
+//   3. Previous-track borrow: a track file short of the DAT size takes its
+//      missing lead-in from the tail of the track file before it. Some
+//      pressed discs pack a data track's pregap there.
+//   4. Rolling CRC32 scan over [zero-pad] + [synthesized Mode-1 leading sectors
 //      for data tracks] + [GDI bytes] + [synthesized Mode-1 trailing sectors
 //      for data tracks] + [zero-pad]. The GF(2)-precomputed rollback table
 //      makes each window-shift O(1). Catches sub-sector drive-offset variance
@@ -84,7 +87,8 @@ public static class RedumpReconstructor
         bool gdiIsDataTrack,
         long expectedSize,
         uint expectedCrc,
-        byte[] expectedMd5)
+        byte[] expectedMd5,
+        byte[]? precedingTailBytes = null)
     {
         if (gdiBytes == null) throw new ArgumentNullException(nameof(gdiBytes));
         if (expectedMd5 == null || expectedMd5.Length != 16) throw new ArgumentException("expectedMd5 must be 16 bytes.", nameof(expectedMd5));
@@ -109,6 +113,21 @@ public static class RedumpReconstructor
             if (Crc32.HashToUInt32(candidate) == expectedCrc &&
                 MD5.HashData(candidate).AsSpan().SequenceEqual(expectedMd5))
                 return candidate;
+        }
+
+        // Missing lead-in borrowed from the end of the previous track's file.
+        if (precedingTailBytes != null)
+        {
+            long borrow = expectedSize - gdiBytes.LongLength;
+            if (borrow > 0 && borrow <= precedingTailBytes.LongLength)
+            {
+                var candidate = new byte[expectedSize];
+                Array.Copy(precedingTailBytes, precedingTailBytes.LongLength - borrow, candidate, 0, borrow);
+                Array.Copy(gdiBytes, 0, candidate, borrow, gdiBytes.LongLength);
+                if (Crc32.HashToUInt32(candidate) == expectedCrc &&
+                    MD5.HashData(candidate).AsSpan().SequenceEqual(expectedMd5))
+                    return candidate;
+            }
         }
 
         // Rolling-CRC scan.

@@ -50,19 +50,21 @@ namespace UniversalDreamcastPatcher.Core
                     currentLba += track.Pregap;
                     chdSectorOffset += track.Pregap;
 
-                    // Output filename: trackNN.bin for data, trackNN.raw for audio
-                    string extension = track.IsAudio ? "raw" : "bin";
+                    // Data tracks keep the sector size the CHD recorded for them.
+                    // A 2048-byte data track comes out as an iso file with a 2048
+                    // column so the GDI matches the form it was compressed from.
+                    int bytesPerSector = track.IsData && track.SectorDataSize == 2048 ? 2048 : SectorSize;
+                    string extension = track.IsAudio ? "raw" : (bytesPerSector == 2048 ? "iso" : "bin");
                     string outputFilename = $"track{track.TrackNumber:D2}.{extension}";
                     string outputPath = Path.Combine(outputDirectory, outputFilename);
 
-                    // GDI line: track# LBA type 2352 filename 0
                     int trackType = track.IsAudio ? 0 : 4;
-                    gdiContent.AppendLine($"{track.TrackNumber} {currentLba} {trackType} {SectorSize} {outputFilename} 0");
+                    gdiContent.AppendLine($"{track.TrackNumber} {currentLba} {trackType} {bytesPerSector} {outputFilename} 0");
 
                     // Extract track data frames from CHD.
                     // FRAMES in CHD metadata includes PAD, so subtract PAD to get actual content.
                     int dataFrames = track.Frames - track.Pad;
-                    await Task.Run(() => ExtractTrackData(chd, chdSectorOffset, dataFrames, outputPath,
+                    await Task.Run(() => ExtractTrackData(chd, chdSectorOffset, dataFrames, outputPath, bytesPerSector,
                         swapAudio && track.IsAudio, cancellationToken), cancellationToken);
 
                     // Advance LBA by the full track span (FRAMES includes PAD, which
@@ -147,7 +149,7 @@ namespace UniversalDreamcastPatcher.Core
                     // Extract track data frames from CHD.
                     // FRAMES in CHD metadata includes PAD, so subtract PAD to get actual content.
                     int dataFrames = track.Frames - track.Pad;
-                    await Task.Run(() => ExtractTrackData(chd, chdSectorOffset, dataFrames, binPath,
+                    await Task.Run(() => ExtractTrackData(chd, chdSectorOffset, dataFrames, binPath, SectorSize,
                         swapAudio && track.IsAudio, cancellationToken), cancellationToken);
 
                     // Advance past data frames + alignment padding in CHD stream.
@@ -195,6 +197,7 @@ namespace UniversalDreamcastPatcher.Core
             long startSector,
             int frameCount,
             string outputPath,
+            int bytesPerSector,
             bool swapEndianness,
             CancellationToken cancellationToken)
         {
@@ -209,7 +212,7 @@ namespace UniversalDreamcastPatcher.Core
                 cancellationToken.ThrowIfCancellationRequested();
 
                 int batchSize = Math.Min(remaining, SectorsPerBatch);
-                byte[] data = chd.ReadSectors(currentSector, batchSize);
+                byte[] data = chd.ReadSectors(currentSector, batchSize, bytesPerSector);
 
                 if (swapEndianness)
                     SwapAudioEndianness(data);

@@ -137,6 +137,8 @@ public static class DiscImageConverter
         // From GDI source: source folder is already the GDI, feed it to the emitter.
         if (source == DetectedSourceFormat.Gdi)
         {
+            if (target == OutputDiscImageFormat.CueBin && SourceFormatDetector.IsConversionGdi(sourcePath))
+                return SourceFormatDetector.ConversionGdiError;
             var sourceDir = Path.GetDirectoryName(sourcePath) ?? string.Empty;
             return EmitFromGdi(sourceDir, target, finalOutputFolder, baseName, progress, ct);
         }
@@ -180,6 +182,9 @@ public static class DiscImageConverter
             var (ok2, msg2) = ChdConverter.ConvertToGdi(sourcePath, gdiPivot, null, ct).GetAwaiter().GetResult();
             if (!ok2)
                 return $"The CHD disc image could not be decompressed.\n{msg2}";
+            if (target == OutputDiscImageFormat.CueBin &&
+                SourceFormatDetector.IsConversionGdi(Path.Combine(gdiPivot, "disc.gdi")))
+                return SourceFormatDetector.ConversionGdiError;
             return EmitFromGdi(gdiPivot, target, finalOutputFolder, baseName, progress, ct);
         }
 

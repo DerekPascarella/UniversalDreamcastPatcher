@@ -192,7 +192,15 @@ namespace UniversalDreamcastPatcher.Core
         // reads in the same hunk. Returns raw 2352-byte sectors concatenated.
         public byte[] ReadSectors(long startSector, int count)
         {
-            byte[] result = new byte[count * ChdSectorDataSize];
+            return ReadSectors(startSector, count, ChdSectorDataSize);
+        }
+
+        // Same batched read with a caller-chosen byte count per frame. Tracks
+        // stored as 2048-byte data sectors keep that data at the start of each
+        // frame, so reading 2048 bytes per frame yields the user data directly.
+        public byte[] ReadSectors(long startSector, int count, int bytesPerSector)
+        {
+            byte[] result = new byte[count * bytesPerSector];
             int framesPerHunk = (int)(Header.HunkBytes / ChdFrameSize);
 
             IntPtr buffer = Marshal.AllocHGlobal((int)Header.HunkBytes);
@@ -213,7 +221,7 @@ namespace UniversalDreamcastPatcher.Core
                         lastHunk = hunkNum;
                     }
 
-                    Marshal.Copy(buffer + (frameInHunk * ChdFrameSize), result, i * ChdSectorDataSize, ChdSectorDataSize);
+                    Marshal.Copy(buffer + (frameInHunk * ChdFrameSize), result, i * bytesPerSector, bytesPerSector);
                 }
             }
             finally
