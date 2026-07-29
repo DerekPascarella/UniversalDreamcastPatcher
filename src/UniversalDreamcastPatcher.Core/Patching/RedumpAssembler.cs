@@ -98,7 +98,7 @@ public static class RedumpAssembler
 
         if (gdiSourceMode)
         {
-            // No CUE input. Mirror the rebuilt GDI's structure instead.
+            // GDI-source mode mirrors the rebuilt GDI's structure.
             // disc.gdi track types: 4 = MODE1/2352, 0 = AUDIO.
             sourceCueDir = options.RebuiltGdiFolder;
             sourceCueLines = Array.Empty<string>();
@@ -359,8 +359,7 @@ public static class RedumpAssembler
         if (cueText == null) return false;
 
         // HD data tracks first: those carry the patched filesystem, so patched
-        // discs bail out here immediately instead of after reconstructing all
-        // of the audio tracks.
+        // discs bail out here before any audio track is reconstructed.
         var order = hdDataIndices
             .Concat(Enumerable.Range(0, rebuiltTracks.Count).Where(i => !hdDataIndices.Contains(i)));
 
@@ -420,8 +419,7 @@ public static class RedumpAssembler
     // disc's TOC: track LBA (from disc.gdi) minus the track file's cumulative
     // start sector. For a typical GD-ROM this works out to 00:02:00 on audio
     // tracks and 00:03:00 on a final data track. Returns null when any track's
-    // numbers are inconsistent, in which case the caller must use the legacy
-    // packing instead.
+    // numbers are inconsistent, in which case the caller uses the legacy packing.
     private static string? BuildComputedRedumpCue(
         List<RebuiltTrack> rebuiltTracks,
         List<string> trackTypes,
@@ -561,8 +559,8 @@ public static class RedumpAssembler
     {
         var sb = new StringBuilder();
         int totalTracks = outputTrackFiles.Length;
-        // Empty sourceCueLines means GDI-source mode. Emit the REM
-        // area markers unconditionally (a GDI doesn't carry that hint).
+        // Empty sourceCueLines means GDI-source mode. Emit the REM area
+        // markers unconditionally, since the hint lives only in a CUE.
         bool sourceHasSdRem = sourceCueLines.Length == 0
             || sourceCueLines.Any(l => l.TrimStart().StartsWith("REM SINGLE-DENSITY", StringComparison.OrdinalIgnoreCase));
         bool sourceHasHdRem = sourceCueLines.Length == 0

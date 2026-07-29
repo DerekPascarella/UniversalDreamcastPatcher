@@ -31,12 +31,12 @@ public static class RedumpReconstructor
     private const long PadBytes = (long)SectorSize * PadSectors;
     private const int SynthSectors = 150;
 
-    // Builds a Redump-form layout around patched track bytes when byte-exact
-    // reconstruction isn't possible (patched data). Computes delta between
-    // DAT-expected size and patched GDI size, infers the pregap/leadout
-    // pattern, and constructs an output of expected_size with the patched
-    // bytes placed in the right slot. Returns null when the delta doesn't
-    // match a known pattern (the caller falls back to legacy).
+    // Builds a Redump-form layout around patched track bytes, for tracks whose
+    // bytes have changed and can no longer hash-match the DAT. Computes delta
+    // between DAT-expected size and patched GDI size, infers the pregap/leadout
+    // pattern, and constructs an output of expected_size with the patched bytes
+    // placed in the right slot. Returns null when the delta matches no known
+    // pattern, and the caller falls back to legacy.
     public static byte[]? BuildHybridLayout(
         byte[] gdiBytes,
         bool gdiIsDataTrack,
@@ -54,7 +54,7 @@ public static class RedumpReconstructor
             return output;
         }
 
-        // 150 sectors trailing Mode-1 leadout (e.g. CCT T3 convention).
+        // 150 sectors trailing Mode-1 leadout (e.g., CCT T3 convention).
         if (delta == 150L * SectorSize)
         {
             if (gdiBytes.LongLength < SectorSize) return null;
@@ -73,7 +73,7 @@ public static class RedumpReconstructor
             int firstTime = DecodeMsfTime(gdiBytes, 12);
             byte[] leader = SynthesizeMode1Sectors(firstTime - 150, 150);
             var output = new byte[expectedSize];
-            // first 75 sectors stay zero from new byte[], then 150 Mode-1 sectors
+            // The first 75 sectors stay zero from new byte[], then 150 Mode-1 sectors follow.
             Array.Copy(leader, 0, output, 75L * SectorSize, leader.Length);
             Array.Copy(gdiBytes, 0, output, 225L * SectorSize, gdiBytes.Length);
             return output;

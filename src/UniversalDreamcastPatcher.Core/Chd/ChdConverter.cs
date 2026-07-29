@@ -46,7 +46,7 @@ namespace UniversalDreamcastPatcher.Core
 
                     var track = chd.Tracks[t];
 
-                    // Account for pregap in LBA but skip pregap data in output
+                    // Account for pregap in LBA, skipping the pregap data in the output.
                     currentLba += track.Pregap;
                     chdSectorOffset += track.Pregap;
 
@@ -73,7 +73,7 @@ namespace UniversalDreamcastPatcher.Core
                     currentLba += track.Frames;
                     chdSectorOffset += track.Frames + GetExtraFrames(track.Frames);
 
-                    // Insert high-density area gap after last low-density track
+                    // Insert the high-density area gap after the last low-density track.
                     if (track.TrackNumber < 3)
                     {
                         bool nextIsHd = (t + 1 < chd.Tracks.Count && chd.Tracks[t + 1].TrackNumber >= 3);
@@ -85,7 +85,7 @@ namespace UniversalDreamcastPatcher.Core
                     progress?.Report((processedTracks * 100) / trackCount);
                 }
 
-                // Write disc.gdi manifest
+                // Write the disc.gdi manifest.
                 string gdiPath = Path.Combine(outputDirectory, "disc.gdi");
                 await File.WriteAllTextAsync(gdiPath, gdiContent.ToString(), cancellationToken);
 
@@ -135,12 +135,12 @@ namespace UniversalDreamcastPatcher.Core
                     cueContent.AppendLine($"FILE \"{binFilename}\" BINARY");
                     cueContent.AppendLine($"  TRACK {track.TrackNumber:D2} {cueTrackType}");
 
-                    // Skip pregap frames in CHD, write only data frames to BIN
+                    // Skip the pregap frames in the CHD and write the data frames to the BIN.
                     chdSectorOffset += track.Pregap;
 
                     if (track.Pregap > 0 && track.TrackNumber > 1)
                     {
-                        // Add PREGAP directive for non-first tracks
+                        // Tracks after the first carry a PREGAP directive.
                         cueContent.AppendLine($"    PREGAP {FramesToMsf(track.Pregap)}");
                     }
 
@@ -160,7 +160,7 @@ namespace UniversalDreamcastPatcher.Core
                     progress?.Report((processedTracks * 100) / trackCount);
                 }
 
-                // Write CUE sheet
+                // Write the CUE sheet.
                 string baseName = Path.GetFileNameWithoutExtension(chdPath);
                 string cuePath = Path.Combine(outputDirectory, baseName + ".cue");
                 await File.WriteAllTextAsync(cuePath, cueContent.ToString(), cancellationToken);

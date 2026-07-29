@@ -62,7 +62,7 @@ public sealed class ExternalDatFile
         => new(filePath, "—", new Dictionary<uint, ExternalDiscEntry>(), isMissing: true);
 
     // Parses a Logiqx XML DAT. Returns null + populates errorMessage on any
-    // parse failure (not XML, no <datafile>, no games with a Track 1, etc.).
+    // parse failure (malformed XML, missing <datafile>, no games with a Track 1).
     public static ExternalDatFile? TryLoad(string filePath, out string? errorMessage)
     {
         errorMessage = null;

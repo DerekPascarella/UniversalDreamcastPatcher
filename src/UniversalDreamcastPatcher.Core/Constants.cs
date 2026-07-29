@@ -1,6 +1,6 @@
-﻿// AUTO-GENERATED FILE - Version is read from ../../version.txt during build.
-// Do not edit by hand - update ../../version.txt for the version, or
-// UpdateVersion.ps1 to change anything else in this file.
+﻿// AUTO-GENERATED FILE. Version is read from ../../version.txt during build.
+// Edit ../../version.txt for the version, or UpdateVersion.ps1 for anything
+// else in this file.
 // Written by Derek Pascarella (ateam)
 
 namespace UniversalDreamcastPatcher.Core;

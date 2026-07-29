@@ -5,7 +5,7 @@
              RequestedThemeVariant="Light">
 
     <!-- Override Avalonia's hardcoded "About Avalonia" entry in the macOS app menu.
-         Defining a NativeMenu here suppresses CreateDefaultAppMenu(); the standard
+         Defining a NativeMenu here suppresses CreateDefaultAppMenu(). The standard
          Services/Hide/Quit items are still appended automatically. -->
     <NativeMenu.Menu>
         <NativeMenu>

@@ -69,8 +69,8 @@ namespace UniversalDreamcastPatcher.Core
     }
 
     // Strongly-typed view of an IP.BIN's meta header. Values are stored
-    // exactly as given - malformed inputs load fine and the editor flags
-    // them via Validate(), rather than blowing up on parse.
+    // exactly as given, so malformed inputs load and the editor flags them
+    // via Validate().
     public sealed class IpBinMetadata
     {
         public const string HardwareIdConst = "SEGA SEGAKATANA ";

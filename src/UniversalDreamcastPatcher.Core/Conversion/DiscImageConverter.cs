@@ -127,7 +127,7 @@ public static class DiscImageConverter
         IProgress<string>? progress,
         CancellationToken ct)
     {
-        // Same-format short circuit (not exposed in UI, defensive only).
+        // Same-format short circuit. Defensive only, since the UI omits this option.
         if (IsSameFormat(source, target))
         {
             progress?.Report("Copying source disc image...");

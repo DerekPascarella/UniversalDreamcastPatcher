@@ -43,8 +43,7 @@
         <!-- Editor subtabs -->
         <TabControl x:Name="EditorSubTabs" SelectedIndex="0" IsEnabled="False" Padding="0">
             <TabControl.Styles>
-                <!-- Nudge the sub-tab font a touch smaller than the
-                     parent strip so the hierarchy reads visually. -->
+                <!-- Sub-tab font sits a touch smaller than the parent strip. -->
                 <Style Selector="TabItem">
                     <Setter Property="FontSize" Value="16" />
                 </Style>

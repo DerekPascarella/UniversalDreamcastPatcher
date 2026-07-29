@@ -13,8 +13,8 @@ public sealed class DiscImageEmitOptions
     // Source GDI folder (disc.gdi + tracks). The emitter only reads from it.
     public string GdiFolder { get; set; } = string.Empty;
 
-    // CueBin or ChdGdRom. GDI target is not handled here: a GDI input is
-    // already a GDI output, so no emit step is needed.
+    // CueBin or ChdGdRom. A GDI input is already a GDI output, so the emitter
+    // covers those two targets.
     public OutputDiscImageFormat TargetFormat { get; set; }
 
     // User's chosen output parent folder. The emitter creates "<BaseName> <suffix>"
@@ -26,7 +26,7 @@ public sealed class DiscImageEmitOptions
     // "<BaseName> (Track NN).bin").
     public string BaseName { get; set; } = string.Empty;
 
-    // When set, used as the final output folder instead of recomputing it from
+    // When set, this is the final output folder. Otherwise it comes from
     // OutputParentFolder + BaseName + format suffix.
     public string? ResolvedFinalUserFolder { get; set; }
 

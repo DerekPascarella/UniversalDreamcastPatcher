@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace UniversalDreamcastPatcher.Core
 {
     // P/Invoke around libchdw. Pass a .gdi for GD-ROM output or a .cue
-    // for CD-ROM output. libchdw decides based on the extension.
+    // for CD-ROM output. libchdw decides from the extension.
     public static class ChdWriter
     {
         private const string LibraryName = "libchdw";
@@ -62,7 +62,7 @@ namespace UniversalDreamcastPatcher.Core
             if (rc == CHDW_ERR_CANCELLED)
                 return (false, "Compression was cancelled");
 
-            // Drop the partial file so a retry isn't blocked by the existing-file check.
+            // Drop the partial file so a retry passes the existing-file check.
             try { if (File.Exists(outputChdPath)) File.Delete(outputChdPath); }
             catch { }
 

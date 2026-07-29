@@ -146,9 +146,9 @@ namespace UniversalDreamcastPatcher.Core
 
     // ---- Raw .bin ---------------------------------------------------------
 
-    // Flat 32,768-byte IP.BIN file. Uses the same signature-scan path
-    // as a disc image, so a 32,768-byte file that doesn't start with
-    // SEGA SEGAKATANA fails cleanly instead of pretending to be valid.
+    // Flat 32,768-byte IP.BIN file. Uses the same signature-scan path as a
+    // disc image, so a file lacking the SEGA SEGAKATANA signature fails the
+    // scan.
     public sealed class RawIpBinSource : IpBinFileSource
     {
         protected internal override Task ScanAsync(string path, IProgress<string>? progress, CancellationToken cancellationToken)
@@ -288,7 +288,7 @@ namespace UniversalDreamcastPatcher.Core
 
     // ---- CDI --------------------------------------------------------------
 
-    // No CDI footer/track parser. Just signature-scan the raw .cdi file.
+    // Signature-scans the raw .cdi file directly.
     public sealed class CdiIpBinSource : IpBinFileSource
     {
         protected internal override Task ScanAsync(string path, IProgress<string>? progress, CancellationToken cancellationToken)
@@ -368,7 +368,7 @@ namespace UniversalDreamcastPatcher.Core
             try { File.Replace(tempChd, SourcePath, null); }
             catch (PlatformNotSupportedException)
             {
-                // rename() is atomic on POSIX, no Delete+Move gap.
+                // rename() is atomic on POSIX.
                 File.Move(tempChd, SourcePath, overwrite: true);
             }
         }

@@ -131,8 +131,8 @@ public partial class BuildPatchView : UserControl
         _outputDcpPath.Text = EnsureSingleDcpExtension(picked.Path.LocalPath);
     }
 
-    // Normalize to exactly one ".dcp" suffix.
-    // File pickers auto-append on some platforms but not others.
+    // Normalize to exactly one ".dcp" suffix. Some platforms auto-append it
+    // in the file picker, so it can arrive doubled.
     private static string EnsureSingleDcpExtension(string path)
     {
         while (path.EndsWith(".dcp", StringComparison.OrdinalIgnoreCase))
@@ -227,7 +227,7 @@ public partial class BuildPatchView : UserControl
         if (_modifiedGdiPath != null) _modifiedGdiPath.Text = string.Empty;
         if (_outputDcpPath != null) _outputDcpPath.Text = string.Empty;
 
-        // Reset the IP.BIN options. Child controls grey out automatically via
+        // Reset the IP.BIN options. Child controls gray out automatically via
         // IsEnabled bindings on the parent checkboxes.
         if (_useCustomIpBin != null) _useCustomIpBin.IsChecked = false;
         if (_ipBinFromModified != null) _ipBinFromModified.IsChecked = true;

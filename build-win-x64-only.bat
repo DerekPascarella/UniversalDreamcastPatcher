@@ -2,9 +2,9 @@
 rem Inner-loop build script: win-x64 self-contained single-file publish only.
 rem Full cross-platform build is build.bat.
 rem
-rem NOTE: This script does NOT rebuild the native libraries under
-rem src\UniversalDreamcastPatcher.Core\runtimes\<rid>\native\. If anything in
-rem native\libchdw\ has changed since the last release, run
+rem NOTE: The native libraries under
+rem src\UniversalDreamcastPatcher.Core\runtimes\<rid>\native\ are reused as-is. If
+rem anything in native\libchdw\ has changed since the last release, run
 rem `bash native/libchdw/build-libchdw.sh` in WSL FIRST, otherwise the
 rem published binary will ship the previous libchdw build.
 rem
@@ -35,6 +35,16 @@ if exist "_localpkg\UdpNatives.*.nupkg" del /q "_localpkg\UdpNatives.*.nupkg"
 if exist "%USERPROFILE%\.nuget\packages\udpnatives" rd /s /q "%USERPROFILE%\.nuget\packages\udpnatives"
 dotnet pack native\UdpNativesPackage\UdpNativesPackage.csproj -o _localpkg --nologo >nul
 if %ERRORLEVEL% neq 0 goto :error
+echo.
+
+echo Formatting code...
+dotnet format UniversalDreamcastPatcher.sln
+if %ERRORLEVEL% neq 0 goto :error
+
+rem dotnet format reads C# only, so XAML line endings are handled separately.
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0normalize-xaml.ps1"
+if %ERRORLEVEL% neq 0 goto :error
+echo.
 
 dotnet publish src\UniversalDreamcastPatcher.App\UniversalDreamcastPatcher.App.csproj ^
     -c Release -r win-x64 --self-contained true ^

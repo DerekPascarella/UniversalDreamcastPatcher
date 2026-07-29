@@ -9,8 +9,8 @@ namespace UniversalDreamcastPatcher.Core;
 // One track line of a .gdi file:
 //   <track#> <lba> <type> <sector size> <filename> <offset>
 // Filenames containing spaces are quoted (chdman-style GDIs do this), and some
-// tools pad the numeric columns with extra whitespace, so parsing is done with
-// a quote-aware tokenizer rather than a plain space split.
+// tools pad the numeric columns with extra whitespace, so parsing uses a
+// quote-aware tokenizer.
 public readonly record struct GdiTrackLine(int TrackNumber, int Lba, int Type, int SectorSize, string FileName)
 {
     public static bool TryParse(string line, out GdiTrackLine track)

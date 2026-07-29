@@ -100,7 +100,7 @@ namespace UniversalDreamcastPatcher.Core
                 }
             }
 
-            // Determine if this is a GD-ROM (has HIGH-DENSITY AREA comment)
+            // A GD-ROM carries a HIGH-DENSITY AREA comment.
             IsGdRom = Tracks.Any(t => t.IsHighDensityArea);
         }
 
@@ -158,13 +158,13 @@ namespace UniversalDreamcastPatcher.Core
         {
             if (IsGdRom)
             {
-                // For GD-ROM, find the first data track after HIGH-DENSITY AREA marker
+                // For GD-ROM, find the first data track after the HIGH-DENSITY AREA marker.
                 return Tracks.FirstOrDefault(t => t.IsHighDensityArea && t.IsData)
                     ?? Tracks.FirstOrDefault(t => t.IsData);
             }
             else
             {
-                // For CD-ROM, use the first data track
+                // For CD-ROM, use the first data track.
                 return Tracks.FirstOrDefault(t => t.IsData);
             }
         }
@@ -186,8 +186,8 @@ namespace UniversalDreamcastPatcher.Core
 
             using var fs = new FileStream(binPath, FileMode.Open, FileAccess.Read);
 
-            // Search for the Dreamcast signature in the first few sectors
-            // The signature can be at different offsets depending on sector format
+            // Search for the Dreamcast signature in the first few sectors.
+            // Its offset varies with the sector format.
             long signatureOffset = FindSignature(fs, DreamcastSignature, Math.Min(fs.Length, SectorSize * 100));
 
             if (signatureOffset < 0)
@@ -195,7 +195,7 @@ namespace UniversalDreamcastPatcher.Core
 
             fs.Seek(signatureOffset, SeekOrigin.Begin);
 
-            // Read 512 bytes for IP.BIN parsing
+            // Read 512 bytes for IP.BIN parsing.
             byte[] buffer = new byte[512];
             int bytesRead = fs.Read(buffer, 0, buffer.Length);
 
@@ -222,13 +222,13 @@ namespace UniversalDreamcastPatcher.Core
                     matchIndex++;
                     if (matchIndex == signature.Length)
                     {
-                        // Found the signature, return position of its start
+                        // Found the signature, so return the position of its start.
                         return position - signature.Length + 1;
                     }
                 }
                 else
                 {
-                    // Reset match but check if current byte starts a new match
+                    // Reset the match, treating the current byte as a possible new start.
                     matchIndex = (b == signature[0]) ? 1 : 0;
                 }
 

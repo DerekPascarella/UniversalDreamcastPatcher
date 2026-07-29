@@ -13,7 +13,7 @@ namespace UniversalDreamcastPatcher.Core.Patching;
 // and the 92-byte region strings via a 20-byte preamble signature.
 // Both spans fit inside one Mode1/2352 sector's user data, so byte
 // writes work against raw .bin, GDI tracks, CUE/BIN tracks, and CDI
-// files alike without any sector-encoding awareness.
+// files alike.
 public static class IpBinPatcher
 {
     public const int IpBinSize = 0x8000;
@@ -55,9 +55,9 @@ public static class IpBinPatcher
     // The four bytes between region strings. Same in every commercial disc.
     private static readonly byte[] RegionStringSeparator = { 0x0E, 0xA0, 0x09, 0x00 };
 
-    // 20 bytes that always sit right before the Japan region string. We
-    // signature-scan for this so the search works regardless of whether
-    // the file is sector-encoded (GDI/CUE/CDI) or flat (raw .bin).
+    // 20 bytes that always sit right before the Japan region string. A
+    // signature scan finds it whether the file is sector-encoded
+    // (GDI/CUE/CDI) or flat (raw .bin).
     private static readonly byte[] RegionPreambleSignature =
     {
         0x00, 0x38, 0x00, 0x70, 0x00, 0xE0, 0x01, 0xC0,
@@ -125,9 +125,8 @@ public static class IpBinPatcher
 
     // ------ IP.BIN Editor flow ------
 
-    // Pull a metadata model out of the 256-byte meta header. Doesn't
-    // throw on bad data - bogus fields come through as-is and are
-    // flagged by IpBinMetadata.Validate() instead.
+    // Pull a metadata model out of the 256-byte meta header. Bogus fields
+    // come through as-is and are flagged by IpBinMetadata.Validate().
     public static IpBinMetadata ParseMetaHeader(byte[] metaHeader)
     {
         if (metaHeader == null) throw new ArgumentNullException(nameof(metaHeader));
@@ -200,7 +199,7 @@ public static class IpBinPatcher
 
     // Build the 92-byte region-strings block. Each 28-byte slot gets
     // its canonical string when the region is checked, or 28 spaces
-    // when it isn't. The two 4-byte separators are always the same.
+    // otherwise. The two 4-byte separators are always the same.
     public static byte[] SerializeRegionStrings(IpBinMetadata metadata)
     {
         if (metadata == null) throw new ArgumentNullException(nameof(metadata));
@@ -364,7 +363,7 @@ public static class IpBinPatcher
             : IpBinMediaType.GdRom;
         var num = int.Parse(match.Groups[2].Value);
         var count = int.Parse(match.Groups[3].Value);
-        // 0 isn't a valid disc number or count - leave the defaults (1/1).
+        // Disc number and count start at 1, so leave the defaults (1/1).
         if (num >= 1 && count >= 1)
         {
             metadata.DiscNumber = num;

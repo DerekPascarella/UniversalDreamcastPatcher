@@ -399,7 +399,7 @@ public static class UpdateManager
         }
         catch
         {
-            // tar not available
+            // tar is unavailable.
         }
 
         throw new UpdateException(
@@ -577,6 +577,14 @@ public static class UpdateManager
         Environment.Exit(0);
     }
 
+    // The script templates below are verbatim string literals, so their line endings
+    // follow this source file. Pinning them here keeps cmd.exe and bash working on
+    // whatever endings the file is stored with.
+    private static string WithLineEndings(string text, string lineEnding)
+    {
+        return text.Replace("\r\n", "\n").Replace('\r', '\n').Replace("\n", lineEnding);
+    }
+
     private static string GenerateWindowsScript(int pid, string extractedDir, string appDir)
     {
         var escaped_extracted = extractedDir.Replace("/", "\\");
@@ -587,10 +595,10 @@ public static class UpdateManager
 
         // Wait-Process avoids parsing tasklist output and returns immediately
         // if the PID is already gone.
-        // xcopy overwrites the install dir's files in place. It does NOT remove
-        // unrelated files, so users who placed the exe inside a shared folder
-        // like Downloads keep their other files intact across updates.
-        return $@"@echo off
+        // xcopy overwrites matching files in place and leaves the rest of the
+        // install directory alone, so users who keep the exe in a shared folder
+        // like Downloads keep their other files across updates.
+        return WithLineEndings($@"@echo off
 powershell -NoProfile -Command ""Wait-Process -Id {pid} -ErrorAction SilentlyContinue""
 
 echo {InstallMarker}> ""{lockPath}""
@@ -605,7 +613,7 @@ del /F /Q ""{lockPath}"" 2>NUL
 start """" ""{exePath}""
 
 del ""%~f0""
-";
+", "\r\n");
     }
 
     private static string GenerateUnixScript(int pid, string extractedDir, string appDir)
@@ -615,11 +623,10 @@ del ""%~f0""
         var lockPath = GetLockFilePath();
         var exePath = $"{escaped_app}/{Constants.AppExecutableBase}";
 
-        // cp overwrites the install dir's files in place. It does NOT remove
-        // unrelated files, so users who placed the binary inside a shared folder
-        // like ~/Downloads keep their other files intact across updates. The
-        // "/." idiom copies dotfiles too.
-        return $@"#!/bin/bash
+        // cp overwrites matching files in place and leaves the rest of the install
+        // directory alone, so users who keep the binary in a shared folder like
+        // ~/Downloads keep their other files. The "/." idiom copies dotfiles too.
+        return WithLineEndings($@"#!/bin/bash
 
 # Wait for the previous process to exit.
 while kill -0 {pid} 2>/dev/null; do
@@ -643,12 +650,12 @@ chmod +x ""{exePath}""
 
 # Self-delete this script.
 rm ""$0""
-";
+", "\n");
     }
 
     public static void CleanupStaleStagingData()
     {
-        // Don't touch the staging dir or scripts while another instance (or an
+        // Leave the staging dir and scripts in place while another instance (or an
         // active updater script) is installing. Removing them would corrupt the install.
         if (IsAnotherInstanceUpdating())
             return;

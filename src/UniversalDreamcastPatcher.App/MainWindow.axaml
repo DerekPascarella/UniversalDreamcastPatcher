@@ -21,7 +21,7 @@
 
     <DockPanel LastChildFill="True">
 
-        <!-- Logo fills full width, no side margins -->
+        <!-- Logo fills the full width, with no side margins. -->
         <Image DockPanel.Dock="Top"
                x:Name="HeaderLogo"
                Source="avares://UniversalDreamcastPatcher/Assets/udp_logo.png"

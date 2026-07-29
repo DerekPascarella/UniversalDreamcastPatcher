@@ -294,18 +294,18 @@ namespace UniversalDreamcastPatcher.Core
 
         // Skips the requested number of frames from the start of the source
         // (used to drop pregap data from multi-index tracks). Returns the
-        // sector count actually written.
+        // sector count written.
         private static async Task<int> CopyFileWithOffsetAsync(string source, string destination, int framesToSkip, CancellationToken cancellationToken)
         {
             const int bufferSize = 81920; // 80KB buffer
             using var sourceStream = new FileStream(source, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan);
             using var destStream = new FileStream(destination, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, FileOptions.Asynchronous | FileOptions.SequentialScan);
 
-            // Seek to the offset (matching original: stream1.Position = frames * count)
+            // Seek past the frames being skipped.
             long bytesToSkip = (long)framesToSkip * SectorSize;
             sourceStream.Seek(bytesToSkip, SeekOrigin.Begin);
 
-            // Calculate sectors to write (matching original: (stream1.Length - stream1.Position) / count)
+            // Sectors remaining after the skip.
             long bytesRemaining = sourceStream.Length - sourceStream.Position;
             int sectorsToWrite = (int)(bytesRemaining / SectorSize);
 

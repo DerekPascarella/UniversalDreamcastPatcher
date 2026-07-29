@@ -26,9 +26,9 @@ public class AppSettings
 
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 
-    // Returns the directory the .exe was launched from.
-    // AppContext.BaseDirectory can't be used here: under PublishSingleFile +
-    // IncludeAllContentForSelfExtract it returns the %TEMP% extraction path.
+    // Returns the directory the .exe was launched from. Under PublishSingleFile
+    // with IncludeAllContentForSelfExtract, AppContext.BaseDirectory points at
+    // the %TEMP% extraction path.
     public static string GetAppDirectory()
     {
         var processPath = Environment.ProcessPath;
@@ -80,7 +80,7 @@ public class AppSettings
         }
         catch
         {
-            // settings file might be read-only or inaccessible
+            // The settings file might be read-only or inaccessible.
         }
     }
 }

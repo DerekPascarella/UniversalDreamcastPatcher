@@ -59,9 +59,9 @@
                                 <Setter Property="Foreground" Value="#c92020" />
                             </Style>
 
-                            <!-- White text on every row cell when selected.
-                                 Scoped to .row so the tooltip popup's TextBlock
-                                 (a logical descendant of the LBI) isn't affected. -->
+                            <!-- White text on every row cell when selected. Scoped to .row
+                                 so it stops short of the tooltip popup's TextBlock,
+                                 a logical descendant of the LBI. -->
                             <Style Selector="ListBoxItem:selected TextBlock.row">
                                 <Setter Property="Foreground" Value="White" />
                             </Style>

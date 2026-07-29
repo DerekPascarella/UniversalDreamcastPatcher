@@ -20,9 +20,11 @@ The application accepts any TOSEC-style GDI, Redump-style CUE/BIN, or compressed
 9. [Legal and Licensing](https://github.com/DerekPascarella/UniversalDreamcastPatcher#legal-and-licensing)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [2.1.5](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.4).
+The latest version of Universal Dreamcast Patcher is [2.1.6](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.6).
 
 ## Changelog
+- **Version 2.1.6** (2026-07-29)
+  - Linux auto-updater is no longer broken (see [Issue 25](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/25)).
 - **Version 2.1.5** (2026-07-28)
   - Added support for CHDs with 2048 bytes-per-sector data tracks (see [Issue 21](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/21)).
   - CUE/BIN output now properly re-encodes ISO-format (2048 bytes-per-sector) data tracks (see [Issue 22](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/22)).

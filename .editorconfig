@@ -1,0 +1,20 @@
+root = true
+
+# Line endings only. dotnet format reads this on every build, so the rules below
+# are what normalize the tree. Every setting here is end_of_line, so indentation
+# and spacing stay as written.
+
+[*.{cs,xaml,axaml}]
+end_of_line = lf
+
+# cmd.exe can mis-parse labels and goto in an LF batch file.
+[*.{bat,cmd}]
+end_of_line = crlf
+
+[*.sh]
+end_of_line = lf
+
+# Vendored sources sit outside the LF rule above, so dotnet format gives them the
+# platform default of CRLF.
+[src/UniversalDreamcastPatcher.Core/DiscUtilsGD/**]
+end_of_line = unset

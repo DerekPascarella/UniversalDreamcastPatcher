@@ -609,16 +609,14 @@ public partial class IpBinEditorView : UserControl
         _ => field.ToString(),
     };
 
-    // ---- Reset all -------------------------------------------------------
-
     // ---- Save changes ----------------------------------------------------
 
     private async Task SaveChangesClicked()
     {
         if (_source == null) return;
         var meta = GatherMetadataFromUi();
-        // Save shouldn't be clickable with blocking issues outstanding.
-        // Bail anyway in case the gating got out of sync.
+        // Gating keeps Save disabled while blocking issues stand. Bail anyway
+        // in case it fell out of sync.
         if (meta.Validate().Any(i => i.Severity == ValidationSeverity.Block)) return;
 
         var warnings = meta.Validate().Where(i => i.Severity == ValidationSeverity.Warn).ToList();

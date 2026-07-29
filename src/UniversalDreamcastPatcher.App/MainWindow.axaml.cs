@@ -192,8 +192,8 @@ public partial class MainWindow : Window
     {
         try
         {
-            // This was awaited from the UI thread, so the continuation runs on it.
-            // No Dispatcher hop needed before showing dialogs.
+            // This was awaited from the UI thread, so the continuation runs on it
+            // and dialogs can show directly.
             var result = await UpdateManager.CheckForUpdateAsync();
 
             if (result.ManualUpdateRequired && !UpdateAvailableDialog.ShouldSkipVersion(result.LatestTag))
@@ -215,7 +215,7 @@ public partial class MainWindow : Window
         }
         catch
         {
-            // Don't surface update-check failures at startup.
+            // Update-check failures stay silent at startup.
         }
     }
 

@@ -69,7 +69,7 @@ public static class SourceFormatDetector
         }
         catch
         {
-            // Unreadable .gdi - let the normal loading paths report it.
+            // Unreadable .gdi. Let the normal loading paths report it.
             return false;
         }
     }
@@ -81,8 +81,7 @@ public static class SourceFormatDetector
     // Conversion discs ship a decoy filesystem. The PVD declares a tiny volume,
     // the boot binary's directory entry points far outside it, and the real
     // game data has no directory entries at all. Retail discs keep the volume
-    // size and the file extents consistent with the tracks, so those two
-    // checks are enough to tell them apart.
+    // size and the file extents consistent with the tracks.
     public static bool IsConversionGdi(string gdiPath)
     {
         try
@@ -289,7 +288,7 @@ public static class SourceFormatDetector
         }
         catch
         {
-            // Unreadable CHD - let the UI decide how to handle it.
+            // Unreadable CHD. Let the UI decide how to handle it.
             return DetectedSourceFormat.Unknown;
         }
     }

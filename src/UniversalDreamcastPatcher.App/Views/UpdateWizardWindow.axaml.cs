@@ -129,7 +129,7 @@ public partial class UpdateWizardWindow : Window
         }
         catch (OperationCanceledException)
         {
-            // user cancelled
+            // The user canceled.
         }
         catch (Exception ex)
         {
@@ -147,7 +147,7 @@ public partial class UpdateWizardWindow : Window
         CancelDownloadButton.IsEnabled = false;
 
         // LaunchUpdaterAndExit calls Environment.Exit, which skips Closing events.
-        // Save the window position now so it isn't lost.
+        // Save the window position here so it persists.
         SaveParentWindowPosition();
 
         UpdateManager.LaunchUpdaterAndExit();

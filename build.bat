@@ -3,9 +3,9 @@ rem Full cross-platform release build: win-x86, win-x64, linux-x64, osx-x64, osx
 rem Produces self-contained single-file publishes in _releases/.
 rem Requires: VS 2022 with .NET 8 SDK, WSL for the macOS .app bundle step.
 rem
-rem NOTE: This script does NOT rebuild the native libraries under
-rem src\UniversalDreamcastPatcher.Core\runtimes\<rid>\native\. If anything in
-rem native\libchdw\ has changed since the last release, run
+rem NOTE: The native libraries under
+rem src\UniversalDreamcastPatcher.Core\runtimes\<rid>\native\ are reused as-is. If
+rem anything in native\libchdw\ has changed since the last release, run
 rem `bash native/libchdw/build-libchdw.sh` in WSL FIRST, otherwise the
 rem published bundles will ship the previous libchdw build.
 rem
@@ -41,6 +41,10 @@ echo.
 echo Formatting code...
 dotnet format UniversalDreamcastPatcher.sln
 if %ERRORLEVEL% neq 0 goto :error
+
+rem dotnet format reads C# only, so XAML line endings are handled separately.
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0normalize-xaml.ps1"
+if %ERRORLEVEL% neq 0 goto :error
 echo.
 
 echo Cleaning previous release output...
@@ -68,7 +72,7 @@ call :build_linux
 if %ERRORLEVEL% neq 0 goto :error
 
 rem ----- osx-x64 -----
-rem Inlined (rather than a :build_macos subroutine) because cmd.exe loses its
+rem Inlined because cmd.exe loses its
 rem read pointer in the .bat file across consecutive `call`s that invoke
 rem `wsl bash`, producing a phantom "system cannot find the batch label" on the
 rem second call. Inlining keeps cmd's parser stable.
@@ -174,10 +178,9 @@ if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
 copy /Y LICENSE.txt "%OUT%\" >nul 2>&1
 copy /Y README.txt  "%OUT%\" >nul 2>&1
 
-rem Tar from inside WSL so we can chmod +x the binary first. Cmd.exe's native
-rem tar doesn't preserve Unix exec bits (Windows files don't carry them), and
-rem dotnet publish on Windows can't set +x either, so the binary lands in the
-rem archive as 0644 and Linux users can't run it without a manual chmod.
+rem Tar from inside WSL to chmod +x the binary first. Cmd.exe's native tar
+rem drops Unix exec bits, and dotnet publish on Windows leaves them unset, so
+rem the binary would land in the archive as 0644 and need a manual chmod.
 wsl bash -c "chmod +x '_releases/UniversalDreamcastPatcher.v%VERSION%-linux-x64/UniversalDreamcastPatcher' && cd _releases && tar -czf UniversalDreamcastPatcher.v%VERSION%-linux-x64.tar.gz UniversalDreamcastPatcher.v%VERSION%-linux-x64" < NUL
 if %ERRORLEVEL% neq 0 echo Warning: failed to tar.gz linux-x64
 

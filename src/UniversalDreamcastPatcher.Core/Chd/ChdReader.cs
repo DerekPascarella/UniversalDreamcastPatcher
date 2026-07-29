@@ -15,14 +15,14 @@ namespace UniversalDreamcastPatcher.Core
         private const int ChdSectorDataSize = 2352;
         private const int TrackPadding = 4; // chdman aligns each track to 4-frame boundaries
 
-        // Metadata tags (big-endian 4CC as uint32)
+        // Metadata tags (big-endian 4CC as uint32).
         private const uint GDROM_TRACK_METADATA_TAG = 0x43484744; // 'CHGD'
         private const uint GDROM_OLD_METADATA_TAG = 0x43484754; // 'CHGT'
         private const uint CDROM_TRACK_METADATA2_TAG = 0x43485432; // 'CHT2'
         private const uint CDROM_TRACK_METADATA_TAG = 0x43485452; // 'CHTR'
         private const uint CDROM_OLD_METADATA_TAG = 0x43484344; // 'CHCD'
 
-        // chd_header field offsets (verified via offsetof on x64 Linux/Windows)
+        // chd_header field offsets (verified via offsetof on x64 Linux/Windows).
         private const int HeaderOffset_Version = 4;
         private const int HeaderOffset_HunkBytes = 28;
         private const int HeaderOffset_TotalHunks = 32;
@@ -74,7 +74,7 @@ namespace UniversalDreamcastPatcher.Core
             var tracks = new List<ChdTrack>();
             bool isGdRom = false;
 
-            // Try GD-ROM metadata first
+            // Try GD-ROM metadata first.
             if (TryReadTracksWithTag(GDROM_TRACK_METADATA_TAG, tracks, isGdRomTag: true))
             {
                 isGdRom = true;
@@ -83,7 +83,7 @@ namespace UniversalDreamcastPatcher.Core
             {
                 isGdRom = true;
             }
-            // Then try CD-ROM metadata
+            // Then try CD-ROM metadata.
             else if (!TryReadTracksWithTag(CDROM_TRACK_METADATA2_TAG, tracks, isGdRomTag: false))
             {
                 if (!TryReadTracksWithTag(CDROM_TRACK_METADATA_TAG, tracks, isGdRomTag: false))
@@ -255,7 +255,7 @@ namespace UniversalDreamcastPatcher.Core
                     if (track.IsData && track.TrackNumber >= 3)
                         return currentSector + track.Pregap;
 
-                    // Total stored per track: pregap + frames + alignment padding
+                    // Total stored per track: pregap + frames + alignment padding.
                     currentSector += track.Pregap + track.Frames
                         + GetExtraFrames(track.Frames);
                 }

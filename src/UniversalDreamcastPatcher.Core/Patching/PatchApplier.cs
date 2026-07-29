@@ -143,7 +143,7 @@ public static class PatchApplier
                 return result;
             }
 
-            // If the DCP bundles an IP.BIN, use it instead of the source disc's.
+            // A DCP that bundles an IP.BIN supplies it, overriding the source disc's.
             var patchBootsector = Path.Combine(patchDir, "bootsector", "IP.BIN");
             if (File.Exists(patchBootsector))
             {
@@ -434,8 +434,8 @@ public static class PatchApplier
             {
                 result.CddaTracks.Add(track);
             }
-            // Extra HD data tracks (track 5+) aren't tracked here. Their content is
-            // already in sourceDir, and GDromBuilder rebuilds the layout from it.
+            // Extra HD data tracks (track 5+) stay in sourceDir, and GDromBuilder
+            // rebuilds the layout from them.
         }
 
         return result;
