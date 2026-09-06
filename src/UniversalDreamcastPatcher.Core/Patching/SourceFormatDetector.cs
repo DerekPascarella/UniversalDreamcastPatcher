@@ -81,7 +81,7 @@ public static class SourceFormatDetector
     // Conversion discs ship a decoy filesystem. The PVD declares a tiny volume,
     // the boot binary's directory entry points far outside it, and the real
     // game data has no directory entries at all. Retail discs keep the volume
-    // size and the file extents consistent with the tracks.
+    // size consistent with the tracks.
     public static bool IsConversionGdi(string gdiPath)
     {
         try
@@ -95,7 +95,6 @@ public static class SourceFormatDetector
                 if (GdiTrackLine.TryParse(lines[i], out var t)) tracks.Add(t);
             if (tracks.Count < 3) return false;
 
-            var regions = new List<(long Start, long End)>();
             var spans = new List<HdDataSpan>();
             foreach (var t in tracks)
             {
@@ -103,7 +102,6 @@ public static class SourceFormatDetector
                 var file = new FileInfo(Path.Combine(folder, t.FileName));
                 if (!file.Exists) return false;
                 long sectors = file.Length / t.SectorSize;
-                regions.Add((t.Lba, t.Lba + sectors));
                 if (t.TrackNumber >= 3 && t.Type == 4)
                     spans.Add(new HdDataSpan(t.Lba, sectors, t.SectorSize, file.FullName));
             }
@@ -124,7 +122,6 @@ public static class SourceFormatDetector
             long rootBytes = BitConverter.ToUInt32(pvd, 166);
 
             bool anyOutsideVolume = false;
-            bool anyUnbacked = false;
 
             var pending = new Stack<(long Extent, long Bytes)>();
             pending.Push((rootExtent, rootBytes));
@@ -136,12 +133,8 @@ public static class SourceFormatDetector
                 if (!visited.Add(extent)) continue;
 
                 var data = ReadHdSectors(spans, extent, (bytes + 2047) / 2048);
-                if (data == null)
-                {
-                    // The directory itself lives outside every data track.
-                    anyUnbacked = true;
-                    continue;
-                }
+                // The directory itself lives outside every data track.
+                if (data == null) continue;
 
                 long offset = 0;
                 while (offset < bytes)
@@ -177,18 +170,10 @@ public static class SourceFormatDetector
                     long recSectors = (recBytes + 2047) / 2048;
                     if (recExtent < baseLba || recExtent + recSectors > volumeEnd)
                         anyOutsideVolume = true;
-
-                    // Retail discs let the last file run up to 150 sectors
-                    // past the dumped track data, so only a start outside
-                    // every track or a larger overrun counts as a violation.
-                    if (!SectorBacked(regions, recExtent) ||
-                        UnbackedSectors(regions, recExtent, recSectors) > 150)
-                        anyUnbacked = true;
                 }
             }
 
-            bool decoyVolume = anyOutsideVolume && volumeSpace * 10 < hdDataSectors;
-            return decoyVolume || anyUnbacked;
+            return anyOutsideVolume && volumeSpace * 10 < hdDataSectors;
         }
         catch
         {
@@ -245,36 +230,6 @@ public static class SourceFormatDetector
             if (n == 0) throw new IOException("Short read while loading high density sector data.");
             readTotal += n;
         }
-    }
-
-    private static bool SectorBacked(List<(long Start, long End)> regions, long lba)
-    {
-        foreach (var (a, b) in regions)
-            if (a <= lba && lba < b) return true;
-        return false;
-    }
-
-    // Counts extent sectors that no track region covers, audio included.
-    // Retail discs list CDDA as files whose extents sit inside audio
-    // tracks, so those count as valid backing.
-    private static long UnbackedSectors(List<(long Start, long End)> regions, long extent, long sectors)
-    {
-        var need = new List<(long Start, long End)> { (extent, extent + sectors) };
-        foreach (var (a, b) in regions)
-        {
-            var next = new List<(long Start, long End)>();
-            foreach (var (x, y) in need)
-            {
-                if (b <= x || a >= y) { next.Add((x, y)); continue; }
-                if (x < a) next.Add((x, a));
-                if (y > b) next.Add((b, y));
-            }
-            need = next;
-            if (need.Count == 0) return 0;
-        }
-        long total = 0;
-        foreach (var (x, y) in need) total += y - x;
-        return total;
     }
 
     private static DetectedSourceFormat DetectChdContents(string chdPath)

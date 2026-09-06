@@ -25,7 +25,7 @@
             <Grid ColumnDefinitions="*,Auto">
                 <TextBox Grid.Column="0"
                          x:Name="SourcePath"
-                         Watermark="Select a .gdi, .cue, .chd, or IP.BIN file..."
+                         Watermark="Select a .gdi, .cue, .cdi, .chd, or IP.BIN file..."
                          IsReadOnly="True" />
                 <Button Grid.Column="1"
                         Content="Browse..."

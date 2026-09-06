@@ -20,9 +20,12 @@ The application accepts any TOSEC-style GDI, Redump-style CUE/BIN, or compressed
 9. [Legal and Licensing](https://github.com/DerekPascarella/UniversalDreamcastPatcher#legal-and-licensing)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [2.1.6](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.6).
+The latest version of Universal Dreamcast Patcher is [2.1.7](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.7).
 
 ## Changelog
+- **Version 2.1.7** (2026-09-06)
+  - IP.BIN editor now clearly states support for CDI disc images (see [Issue 26](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/26)).
+  - Atomiswave/NAOMI GDI detection false-positives fixed (see [Issue 27](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/27)).
 - **Version 2.1.6** (2026-07-29)
   - Linux auto-updater is no longer broken (see [Issue 25](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/25)).
 - **Version 2.1.5** (2026-07-28)
@@ -195,7 +198,7 @@ All modified or new files reside in the root of the patch. Likewise, all folders
 </p>
 
 ## Editing IP.BIN
-<img align="right" width="320" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/screenshot_ipbin_editor.png?raw=true"> Universal Dreamcast Patcher includes a full `IP.BIN` editor for inspecting and modifying the Dreamcast bootsector. The editor accepts either a disc image (GDI, CUE/BIN, or CHD) or a standalone `IP.BIN` file. When a disc image is loaded, the editor reads `IP.BIN` from the disc and, on save, writes the modified bootsector back into the original disc image in place, preserving the disc's format.
+<img align="right" width="320" src="https://github.com/DerekPascarella/UniversalDreamcastPatcher/blob/main/screenshots/screenshot_ipbin_editor.png?raw=true"> Universal Dreamcast Patcher includes a full `IP.BIN` editor for inspecting and modifying the Dreamcast bootsector. The editor accepts either a disc image (GDI, CUE/BIN, CHD, or CDI) or a standalone `IP.BIN` file. When a disc image is loaded, the editor reads `IP.BIN` from the disc and, on save, writes the modified bootsector back into the original disc image in place, preserving the disc's format.
 
 Editable fields are organized across three sub-tabs.
 
@@ -206,7 +209,7 @@ Editable fields are organized across three sub-tabs.
 The steps for editing `IP.BIN` are as follows.
 
 1. Select the **IP.BIN Editor** tab.
-2. Next to **Source disc image or IP.BIN**, click "Browse..." and select a `.gdi`, `.cue`, `.chd`, or `IP.BIN` file.
+2. Next to **Source disc image or IP.BIN**, click "Browse..." and select a `.gdi`, `.cue`, `.cdi`, `.chd`, or `IP.BIN` file.
 3. Edit fields across the **Identification**, **Disc / Region**, and **Peripherals** sub-tabs.
 4. Click **Save Changes**.
 
