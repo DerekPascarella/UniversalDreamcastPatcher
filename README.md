@@ -20,9 +20,12 @@ The application accepts any TOSEC-style GDI, Redump-style CUE/BIN, or compressed
 9. [Legal and Licensing](https://github.com/DerekPascarella/UniversalDreamcastPatcher#legal-and-licensing)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [2.1.7](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.7).
+The latest version of Universal Dreamcast Patcher is [2.1.8](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.8).
 
 ## Changelog
+- **Version 2.1.8** (2026-10-15)
+  - Fixed loss of custom IP.BIN data when applying patches (see [Issue 30](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/30)).
+  - Patch completion dialog now reports overwritten files separately (see [Issue 31](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/31)).
 - **Version 2.1.7** (2026-09-06)
   - IP.BIN editor now clearly states support for CDI disc images (see [Issue 26](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/26)).
   - Atomiswave/NAOMI GDI detection false-positives fixed (see [Issue 27](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/27)).

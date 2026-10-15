@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers.Binary;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -64,6 +65,13 @@ namespace DiscUtils.Gdrom
         public string LastTrackPath { get; set; }
         public bool RawMode { get; set; }
         public bool TruncateData { get; set; }
+        // The source descriptor bounds existing TOC entries and identifies removed tracks.
+        public List<DiscTrack> SourceTracks { get; set; }
+        /// <summary>
+        /// Resolves ambiguous DCP track data before any changes. Return true to preserve
+        /// IP.BIN, false to update its track entries, or throw OperationCanceledException to cancel.
+        /// </summary>
+        public Func<bool> PreserveCustomIpBin { get; set; }
         #endregion
         #region Private Fields
         private byte[] _ipbinData = new byte[0x8000];
@@ -553,23 +561,80 @@ namespace DiscUtils.Gdrom
 
         private void UpdateIPBIN(byte[] ipbinData, List<DiscTrack> tracks)
         {
-            //Tracks 03 to 99, 1 and 2 were in the low density area
-            for (int t = 0; t < 97; t++)
+            if (tracks.Count == 0 || tracks.Count > 97)
+                throw new InvalidOperationException("A GD-ROM must have between 1 and 97 high-density tracks.");
+            if (PreserveCustomIpBin != null)
             {
-                uint dcLBA = 0xFFFFFF;
-                byte dcType = 0xFF;
-                if (t < tracks.Count)
+                int entryCount = Math.Max(tracks.Count, Math.Min(SourceTracks?.Count ?? 0, 97));
+                bool hasTocSignature = Encoding.ASCII.GetString(ipbinData, 0x100, 4) == "TOC1";
+                bool needsDecision = false;
+                for (int t = 0; t < entryCount; t++)
                 {
-                    DiscTrack track = tracks[t];
-                    dcLBA = track.LBA + 150;
-                    dcType = (byte)((track.Type << 4) | 0x1);
+                    uint entry = BinaryPrimitives.ReadUInt32LittleEndian(ipbinData.AsSpan(0x104 + t * 4, 4));
+                    uint rebuilt = t < tracks.Count ? GetTocEntry(tracks[t]) : uint.MaxValue;
+                    if (entry == rebuilt)
+                        continue;
+                    bool matchesSource = SourceTracks != null && t < SourceTracks.Count && entry == GetTocEntry(SourceTracks[t]);
+                    bool emptyNewSlot = t >= (SourceTracks?.Count ?? 0) && entry == uint.MaxValue;
+                    if (!hasTocSignature || (!matchesSource && !emptyNewSlot))
+                        needsDecision = true;
                 }
-                int offset = 0x104 + (t * 4);
-                ipbinData[offset++] = (byte)(dcLBA & 0xFF);
-                ipbinData[offset++] = (byte)((dcLBA >> 8) & 0xFF);
-                ipbinData[offset++] = (byte)((dcLBA >> 16) & 0xFF);
-                ipbinData[offset] = dcType;
+                if (needsDecision && PreserveCustomIpBin())
+                    return;
+
+                WriteTocEntries(ipbinData, tracks, entryCount);
+                return;
             }
+            if (Encoding.ASCII.GetString(ipbinData, 0x100, 4) != "TOC1")
+                throw new InvalidOperationException("IP.BIN has no recognizable TOC1 track table. Its boot data cannot be updated safely.");
+
+            int oldCount = 0;
+            uint previousAddress = GD_START_LBA + 149;
+            int sourceCount = SourceTracks == null ? 97 : Math.Min(SourceTracks.Count, 97);
+            while (oldCount < sourceCount)
+            {
+                uint entry = BinaryPrimitives.ReadUInt32LittleEndian(ipbinData.AsSpan(0x104 + oldCount * 4, 4));
+                uint address = entry & 0xFFFFFF;
+                uint type = entry >> 24;
+                if ((type != 0x01 && type != 0x41) || address <= previousAddress || address >= GD_END_LBA + 150)
+                    break;
+                previousAddress = address;
+                oldCount++;
+            }
+
+            // Bytes after the first unused or unrecognized slot may be custom boot code or data.
+            for (int t = oldCount; t < tracks.Count; t++)
+            {
+                int offset = 0x104 + t * 4;
+                uint entry = BinaryPrimitives.ReadUInt32LittleEndian(ipbinData.AsSpan(offset, 4));
+                if (entry != uint.MaxValue && entry != GetTocEntry(tracks[t]))
+                    throw new InvalidOperationException($"Rebuilt track {t + 3} would overwrite unrecognized IP.BIN data at 0x{offset:X4}. The custom boot data was preserved.");
+            }
+            for (int t = tracks.Count; t < oldCount; t++)
+            {
+                int offset = 0x104 + t * 4;
+                uint entry = BinaryPrimitives.ReadUInt32LittleEndian(ipbinData.AsSpan(offset, 4));
+                if (SourceTracks == null || t >= SourceTracks.Count || entry != GetTocEntry(SourceTracks[t]))
+                    throw new InvalidOperationException($"IP.BIN contains an extra entry at 0x{offset:X4} that cannot be confirmed as a removed source track. The custom boot data was preserved.");
+            }
+
+            WriteTocEntries(ipbinData, tracks, Math.Max(tracks.Count, oldCount));
+        }
+
+        private static void WriteTocEntries(byte[] ipbinData, List<DiscTrack> tracks, int entryCount)
+        {
+            for (int t = 0; t < entryCount; t++)
+            {
+                int offset = 0x104 + t * 4;
+                uint entry = t < tracks.Count ? GetTocEntry(tracks[t]) : uint.MaxValue;
+                if (BinaryPrimitives.ReadUInt32LittleEndian(ipbinData.AsSpan(offset, 4)) != entry)
+                    BinaryPrimitives.WriteUInt32LittleEndian(ipbinData.AsSpan(offset, 4), entry);
+            }
+        }
+
+        private static uint GetTocEntry(DiscTrack track)
+        {
+            return (track.LBA + 150) | ((uint)((track.Type << 4) | 1) << 24);
         }
 
         public static string CheckOutputExists(List<string> cdda, string output)

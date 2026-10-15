@@ -3,7 +3,7 @@
 # src/UniversalDreamcastPatcher.Core/runtimes/<rid>/native/libchdw.{dll,so,dylib}.
 #
 # Needs cmake, system gcc, posix-threads mingw (x86_64-w64-mingw32-gcc-posix
-# and i686-w64-mingw32-gcc-posix), and the zig wrappers at /tmp/zig-wrappers/.
+# and i686-w64-mingw32-gcc-posix), and the Zig wrappers under native-build-tools/zig-wrappers/.
 # See README.md for install steps.
 #
 # Written by Derek Pascarella (ateam)
@@ -14,7 +14,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 RUNTIMES="$REPO_ROOT/src/UniversalDreamcastPatcher.Core/runtimes"
 
-WORK="${LIBCHDW_WORK_DIR:-/tmp/libchdw-build}"
+NATIVE_TOOLS='/home/ateam/.local/share/openMenu/native-build-tools'
+WORK="${LIBCHDW_WORK_DIR:-$NATIVE_TOOLS/libchdw-build}"
 SEED="$WORK/charlesthobe-chdman"
 
 mkdir -p "$WORK"
@@ -145,7 +146,10 @@ EOF
 build_rid() {
     local rid="$1"; shift
     local artifact="$1"; shift
-    local toolchain_arg="${1:-}"
+    local toolchain_args=()
+    if [ "$#" -gt 0 ]; then
+        toolchain_args+=("$1")
+    fi
 
     echo "==> Building $rid"
     local bd="$SEED/build-$rid"
@@ -158,7 +162,7 @@ build_rid() {
         cmake .. -DCMAKE_BUILD_TYPE=Release \
                  -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
                  "-DLIBCHDW_SOURCE_DIR=$SCRIPT_DIR" \
-                 $toolchain_arg >/dev/null
+                 "${toolchain_args[@]}" >/dev/null
         make chdw -j"$(nproc)"
     )
     mkdir -p "$RUNTIMES/$rid/native"
@@ -169,8 +173,8 @@ build_rid() {
 build_rid linux-x64  libchdw.so
 build_rid win-x64    libchdw.dll  "-DCMAKE_TOOLCHAIN_FILE=$WORK/toolchain-mingw-x64.cmake"
 build_rid win-x86    libchdw.dll  "-DCMAKE_TOOLCHAIN_FILE=$WORK/toolchain-mingw-x86.cmake"
-build_rid osx-x64    libchdw.dylib "-DCMAKE_TOOLCHAIN_FILE=/tmp/zig-wrappers/toolchain-x86_64-macos.cmake"
-build_rid osx-arm64  libchdw.dylib "-DCMAKE_TOOLCHAIN_FILE=/tmp/zig-wrappers/toolchain-aarch64-macos.cmake"
+build_rid osx-x64    libchdw.dylib "-DCMAKE_TOOLCHAIN_FILE=$NATIVE_TOOLS/zig-wrappers/toolchain-x86_64-macos.cmake"
+build_rid osx-arm64  libchdw.dylib "-DCMAKE_TOOLCHAIN_FILE=$NATIVE_TOOLS/zig-wrappers/toolchain-aarch64-macos.cmake"
 
 echo
 echo "==> All RIDs built. Artifacts:"

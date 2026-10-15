@@ -18,8 +18,8 @@ The MAME source itself is pulled from [charlesthobe/chdman](https://github.com/c
 | linux-x64   | system gcc                                                      |
 | win-x64     | `x86_64-w64-mingw32-gcc-posix` (the posix-threads mingw variant; default win32-threads variant lacks `std::mutex`) |
 | win-x86     | `i686-w64-mingw32-gcc-posix` (same caveat)                      |
-| osx-x64     | zig 0.13+ via `/tmp/zig-wrappers/cc-x86_64-macos`               |
-| osx-arm64   | zig 0.13+ via `/tmp/zig-wrappers/cc-aarch64-macos`              |
+| osx-x64     | zig 0.13+ via `/home/ateam/.local/share/openMenu/native-build-tools/zig-wrappers/cc-x86_64-macos`               |
+| osx-arm64   | zig 0.13+ via `/home/ateam/.local/share/openMenu/native-build-tools/zig-wrappers/cc-aarch64-macos`              |
 
 Install on Ubuntu:
 ```
@@ -30,7 +30,7 @@ sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw3
 sudo update-alternatives --set i686-w64-mingw32-g++   /usr/bin/i686-w64-mingw32-g++-posix
 ```
 
-zig install: download the static tarball from <https://ziglang.org/download/> and drop the wrappers as set up in `/tmp/zig-wrappers/` (see how the existing libchdr build uses them).
+zig install: download the static tarball from <https://ziglang.org/download/> and drop the wrappers as set up in `/home/ateam/.local/share/openMenu/native-build-tools/zig-wrappers/` (see how the existing libchdr build uses them).
 
 ## Build steps
 

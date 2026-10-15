@@ -25,15 +25,22 @@ public sealed class PatchApplyOptions
     public string DcpPatchPath { get; set; } = string.Empty;
     public string OutputFolder { get; set; } = string.Empty;
     public OutputDiscImageFormat OutputFormat { get; set; } = OutputDiscImageFormat.Gdi;
+    /// <summary>
+    /// Called on the worker thread for ambiguous DCP track data. Return true to preserve
+    /// IP.BIN, false to update its track entries, or throw OperationCanceledException to cancel.
+    /// </summary>
+    public Func<Task<bool>>? PreserveCustomIpBinAsync { get; set; }
 }
 
 public sealed class PatchApplyResult
 {
     public bool Success { get; set; }
+    public bool Canceled { get; set; }
     public string? ErrorMessage { get; set; }
     // The folder shown to the user. Holds the .gdi or .cue plus track files.
     public string ProducedOutputFolder { get; set; } = string.Empty;
     public int FilesPatched { get; set; }
+    public int FilesOverwritten { get; set; }
     public int FilesAdded { get; set; }
 }
 
@@ -88,6 +95,7 @@ public static class PatchApplier
         var sourceDir = Path.Combine(workspace, "source");
         var patchDir = Path.Combine(workspace, "patch");
         var bootsectorDir = Path.Combine(workspace, "bootsector");
+        bool outputCreated = false;
 
         try
         {
@@ -145,10 +153,13 @@ public static class PatchApplier
 
             // A DCP that bundles an IP.BIN supplies it, overriding the source disc's.
             var patchBootsector = Path.Combine(patchDir, "bootsector", "IP.BIN");
-            if (File.Exists(patchBootsector))
+            bool hasPatchBootsector = File.Exists(patchBootsector);
+            if (hasPatchBootsector)
             {
                 File.Copy(patchBootsector, Path.Combine(bootsectorDir, "IP.BIN"), overwrite: true);
             }
+
+            var (added, overwritten) = CountWholeFiles(patchDir, sourceDir);
 
             foreach (var entry in Directory.EnumerateFileSystemEntries(patchDir))
             {
@@ -172,7 +183,6 @@ public static class PatchApplier
 
             progress?.Report("Applying patches...");
             int patched = 0;
-            int added = 0;
             foreach (var path in Directory.EnumerateFiles(sourceDir, "*", SearchOption.AllDirectories))
             {
                 ct.ThrowIfCancellationRequested();
@@ -215,14 +225,6 @@ public static class PatchApplier
                 patched++;
             }
 
-            foreach (var path in Directory.EnumerateFiles(patchDir, "*", SearchOption.AllDirectories))
-            {
-                if (path.EndsWith(".xdelta", StringComparison.OrdinalIgnoreCase)) continue;
-                var rel = Path.GetRelativePath(patchDir, path).Replace('\\', '/');
-                if (rel.StartsWith("bootsector/", StringComparison.OrdinalIgnoreCase)) continue;
-                added++;
-            }
-
             var chosenIpBin = Path.Combine(bootsectorDir, "IP.BIN");
             if (!File.Exists(chosenIpBin))
             {
@@ -248,6 +250,7 @@ public static class PatchApplier
             if (Directory.Exists(finalGdiFolder))
                 Directory.Delete(finalGdiFolder, recursive: true);
             Directory.CreateDirectory(finalGdiFolder);
+            outputCreated = true;
 
             var sourceImageFolder = Path.GetDirectoryName(normalized.GdiPath) ?? string.Empty;
             var gdiLines = File.ReadAllLines(normalized.GdiPath);
@@ -299,7 +302,20 @@ public static class PatchApplier
                 RawMode = needsRawForRedump || parsed.Track3SectorSize == 2352,
                 TruncateData = false,
                 BuildDate = Determinism.FixedEpoch,
+                SourceTracks = parsed.HighDensityTracks,
             };
+            if (hasPatchBootsector)
+            {
+                builder.PreserveCustomIpBin = () =>
+                {
+                    ct.ThrowIfCancellationRequested();
+                    if (options.PreserveCustomIpBinAsync == null)
+                        throw new InvalidOperationException("The patch's IP.BIN contains ambiguous track data. Choose whether to preserve IP.BIN or update its track entries before continuing.");
+                    bool preserve = options.PreserveCustomIpBinAsync().GetAwaiter().GetResult();
+                    ct.ThrowIfCancellationRequested();
+                    return preserve;
+                };
+            }
             builder.ReportProgress = p => progress?.Report($"{rebuildLabel}... {p}%");
             builder.ImportFolder(sourceDir);
             var builtTracks = builder.BuildGDROM(finalGdiFolder, ct);
@@ -336,12 +352,14 @@ public static class PatchApplier
             result.Success = true;
             result.ProducedOutputFolder = finalUserOutputFolder;
             result.FilesPatched = patched;
+            result.FilesOverwritten = overwritten;
             result.FilesAdded = added;
             return result;
         }
         catch (OperationCanceledException)
         {
-            result.ErrorMessage = "Patching was cancelled.";
+            result.Canceled = true;
+            result.ErrorMessage = "Patching was canceled.";
             return result;
         }
         catch (Exception ex)
@@ -353,7 +371,7 @@ public static class PatchApplier
         {
             try { if (Directory.Exists(workspace)) Directory.Delete(workspace, recursive: true); }
             catch { /* best effort */ }
-            if (options.OutputFormat != OutputDiscImageFormat.Gdi)
+            if (options.OutputFormat != OutputDiscImageFormat.Gdi || (result.Canceled && outputCreated))
             {
                 try { if (Directory.Exists(finalGdiFolder)) Directory.Delete(finalGdiFolder, recursive: true); }
                 catch { /* best effort */ }
@@ -388,6 +406,25 @@ public static class PatchApplier
         return null;
     }
 
+    private static (int Added, int Overwritten) CountWholeFiles(string patchDir, string sourceDir)
+    {
+        int added = 0;
+        int overwritten = 0;
+        foreach (var path in Directory.EnumerateFiles(patchDir, "*", SearchOption.AllDirectories))
+        {
+            if (path.EndsWith(".xdelta", StringComparison.OrdinalIgnoreCase)) continue;
+            var rel = Path.GetRelativePath(patchDir, path);
+            if (string.Equals(rel, "bootsector", StringComparison.OrdinalIgnoreCase)
+                || rel.Replace('\\', '/').StartsWith("bootsector/", StringComparison.OrdinalIgnoreCase)) continue;
+
+            if (File.Exists(Path.Combine(sourceDir, rel)))
+                overwritten++;
+            else
+                added++;
+        }
+        return (added, overwritten);
+    }
+
     private static void MergeDirectory(string source, string target)
     {
         Directory.CreateDirectory(target);
@@ -406,6 +443,7 @@ public static class PatchApplier
     {
         public List<GdiTrackLine> LowDensityTracks { get; } = new();
         public List<GdiTrackLine> CddaTracks { get; } = new();
+        public List<DiscTrack> HighDensityTracks { get; } = new();
         // Sector size of the source's HD data track 3 (2048 = ISO, 2352 = raw BIN).
         // Used to match the rebuild output's data-track format to the source's.
         public uint Track3SectorSize { get; set; } = 2352;
@@ -420,6 +458,9 @@ public static class PatchApplier
         for (int i = 1; i <= trackCount && i < lines.Length; i++)
         {
             if (!GdiTrackLine.TryParse(lines[i], out var track)) continue;
+
+            if (track.TrackNumber >= 3)
+                result.HighDensityTracks.Add(new DiscTrack { LBA = (uint)track.Lba, Type = (byte)track.Type });
 
             if (track.TrackNumber <= 2)
             {

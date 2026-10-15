@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using MsBox.Avalonia.Enums;
 using UniversalDreamcastPatcher.App.Views.Shared;
 using UniversalDreamcastPatcher.Core.Patching;
 
@@ -185,9 +186,14 @@ public partial class ApplyPatchView : UserControl
                     DcpPatchPath = dcp,
                     OutputFolder = outDir,
                     OutputFormat = format,
+                    PreserveCustomIpBinAsync = () => Dispatcher.UIThread.InvokeAsync(ConfirmIpBinPreservation),
                 },
                 progress,
                 _cts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            result = new PatchApplyResult { Canceled = true };
         }
         catch (Exception ex)
         {
@@ -205,10 +211,14 @@ public partial class ApplyPatchView : UserControl
         _cts.Dispose();
         _cts = null;
 
+        if (result.Canceled)
+            return;
+
         string title = result.Success ? "Information" : "Error";
         string message = result.Success
             ? $"Patch applied successfully.\n\n" +
               $"Files patched: {result.FilesPatched}\n" +
+              $"Files overwritten: {result.FilesOverwritten}\n" +
               $"Files added: {result.FilesAdded}\n\n" +
               $"Output folder:\n{result.ProducedOutputFolder}"
             : result.ErrorMessage ?? "Patching failed for an unknown reason.";
@@ -216,6 +226,25 @@ public partial class ApplyPatchView : UserControl
         await DialogBox.ShowAsync(this, title, message);
 
         ResetInputs();
+    }
+
+    private async System.Threading.Tasks.Task<bool> ConfirmIpBinPreservation()
+    {
+        var choice = await DialogBox.ShowAsync(this, "Confirmation",
+            "This patch's IP.BIN contains track information that differs from the rebuilt disc. " +
+            "These differences may include custom data intentionally added by the patch author.\n\n" +
+            "Keep the patch's IP.BIN unchanged?\n\n" +
+            "Yes: Preserve IP.BIN exactly as supplied. Choose this if the patch contains custom bootsector data, or you're unsure.\n\n" +
+            "No: Update the track entries to match the rebuilt disc. This may overwrite custom data within those entries.\n\n" +
+            "If you choose Yes and the disc doesn't work as expected, apply the patch again and try No.",
+            ButtonEnum.YesNoCancel);
+
+        return choice switch
+        {
+            ButtonResult.Yes => true,
+            ButtonResult.No => false,
+            _ => throw new OperationCanceledException(),
+        };
     }
 
     private void ResetInputs()
