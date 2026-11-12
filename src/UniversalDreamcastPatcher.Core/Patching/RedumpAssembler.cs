@@ -391,16 +391,12 @@ public static class RedumpAssembler
 
                 var dat = datEntry.Tracks[i];
                 bool isData = trackTypes[i] == "MODE1/2352";
-                byte[]? reconstructed = RedumpReconstructor.TryReconstruct(
-                    File.ReadAllBytes(srcPath), isData, dat.Size, dat.Crc32, dat.Md5, precedingTail);
-                if (reconstructed == null)
+                var destPath = Path.Combine(options.OutputFolder, outputTrackFiles[i]);
+                if (!RedumpReconstructor.TryReconstructToFile(srcPath, isData, dat.Size, dat.Crc32, dat.Md5, destPath, precedingTail))
                 {
                     DeleteFiles(written);
                     return false;
                 }
-
-                var destPath = Path.Combine(options.OutputFolder, outputTrackFiles[i]);
-                File.WriteAllBytes(destPath, reconstructed);
                 written.Add(destPath);
             }
         }

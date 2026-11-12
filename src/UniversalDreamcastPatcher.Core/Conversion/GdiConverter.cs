@@ -53,6 +53,8 @@ namespace UniversalDreamcastPatcher.Core
                 long cumulativeFileStart = 0;
                 int processedTracks = 0;
 
+                string OutputFilename(GdiTrack t) => $"track{t.TrackNumber:D2}.{(t.IsAudio ? "raw" : "bin")}";
+
                 // TOSEC DAT fast-path: hash Track 1's .bin (data, no pregap on
                 // SD area so identical bytes to TOSEC's track01.bin) and look
                 // up the disc. When matched, each per-track CUE-INDEX strip is
@@ -72,6 +74,32 @@ namespace UniversalDreamcastPatcher.Core
                 }
                 bool tosecUsable = tosecEntry != null;
 
+                // Reconstruction is all-or-nothing. A track that fails means
+                // this is not the catalogued disc (e.g., a patched image whose
+                // track 1 is untouched). Rebuilding its other tracks against
+                // the DAT can swap a rebuilt track for the retail one it still
+                // contains, so every track takes the CUE-INDEX strip path
+                // instead, which overwrites anything written here.
+                if (tosecUsable)
+                {
+                    foreach (var track in cueData.Tracks)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+
+                        var tosecTrack = tosecEntry!.Tracks.FirstOrDefault(t => t.TrackNumber == track.TrackNumber);
+                        string sourceBinPath = Path.Combine(cueData.Directory, track.DataFilename);
+                        if (tosecTrack == null || !File.Exists(sourceBinPath)) continue;
+
+                        if (!RedumpReconstructor.TryReconstructToFile(
+                            sourceBinPath, !track.IsAudio, tosecTrack.Size, tosecTrack.Crc32, tosecTrack.Md5,
+                            Path.Combine(outputDirectory, OutputFilename(track))))
+                        {
+                            tosecUsable = false;
+                            break;
+                        }
+                    }
+                }
+
                 foreach (var track in cueData.Tracks)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
@@ -83,8 +111,7 @@ namespace UniversalDreamcastPatcher.Core
                     }
 
                     // trackNN.bin for data, trackNN.raw for audio.
-                    string extension = track.IsAudio ? "raw" : "bin";
-                    string outputFilename = $"track{track.TrackNumber:D2}.{extension}";
+                    string outputFilename = OutputFilename(track);
                     string outputPath = Path.Combine(outputDirectory, outputFilename);
 
                     long sourceFileSectors = new FileInfo(sourceBinPath).Length / SectorSize;
@@ -92,29 +119,7 @@ namespace UniversalDreamcastPatcher.Core
                     long trackLba = cumulativeFileStart + (index01?.TotalFrames ?? 0);
                     int trackType = track.IsAudio ? 0 : 4;
 
-                    bool written = false;
-
-                    // TOSEC byte-exact path. Reads the Redump-form .bin, looks
-                    // up TOSEC's expected per-track hashes by track number,
-                    // runs the same reconstruction engine as RedumpAssembler
-                    // (verbatim, sector-aligned pregap, rolling-CRC scan).
-                    // Falls through to the CUE-INDEX strip path if no DAT
-                    // entry or any track reconstruction fails.
-                    if (tosecUsable)
-                    {
-                        var tosecTrack = tosecEntry!.Tracks.FirstOrDefault(t => t.TrackNumber == track.TrackNumber);
-                        if (tosecTrack != null)
-                        {
-                            byte[] redumpBytes = File.ReadAllBytes(sourceBinPath);
-                            byte[]? reconstructed = RedumpReconstructor.TryReconstruct(
-                                redumpBytes, !track.IsAudio, tosecTrack.Size, tosecTrack.Crc32, tosecTrack.Md5);
-                            if (reconstructed != null)
-                            {
-                                await File.WriteAllBytesAsync(outputPath, reconstructed, cancellationToken);
-                                written = true;
-                            }
-                        }
-                    }
+                    bool written = tosecUsable && tosecEntry!.Tracks.Any(t => t.TrackNumber == track.TrackNumber);
 
                     if (!written)
                     {

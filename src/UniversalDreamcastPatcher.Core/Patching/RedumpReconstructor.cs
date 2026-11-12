@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.IO.Hashing;
+using System.Linq;
 using System.Security.Cryptography;
 using DiscUtils.Iso9660;
 
@@ -156,6 +158,195 @@ public static class RedumpReconstructor
         var window = new byte[expectedSize];
         Array.Copy(buf, hit, window, 0, expectedSize);
         return window;
+    }
+
+    // File-to-file form of TryReconstruct. Runs the same tiers but reads the
+    // track in blocks, so memory use stays flat for any track size. Writes
+    // destPath and returns true on a hash match.
+    public static bool TryReconstructToFile(
+        string srcPath,
+        bool gdiIsDataTrack,
+        long expectedSize,
+        uint expectedCrc,
+        byte[] expectedMd5,
+        string destPath,
+        byte[]? precedingTailBytes = null)
+    {
+        if (expectedMd5 == null || expectedMd5.Length != 16) throw new ArgumentException("expectedMd5 must be 16 bytes.", nameof(expectedMd5));
+
+        using var src = new FileStream(srcPath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 1);
+        long srcLength = src.Length;
+        var whole = new Segment(srcLength, IsSource: true);
+        var block = new byte[BlockSize];
+
+        // Sector-aligned leading-silence pregap candidates. Pregap 0 on a
+        // track of the expected size is the verbatim case. Every candidate is
+        // zeros followed by the start of the track, so one pass over the file
+        // feeds all of their CRCs.
+        long[] prepends = new[] { 0, 75, 150, 225 }
+            .Select(pregap => (long)pregap * SectorSize)
+            .Where(prepend => prepend < expectedSize && expectedSize - prepend <= srcLength)
+            .ToArray();
+        var pregapCrcs = new Crc32[prepends.Length];
+        for (int c = 0; c < prepends.Length; c++)
+        {
+            pregapCrcs[c] = new Crc32();
+            pregapCrcs[c].Append(new byte[prepends[c]]);
+        }
+        long longestTake = prepends.Length == 0 ? 0 : expectedSize - prepends[0];
+        for (long done = 0; done < longestTake;)
+        {
+            var part = block.AsSpan(0, (int)Math.Min(block.Length, longestTake - done));
+            ReadLayout(src, new[] { whole }, done, part);
+            for (int c = 0; c < prepends.Length; c++)
+            {
+                long take = Math.Min(part.Length, expectedSize - prepends[c] - done);
+                if (take > 0) pregapCrcs[c].Append(part[..(int)take]);
+            }
+            done += part.Length;
+        }
+        for (int c = 0; c < prepends.Length; c++)
+        {
+            if (pregapCrcs[c].GetCurrentHashAsUInt32() == expectedCrc &&
+                WriteIfMd5Matches(src, new[] { new Segment(prepends[c]), whole }, 0, expectedSize, expectedMd5, destPath, block))
+                return true;
+        }
+
+        // Missing lead-in borrowed from the end of the previous track's file.
+        if (precedingTailBytes != null)
+        {
+            long borrow = expectedSize - srcLength;
+            if (borrow > 0 && borrow <= precedingTailBytes.LongLength)
+            {
+                var tail = precedingTailBytes.AsMemory((int)(precedingTailBytes.LongLength - borrow));
+                var layout = new[] { new Segment(borrow, tail), whole };
+                if (CrcOfRange(src, layout, 0, expectedSize, block) == expectedCrc &&
+                    WriteIfMd5Matches(src, layout, 0, expectedSize, expectedMd5, destPath, block))
+                    return true;
+            }
+        }
+
+        // Rolling-CRC scan.
+        byte[] leadingSynth = Array.Empty<byte>();
+        byte[] trailingSynth = Array.Empty<byte>();
+        if (gdiIsDataTrack && srcLength >= SectorSize)
+        {
+            var header = new byte[3];
+            ReadLayout(src, new[] { whole }, 12, header);
+            int firstTime = DecodeMsfTime(header, 0);
+            ReadLayout(src, new[] { whole }, srcLength - SectorSize + 12, header);
+            int lastTime = DecodeMsfTime(header, 0);
+            leadingSynth = SynthesizeMode1Sectors(firstTime - SynthSectors, SynthSectors);
+            trailingSynth = SynthesizeMode1Sectors(lastTime + 1, SynthSectors);
+        }
+
+        var scan = new[]
+        {
+            new Segment(PadBytes),
+            new Segment(leadingSynth.Length, leadingSynth),
+            whole,
+            new Segment(trailingSynth.Length, trailingSynth),
+            new Segment(PadBytes),
+        };
+        long scanLength = PadBytes + leadingSynth.Length + srcLength + trailingSynth.Length + PadBytes;
+        if (scanLength < expectedSize) return false;
+
+        uint[] outTab = BuildRollbackTable(expectedSize);
+        uint[] fastTab = BuildFastCrcTable();
+
+        uint crc = CrcOfRange(src, scan, 0, expectedSize, block);
+        if (crc == expectedCrc && WriteIfMd5Matches(src, scan, 0, expectedSize, expectedMd5, destPath, block))
+            return true;
+
+        // Each shift drops the byte at i and takes in the byte at expectedSize + i,
+        // so the scan only reads the two ends of the layout.
+        var outgoing = new byte[BlockSize];
+        var incoming = new byte[BlockSize];
+        long limit = scanLength - expectedSize;
+        for (long i = 0; i < limit; i += BlockSize)
+        {
+            int n = (int)Math.Min(BlockSize, limit - i);
+            ReadLayout(src, scan, i, outgoing.AsSpan(0, n));
+            ReadLayout(src, scan, expectedSize + i, incoming.AsSpan(0, n));
+            for (int k = 0; k < n; k++)
+            {
+                crc = (crc >> 8) ^ fastTab[(byte)crc ^ incoming[k]] ^ outTab[outgoing[k]];
+                if (crc == expectedCrc && WriteIfMd5Matches(src, scan, i + k + 1, expectedSize, expectedMd5, destPath, block))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private const int BlockSize = 1024 * 1024;
+
+    // One run of a candidate layout: the source track file from its first
+    // byte, in-memory bytes, or zero fill when neither is set.
+    private readonly record struct Segment(long Length, ReadOnlyMemory<byte> Bytes = default, bool IsSource = false);
+
+    // Fills dest from the layout starting at offset. The range must lie inside the layout.
+    private static void ReadLayout(FileStream src, Segment[] layout, long offset, Span<byte> dest)
+    {
+        long segmentStart = 0;
+        foreach (var segment in layout)
+        {
+            if (dest.IsEmpty) return;
+            long segmentEnd = segmentStart + segment.Length;
+            if (offset < segmentEnd)
+            {
+                long within = offset - segmentStart;
+                var part = dest[..(int)Math.Min(dest.Length, segmentEnd - offset)];
+                if (segment.IsSource)
+                {
+                    src.Position = within;
+                    src.ReadExactly(part);
+                }
+                else if (segment.Bytes.IsEmpty)
+                {
+                    part.Clear();
+                }
+                else
+                {
+                    segment.Bytes.Span.Slice((int)within, part.Length).CopyTo(part);
+                }
+                dest = dest[part.Length..];
+                offset += part.Length;
+            }
+            segmentStart = segmentEnd;
+        }
+    }
+
+    private static uint CrcOfRange(FileStream src, Segment[] layout, long offset, long length, byte[] block)
+    {
+        var crc = new Crc32();
+        for (long done = 0; done < length;)
+        {
+            var part = block.AsSpan(0, (int)Math.Min(block.Length, length - done));
+            ReadLayout(src, layout, offset + done, part);
+            crc.Append(part);
+            done += part.Length;
+        }
+        return crc.GetCurrentHashAsUInt32();
+    }
+
+    // The MD5 is taken from the bytes as they are written. A mismatch deletes destPath.
+    private static bool WriteIfMd5Matches(FileStream src, Segment[] layout, long offset, long length, byte[] expectedMd5, string destPath, byte[] block)
+    {
+        using var md5 = IncrementalHash.CreateHash(HashAlgorithmName.MD5);
+        using (var dest = new FileStream(destPath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 1))
+        {
+            for (long done = 0; done < length;)
+            {
+                var part = block.AsSpan(0, (int)Math.Min(block.Length, length - done));
+                ReadLayout(src, layout, offset + done, part);
+                md5.AppendData(part);
+                dest.Write(part);
+                done += part.Length;
+            }
+        }
+        if (md5.GetHashAndReset().AsSpan().SequenceEqual(expectedMd5)) return true;
+        System.IO.File.Delete(destPath);
+        return false;
     }
 
     // Decodes the GD-ROM extended-BCD MSF (standard BCD 0-99, hex-continued

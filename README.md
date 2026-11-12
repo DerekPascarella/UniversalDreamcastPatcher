@@ -20,9 +20,12 @@ The application accepts any TOSEC-style GDI, Redump-style CUE/BIN, or compressed
 9. [Legal and Licensing](https://github.com/DerekPascarella/UniversalDreamcastPatcher#legal-and-licensing)
 
 ## Latest Version
-The latest version of Universal Dreamcast Patcher is [2.1.8](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.8).
+The latest version of Universal Dreamcast Patcher is [2.1.9](https://github.com/DerekPascarella/UniversalDreamcastPatcher/releases/tag/2.1.9).
 
 ## Changelog
+- **Version 2.1.9** (2026-11-12)
+  - Fixed excessive RAM consumption during disc image conversion that could lead to a crash under certain conditions (see [Issue 32](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/32)).
+  - Fixed broken conversion between GDI and CUE/BIN under certain conditions (see [Issue 33](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/33)).
 - **Version 2.1.8** (2026-10-15)
   - Fixed loss of custom IP.BIN data when applying patches (see [Issue 30](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/30)).
   - Patch completion dialog now reports overwritten files separately (see [Issue 31](https://github.com/DerekPascarella/UniversalDreamcastPatcher/issues/31)).
